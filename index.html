@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel Invest — Monitoramento de Investimentos com IA</title>
+  <meta name="description" content="Monitore qualquer ativo — cripto, ETFs, ações — com inteligência artificial. Alertas personalizados via Telegram com análises do Claude AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:        #F97316;
+      --orange-light:  #FB923C;
+      --orange-dark:   #EA6C0A;
+      --orange-glow:   rgba(249, 115, 22, 0.25);
+      --orange-subtle: rgba(249, 115, 22, 0.08);
+      --bg:            #0A0A0B;
+      --bg-card:       #111113;
+      --bg-elevated:   #18181B;
+      --border:        rgba(255, 255, 255, 0.07);
+      --border-orange: rgba(249, 115, 22, 0.3);
+      --text:          #FAFAFA;
+      --text-muted:    #A1A1AA;
+      --text-faint:    #52525B;
+      --radius-sm:     8px;
+      --radius:        14px;
+      --radius-lg:     22px;
+      --transition:    0.2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Utilities ────────────────────────────────────────────────── */
+    .container {
+      max-width: 1120px;
+      margin-inline: auto;
+      padding-inline: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--orange-subtle);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-light);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--orange);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .section-label { text-align: center; margin-bottom: 16px; }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      text-align: center;
+    }
+
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 560px;
+      margin-inline: auto;
+      margin-top: 14px;
+    }
+
+    .highlight { color: var(--orange); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-dark);
+      box-shadow: 0 0 28px var(--orange-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 13px 26px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--orange);
+      background: var(--orange-subtle);
+    }
+
+    /* ── Noise overlay ────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ──────────────────────────────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 11, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-icon {
+      width: 32px; height: 32px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ── Lang Selector ────────────────────────────────────────────── */
+    .lang-selector {
+      position: relative;
+    }
+
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 11px;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--border-orange);
+      color: var(--text);
+    }
+
+    .lang-btn[aria-expanded="true"] {
+      border-color: var(--border-orange);
+      color: var(--text);
+    }
+
+    .lang-flag { font-size: 15px; line-height: 1; }
+
+    .lang-code { letter-spacing: 0.04em; }
+
+    .lang-chevron {
+      font-size: 10px;
+      transition: transform var(--transition);
+      opacity: 0.6;
+    }
+
+    .lang-btn[aria-expanded="true"] .lang-chevron {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .lang-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      min-width: 148px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(-6px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 200;
+    }
+
+    .lang-dropdown.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      text-align: left;
+    }
+
+    .lang-option:hover {
+      background: var(--orange-subtle);
+      color: var(--text);
+    }
+
+    .lang-option.active {
+      color: var(--orange-light);
+      background: var(--orange-subtle);
+    }
+
+    .lang-option .lang-option-flag { font-size: 16px; }
+
+    .lang-option-sep {
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* ── HERO ─────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 120px 0 100px;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 780px;
+      margin-inline: auto;
+    }
+
+    .hero-title {
+      font-size: clamp(38px, 6vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin: 20px 0 24px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text-muted);
+      max-width: 580px;
+      margin-inline: auto;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-trust {
+      margin-top: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .trust-icon { color: var(--orange); font-size: 15px; }
+
+    /* Dashboard mockup */
+    .hero-dashboard {
+      position: relative;
+      margin-top: 80px;
+      max-width: 960px;
+      margin-inline: auto;
+    }
+
+    .dashboard-frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--border), 0 60px 120px -20px rgba(0,0,0,0.8), 0 0 80px rgba(249,115,22,0.06);
+    }
+
+    .dashboard-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FEBC2E; }
+    .dot-g { background: #28C840; }
+
+    .dashboard-url {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-faint);
+      text-align: center;
+    }
+
+    .dashboard-body {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .dash-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+
+    .dash-card.featured {
+      border-color: var(--border-orange);
+      background: linear-gradient(135deg, rgba(249,115,22,0.06), transparent);
+    }
+
+    .dash-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+
+    .dash-card-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .dash-card-value.green  { color: #34D399; }
+    .dash-card-value.orange { color: var(--orange); }
+    .dash-card-value.white  { color: var(--text); }
+
+    .dash-card-change { font-size: 12px; margin-top: 4px; color: var(--text-faint); }
+    .dash-card-change span { color: #34D399; }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 48px;
+      margin-top: 12px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: rgba(249,115,22,0.2);
+      border-radius: 3px 3px 0 0;
+      transition: background 0.2s;
+    }
+
+    .chart-bar.active { background: var(--orange); }
+
+    @media (max-width: 640px) {
+      .dashboard-body { grid-template-columns: 1fr 1fr; }
+      .dash-card:last-child { display: none; }
+    }
+
+    /* ── SECTION COMMON ───────────────────────────────────────────── */
+    section { padding: 96px 0; position: relative; }
+
+    .section-divider {
+      width: 48px;
+      height: 3px;
+      background: var(--orange);
+      border-radius: 99px;
+      margin: 16px auto 0;
+    }
+
+    /* ── BENEFITS ─────────────────────────────────────────────────── */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 900px) { .benefits-grid { grid-template-columns: 1fr; } }
+
+    .benefit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      transition: border-color var(--transition), transform var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benefit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .benefit-card:hover { border-color: var(--border-orange); transform: translateY(-4px); }
+    .benefit-card:hover::before { opacity: 1; }
+
+    .benefit-icon {
+      width: 52px; height: 52px;
+      background: var(--orange-subtle);
+      border: 1px solid var(--border-orange);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+
+    .benefit-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .benefit-desc { font-size: 15px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── HOW IT WORKS ─────────────────────────────────────────────── */
+    .how-it-works {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 60px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(16.66% + 24px);
+      right: calc(16.66% + 24px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-orange), var(--border-orange));
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+    }
+
+    .step { padding: 0 32px; text-align: center; }
+
+    .step-num {
+      width: 72px; height: 72px;
+      background: var(--bg);
+      border: 2px solid var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--orange);
+      margin: 0 auto 28px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .step-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .step-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── METRICS ──────────────────────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 900px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .metrics-grid { grid-template-columns: 1fr; } }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      transition: border-color var(--transition);
+    }
+
+    .metric-card:hover { border-color: var(--border-orange); }
+
+    .metric-emoji { font-size: 28px; margin-bottom: 12px; }
+    .metric-name  { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .metric-desc  { font-size: 12px; color: var(--text-faint); line-height: 1.5; }
+
+    .metrics-assets { margin-top: 48px; text-align: center; }
+
+    .asset-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .asset-tag {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+
+    .asset-tag:hover { border-color: var(--border-orange); color: var(--orange-light); }
+
+    /* ── TESTIMONIALS ─────────────────────────────────────────────── */
+    .testimonials {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 900px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+    .testimonial-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: border-color var(--transition);
+    }
+
+    .testimonial-card:hover { border-color: var(--border-orange); }
+
+    .stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .star  { color: var(--orange); font-size: 14px; }
+
+    .testimonial-text {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .testimonial-text::before { content: '"'; }
+    .testimonial-text::after  { content: '"'; }
+
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+
+    .author-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .author-name { font-size: 14px; font-weight: 600; }
+    .author-role { font-size: 12px; color: var(--text-faint); }
+
+    /* ── PRICING ──────────────────────────────────────────────────── */
+    .pricing-wrapper { max-width: 520px; margin: 56px auto 0; }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-orange);
+      border-radius: var(--radius-lg);
+      padding: 48px 48px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--orange-dark), var(--orange), var(--orange-light));
+    }
+
+    .pricing-glow {
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 300px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pricing-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      margin: 8px 0;
+    }
+
+    .price-currency { font-size: 24px; font-weight: 700; color: var(--text-muted); }
+    .price-amount   { font-size: 72px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+    .price-period   { font-size: 16px; color: var(--text-muted); }
+    .price-subtitle { font-size: 13px; color: var(--text-faint); margin-bottom: 36px; }
+
+    .feature-list {
+      text-align: left;
+      list-style: none;
+      margin-bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .check-icon {
+      width: 20px; height: 20px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #34D399;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .pricing-cta { width: 100%; font-size: 16px; padding: 16px; border-radius: var(--radius-sm); }
+    .pricing-note { margin-top: 16px; font-size: 12px; color: var(--text-faint); }
+
+    /* ── FINAL CTA ────────────────────────────────────────────────── */
+    .final-cta { text-align: center; padding: 100px 0; position: relative; }
+
+    .final-cta-glow {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .final-cta-title {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      max-width: 700px;
+      margin-inline: auto;
+      margin-bottom: 20px;
+    }
+
+    .final-cta-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-inline: auto;
+      margin-bottom: 40px;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────────── */
+    .footer { border-top: 1px solid var(--border); padding: 40px 0; }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+
+    .footer-logo-icon {
+      width: 26px; height: 26px;
+      background: var(--orange);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .footer-copy { font-size: 13px; color: var(--text-faint); }
+
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 13px; color: var(--text-faint); transition: color var(--transition); }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    /* ── Scroll animations ────────────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .fade-up-delay-1 { transition-delay: 0.1s; }
+    .fade-up-delay-2 { transition-delay: 0.2s; }
+    .fade-up-delay-3 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">⚡</div>
+        <span>Sentinel<span class="highlight"> Invest</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#beneficios" data-i18n="nav.benefits"></a></li>
+        <li><a href="#como-funciona" data-i18n="nav.how"></a></li>
+        <li><a href="#metricas" data-i18n="nav.metrics"></a></li>
+        <li><a href="#preco" data-i18n="nav.pricing"></a></li>
+      </ul>
+      <div class="nav-right">
+        <!-- Language Selector -->
+        <div class="lang-selector" id="langSelector">
+          <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+            <span class="lang-flag" id="currentFlag"></span>
+            <span class="lang-code" id="currentCode"></span>
+            <span class="lang-chevron">▾</span>
+          </button>
+          <div class="lang-dropdown" id="langDropdown" role="menu">
+            <button class="lang-option" data-lang="pt" role="menuitem">
+              <span class="lang-option-flag">🇧🇷</span> Português
+            </button>
+            <div class="lang-option-sep"></div>
+            <button class="lang-option" data-lang="es" role="menuitem">
+              <span class="lang-option-flag">🇪🇸</span> Español
+            </button>
+            <div class="lang-option-sep"></div>
+            <button class="lang-option" data-lang="en" role="menuitem">
+              <span class="lang-option-flag">🇺🇸</span> English
+            </button>
+          </div>
+        </div>
+        <a href="#preco" class="btn-primary" data-i18n="nav.cta"></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span data-i18n="hero.badge"></span>
+        </div>
+        <h1 class="hero-title" data-i18n-html="hero.title"></h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle"></p>
+        <div class="hero-actions">
+          <a href="#preco" class="btn-primary" style="font-size:16px; padding:16px 32px;" data-i18n="hero.cta_primary"></a>
+          <a href="#como-funciona" class="btn-secondary" data-i18n="hero.cta_secondary"></a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span data-i18n="hero.trust1"></span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span data-i18n="hero.trust2"></span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span data-i18n="hero.trust3"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard mockup -->
+      <div class="hero-dashboard fade-up">
+        <div class="dashboard-frame">
+          <div class="dashboard-bar">
+            <span class="dot dot-r"></span>
+            <span class="dot dot-y"></span>
+            <span class="dot dot-g"></span>
+            <div class="dashboard-url">sentinel-invest.app/dashboard</div>
+          </div>
+          <div class="dashboard-body">
+            <div class="dash-card featured">
+              <div class="dash-card-label" data-i18n="dash.portfolio"></div>
+              <div class="dash-card-value orange">$48,320</div>
+              <div class="dash-card-change">24h: <span>+$1,240 (+2.6%)</span></div>
+              <div class="chart-bars">
+                <div class="chart-bar" style="height:40%"></div>
+                <div class="chart-bar" style="height:55%"></div>
+                <div class="chart-bar" style="height:45%"></div>
+                <div class="chart-bar" style="height:70%"></div>
+                <div class="chart-bar" style="height:60%"></div>
+                <div class="chart-bar" style="height:85%"></div>
+                <div class="chart-bar active" style="height:100%"></div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label" data-i18n="dash.alerts_today"></div>
+              <div class="dash-card-value white">7</div>
+              <div class="dash-card-change" data-i18n-html="dash.last_alert"></div>
+              <div class="chart-bars" style="margin-top:12px;">
+                <div class="chart-bar active" style="height:60%"></div>
+                <div class="chart-bar" style="height:30%"></div>
+                <div class="chart-bar active" style="height:90%"></div>
+                <div class="chart-bar" style="height:50%"></div>
+                <div class="chart-bar active" style="height:70%"></div>
+                <div class="chart-bar" style="height:40%"></div>
+                <div class="chart-bar active" style="height:80%"></div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label" data-i18n="dash.risk_score"></div>
+              <div class="dash-card-value green" data-i18n="dash.risk_low"></div>
+              <div class="dash-card-change" data-i18n-html="dash.updated"></div>
+              <div class="chart-bars" style="margin-top:12px;">
+                <div class="chart-bar" style="height:20%"></div>
+                <div class="chart-bar" style="height:35%"></div>
+                <div class="chart-bar" style="height:25%"></div>
+                <div class="chart-bar" style="height:40%"></div>
+                <div class="chart-bar" style="height:30%"></div>
+                <div class="chart-bar" style="height:20%"></div>
+                <div class="chart-bar" style="height:28%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BENEFITS ────────────────────────────────────────────────── -->
+  <section id="beneficios">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="benefits.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="benefits.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="benefits.sub"></p>
+
+      <div class="benefits-grid">
+        <div class="benefit-card fade-up">
+          <div class="benefit-icon">🤖</div>
+          <h3 class="benefit-title" data-i18n="benefit1.title"></h3>
+          <p class="benefit-desc" data-i18n="benefit1.desc"></p>
+        </div>
+        <div class="benefit-card fade-up fade-up-delay-1">
+          <div class="benefit-icon">📲</div>
+          <h3 class="benefit-title" data-i18n="benefit2.title"></h3>
+          <p class="benefit-desc" data-i18n="benefit2.desc"></p>
+        </div>
+        <div class="benefit-card fade-up fade-up-delay-2">
+          <div class="benefit-icon">🌐</div>
+          <h3 class="benefit-title" data-i18n="benefit3.title"></h3>
+          <p class="benefit-desc" data-i18n="benefit3.desc"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ─────────────────────────────────────────────── -->
+  <section id="como-funciona" class="how-it-works">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="how.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="how.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="how.sub"></p>
+
+      <div class="steps">
+        <div class="step fade-up">
+          <div class="step-num">1</div>
+          <h3 class="step-title" data-i18n="step1.title"></h3>
+          <p class="step-desc" data-i18n="step1.desc"></p>
+        </div>
+        <div class="step fade-up fade-up-delay-1">
+          <div class="step-num">2</div>
+          <h3 class="step-title" data-i18n="step2.title"></h3>
+          <p class="step-desc" data-i18n="step2.desc"></p>
+        </div>
+        <div class="step fade-up fade-up-delay-2">
+          <div class="step-num">3</div>
+          <h3 class="step-title" data-i18n="step3.title"></h3>
+          <p class="step-desc" data-i18n="step3.desc"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── METRICS ──────────────────────────────────────────────────── -->
+  <section id="metricas">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="metrics.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="metrics.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="metrics.sub"></p>
+
+      <div class="metrics-grid">
+        <div class="metric-card fade-up">
+          <div class="metric-emoji">📈</div>
+          <div class="metric-name" data-i18n="metric1.name"></div>
+          <div class="metric-desc" data-i18n="metric1.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-1">
+          <div class="metric-emoji">📊</div>
+          <div class="metric-name" data-i18n="metric2.name"></div>
+          <div class="metric-desc" data-i18n="metric2.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-2">
+          <div class="metric-emoji">⚡</div>
+          <div class="metric-name" data-i18n="metric3.name"></div>
+          <div class="metric-desc" data-i18n="metric3.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-3">
+          <div class="metric-emoji">〰️</div>
+          <div class="metric-name" data-i18n="metric4.name"></div>
+          <div class="metric-desc" data-i18n="metric4.desc"></div>
+        </div>
+        <div class="metric-card fade-up">
+          <div class="metric-emoji">🎯</div>
+          <div class="metric-name" data-i18n="metric5.name"></div>
+          <div class="metric-desc" data-i18n="metric5.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-1">
+          <div class="metric-emoji">😨</div>
+          <div class="metric-name" data-i18n="metric6.name"></div>
+          <div class="metric-desc" data-i18n="metric6.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-2">
+          <div class="metric-emoji">🔒</div>
+          <div class="metric-name" data-i18n="metric7.name"></div>
+          <div class="metric-desc" data-i18n="metric7.desc"></div>
+        </div>
+        <div class="metric-card fade-up fade-up-delay-3">
+          <div class="metric-emoji">📰</div>
+          <div class="metric-name" data-i18n="metric8.name"></div>
+          <div class="metric-desc" data-i18n="metric8.desc"></div>
+        </div>
+      </div>
+
+      <div class="metrics-assets">
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;" data-i18n="assets.label"></p>
+        <div class="asset-tags">
+          <span class="asset-tag">Bitcoin (BTC)</span>
+          <span class="asset-tag">Ethereum (ETH)</span>
+          <span class="asset-tag">Solana (SOL)</span>
+          <span class="asset-tag">AAPL</span>
+          <span class="asset-tag">TSLA</span>
+          <span class="asset-tag">NVDA</span>
+          <span class="asset-tag">VOO</span>
+          <span class="asset-tag">QQQ</span>
+          <span class="asset-tag">SPY</span>
+          <span class="asset-tag">Gold (XAU)</span>
+          <span class="asset-tag" data-i18n="assets.more"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ─────────────────────────────────────────────── -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="testimonials.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="testimonials.title"></h2>
+      <div class="section-divider"></div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-up">
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            <span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-text" data-i18n="t1.text"></p>
+          <div class="testimonial-author">
+            <div class="author-avatar">R</div>
+            <div>
+              <div class="author-name" data-i18n="t1.name"></div>
+              <div class="author-role" data-i18n="t1.role"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-up fade-up-delay-1">
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            <span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-text" data-i18n="t2.text"></p>
+          <div class="testimonial-author">
+            <div class="author-avatar">C</div>
+            <div>
+              <div class="author-name" data-i18n="t2.name"></div>
+              <div class="author-role" data-i18n="t2.role"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card fade-up fade-up-delay-2">
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            <span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-text" data-i18n="t3.text"></p>
+          <div class="testimonial-author">
+            <div class="author-avatar">T</div>
+            <div>
+              <div class="author-name" data-i18n="t3.name"></div>
+              <div class="author-role" data-i18n="t3.role"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ──────────────────────────────────────────────────── -->
+  <section id="preco">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="pricing.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n="pricing.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="pricing.sub"></p>
+
+      <div class="pricing-wrapper">
+        <div class="pricing-card fade-up">
+          <div class="pricing-glow"></div>
+          <div class="pricing-badge" data-i18n="pricing.plan_badge"></div>
+          <div class="price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">29</span>
+            <span class="price-period" data-i18n="pricing.period"></span>
+          </div>
+          <p class="price-subtitle" data-i18n="pricing.per"></p>
+
+          <ul class="feature-list">
+            <li><span class="check-icon">✓</span><span data-i18n="feature1"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature2"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature3"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature4"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature5"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature6"></span></li>
+            <li><span class="check-icon">✓</span><span data-i18n="feature7"></span></li>
+          </ul>
+
+          <a href="#" class="btn-primary pricing-cta" data-i18n="pricing.cta"></a>
+          <p class="pricing-note" data-i18n="pricing.note"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ────────────────────────────────────────────────── -->
+  <section class="final-cta">
+    <div class="final-cta-glow"></div>
+    <div class="container" style="position:relative; z-index:1;">
+      <h2 class="final-cta-title" data-i18n-html="finalcta.title"></h2>
+      <p class="final-cta-sub" data-i18n="finalcta.sub"></p>
+      <a href="#preco" class="btn-primary" style="font-size:17px; padding:18px 40px;" data-i18n="finalcta.cta"></a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ───────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">⚡</div>
+        <span>Sentinel<span class="highlight"> Invest</span></span>
+      </div>
+      <p class="footer-copy" data-i18n="footer.copy"></p>
+      <ul class="footer-links">
+        <li><a href="#" data-i18n="footer.terms"></a></li>
+        <li><a href="#" data-i18n="footer.privacy"></a></li>
+        <li><a href="#" data-i18n="footer.contact"></a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- ── i18n & Lang Selector ─────────────────────────────────────── -->
+  <script>
+  (() => {
+    /* ── Translations ─────────────────────────────────────────────── */
+    const T = {
+      pt: {
+        /* meta */
+        'meta.title':       'Sentinel Invest — Monitoramento de Investimentos com IA',
+        'meta.description': 'Monitore qualquer ativo — cripto, ETFs, ações — com inteligência artificial. Alertas personalizados via Telegram com análises do Claude AI.',
+        'html.lang':        'pt-BR',
+        /* nav */
+        'nav.benefits': 'Benefícios',
+        'nav.how':      'Como funciona',
+        'nav.metrics':  'Métricas',
+        'nav.pricing':  'Preço',
+        'nav.cta':      'Começar agora →',
+        /* hero */
+        'hero.badge':        'Monitoramento em tempo real',
+        'hero.title':        'Seu portfólio.<br/>Vigilado pela <span class="highlight">IA.</span>',
+        'hero.subtitle':     'O Sentinel monitora cripto, ETFs e ações 24/7 e envia alertas cirúrgicos no Telegram com análises do Claude AI — antes que o mercado te surpreenda.',
+        'hero.cta_primary':  'Começar por $29/mês →',
+        'hero.cta_secondary':'Ver como funciona',
+        'hero.trust1':       'Sem contrato mínimo',
+        'hero.trust2':       'Cancele quando quiser',
+        'hero.trust3':       'Setup em menos de 5 min',
+        /* dashboard */
+        'dash.portfolio':   'Portfólio Total',
+        'dash.alerts_today':'Alertas Hoje',
+        'dash.last_alert':  'Último: <span>há 12 min</span>',
+        'dash.risk_score':  'Score de Risco IA',
+        'dash.risk_low':    'Baixo',
+        'dash.updated':     'Atualizado <span>agora</span>',
+        /* benefits */
+        'benefits.badge':  'Por que o Sentinel',
+        'benefits.title':  'Não perca mais uma<br/><span class="highlight">oportunidade.</span>',
+        'benefits.sub':    'Três vantagens que mudam a forma como você investe.',
+        'benefit1.title':  'Análise com Claude AI',
+        'benefit1.desc':   'Cada alerta vem acompanhado de uma análise contextual gerada pelo Claude AI. Você recebe não só o número, mas o que ele significa para o seu portfólio.',
+        'benefit2.title':  'Alertas direto no Telegram',
+        'benefit2.desc':   'Nada de apps extras. Os alertas chegam onde você já está — no Telegram, com formatação clara e links de contexto para agir na hora certa.',
+        'benefit3.title':  'Qualquer ativo, qualquer hora',
+        'benefit3.desc':   'Bitcoin, AAPL, VOO, ouro, commodities — o Sentinel monitora 24 horas por dia, 7 dias por semana, sem pausas e sem distrações.',
+        /* how */
+        'how.badge':  'Como funciona',
+        'how.title':  'Pronto em <span class="highlight">3 passos simples.</span>',
+        'how.sub':    'Do cadastro ao primeiro alerta em menos de 5 minutos.',
+        'step1.title':'Cadastre seus ativos',
+        'step1.desc': 'Informe os ativos que deseja monitorar — cripto, ações, ETFs. Sem chaves de API nem acesso à corretora. Apenas os tickers.',
+        'step2.title':'Defina seus alertas',
+        'step2.desc': 'Escolha os gatilhos: variação de preço, volume anormal, RSI, cruzamento de médias ou score de risco gerado pela IA.',
+        'step3.title':'Receba no Telegram',
+        'step3.desc': 'Conecte seu Telegram em um clique. Alertas com análise do Claude AI chegam em segundos — onde você estiver.',
+        /* metrics */
+        'metrics.badge': 'O que monitoramos',
+        'metrics.title': 'Dados que <span class="highlight">importam.</span>',
+        'metrics.sub':   'Indicadores técnicos e fundamentalistas em tempo real para cada ativo.',
+        'metric1.name':  'Preço & Variação',
+        'metric1.desc':  'Monitoramento tick a tick com alertas de variação percentual configuráveis',
+        'metric2.name':  'Volume Anormal',
+        'metric2.desc':  'Detecta picos de volume que precedem movimentos relevantes de preço',
+        'metric3.name':  'RSI & Momentum',
+        'metric3.desc':  'Alerta em sobrecompra / sobrevenda com análise de divergência',
+        'metric4.name':  'Médias Móveis',
+        'metric4.desc':  'Cruzamento de MAs configuráveis com sinal de tendência automático',
+        'metric5.name':  'Suporte & Resistência',
+        'metric5.desc':  'Detecção automática de níveis-chave via análise de máximas e mínimas',
+        'metric6.name':  'Fear & Greed',
+        'metric6.desc':  'Índice de sentimento do mercado cripto e alertas de extremos',
+        'metric7.name':  'Score de Risco IA',
+        'metric7.desc':  'Score dinâmico calculado pelo Claude AI com base em múltiplos fatores',
+        'metric8.name':  'Sentimento de Notícias',
+        'metric8.desc':  'IA analisa notícias e tweets em tempo real e envia resumo contextual',
+        'assets.label':  'Ativos suportados:',
+        'assets.more':   '+ qualquer ticker',
+        /* testimonials */
+        'testimonials.badge': 'Depoimentos',
+        'testimonials.title': 'Investidores que já <span class="highlight">confiam.</span>',
+        't1.text': 'O alerta de volume do BTC chegou 18 minutos antes do pump. Entrei na hora certa. A análise do Claude foi cirúrgica — explicou exatamente o que estava acontecendo com o order book.',
+        't1.name': 'Rafael M.',
+        't1.role': 'Trader de cripto · São Paulo',
+        't2.text': 'Monitoro minha carteira de ETFs e ações americanas sem abrir a plataforma da corretora o dia inteiro. Os alertas chegam no Telegram quando preciso agir — o resto deixo com o Sentinel.',
+        't2.name': 'Camila P.',
+        't2.role': 'Investidora de longo prazo · Curitiba',
+        't3.text': 'Uso o score de risco da IA para calibrar meu sizing. Desde que comecei, reduzi os drawdowns e melhorei o Sharpe. Vale cada centavo dos $29.',
+        't3.name': 'Thiago A.',
+        't3.role': 'Swing trader · Rio de Janeiro',
+        /* pricing */
+        'pricing.badge':     'Plano único',
+        'pricing.title':     'Simples. Sem pegadinha.',
+        'pricing.sub':       'Um plano completo. Tudo incluso. Cancele quando quiser.',
+        'pricing.plan_badge':'Mais popular',
+        'pricing.period':    '/mês',
+        'pricing.per':       'por portfólio · cobrado mensalmente',
+        'feature1': 'Monitoramento de até 30 ativos simultâneos',
+        'feature2': 'Alertas ilimitados via Telegram',
+        'feature3': 'Análise contextual com Claude AI em cada alerta',
+        'feature4': 'Score de risco dinâmico 24/7',
+        'feature5': 'Dashboard web com histórico completo',
+        'feature6': 'Suporte prioritário via Telegram',
+        'feature7': 'Sem contrato — cancele quando quiser',
+        'pricing.cta':  'Começar agora →',
+        'pricing.note': 'Sem cartão de crédito para testar · 7 dias grátis',
+        /* final cta */
+        'finalcta.title': 'O mercado não espera.<br/><span class="highlight">Você também não deveria.</span>',
+        'finalcta.sub':   'Comece grátis por 7 dias. Sem cartão. Cancele quando quiser. Seu portfólio merece atenção 24/7.',
+        'finalcta.cta':   'Ativar monitoramento agora →',
+        /* footer */
+        'footer.copy':    '© 2026 Sentinel Invest. Todos os direitos reservados.',
+        'footer.terms':   'Termos',
+        'footer.privacy': 'Privacidade',
+        'footer.contact': 'Contato',
+        /* lang selector */
+        'lang.flag': '🇧🇷',
+        'lang.code': 'PT',
+      },
+
+      es: {
+        'meta.title':       'Sentinel Invest — Monitoreo de Inversiones con IA',
+        'meta.description': 'Monitorea cualquier activo — cripto, ETFs, acciones — con inteligencia artificial. Alertas personalizadas vía Telegram con análisis de Claude AI.',
+        'html.lang':        'es',
+        'nav.benefits': 'Beneficios',
+        'nav.how':      'Cómo funciona',
+        'nav.metrics':  'Métricas',
+        'nav.pricing':  'Precio',
+        'nav.cta':      'Empezar ahora →',
+        'hero.badge':        'Monitoreo en tiempo real',
+        'hero.title':        'Tu portafolio.<br/>Vigilado por la <span class="highlight">IA.</span>',
+        'hero.subtitle':     'Sentinel monitorea cripto, ETFs y acciones 24/7 y envía alertas precisas a Telegram con análisis de Claude AI — antes de que el mercado te sorprenda.',
+        'hero.cta_primary':  'Empezar por $29/mes →',
+        'hero.cta_secondary':'Ver cómo funciona',
+        'hero.trust1':       'Sin contrato mínimo',
+        'hero.trust2':       'Cancela cuando quieras',
+        'hero.trust3':       'Configuración en menos de 5 min',
+        'dash.portfolio':   'Portafolio Total',
+        'dash.alerts_today':'Alertas Hoy',
+        'dash.last_alert':  'Última: <span>hace 12 min</span>',
+        'dash.risk_score':  'Score de Riesgo IA',
+        'dash.risk_low':    'Bajo',
+        'dash.updated':     'Actualizado <span>ahora</span>',
+        'benefits.badge':  'Por qué Sentinel',
+        'benefits.title':  'No pierdas más ninguna<br/><span class="highlight">oportunidad.</span>',
+        'benefits.sub':    'Tres ventajas que cambian la forma en que inviertes.',
+        'benefit1.title':  'Análisis con Claude AI',
+        'benefit1.desc':   'Cada alerta incluye un análisis contextual generado por Claude AI. Recibes no solo el número, sino lo que significa para tu portafolio.',
+        'benefit2.title':  'Alertas directo a Telegram',
+        'benefit2.desc':   'Sin apps adicionales. Las alertas llegan donde ya estás — en Telegram, con formato claro y enlaces de contexto para actuar en el momento justo.',
+        'benefit3.title':  'Cualquier activo, a cualquier hora',
+        'benefit3.desc':   'Bitcoin, AAPL, VOO, oro, commodities — Sentinel monitorea las 24 horas del día, los 7 días de la semana, sin pausas.',
+        'how.badge':  'Cómo funciona',
+        'how.title':  'Listo en <span class="highlight">3 pasos simples.</span>',
+        'how.sub':    'Del registro a la primera alerta en menos de 5 minutos.',
+        'step1.title':'Registra tus activos',
+        'step1.desc': 'Ingresa los activos que deseas monitorear — cripto, acciones, ETFs. Sin API keys ni acceso al bróker. Solo los tickers.',
+        'step2.title':'Define tus alertas',
+        'step2.desc': 'Elige los disparadores: variación de precio, volumen anormal, RSI, cruce de medias o score de riesgo generado por IA.',
+        'step3.title':'Recibe en Telegram',
+        'step3.desc': 'Conecta tu Telegram en un clic. Las alertas con análisis de Claude AI llegan en segundos — donde sea que estés.',
+        'metrics.badge': 'Qué monitoreamos',
+        'metrics.title': 'Datos que <span class="highlight">importan.</span>',
+        'metrics.sub':   'Indicadores técnicos y fundamentales en tiempo real para cada activo.',
+        'metric1.name':  'Precio & Variación',
+        'metric1.desc':  'Monitoreo tick a tick con alertas de variación porcentual configurables',
+        'metric2.name':  'Volumen Anormal',
+        'metric2.desc':  'Detecta picos de volumen que preceden movimientos relevantes de precio',
+        'metric3.name':  'RSI & Momentum',
+        'metric3.desc':  'Alerta en sobrecompra / sobreventa con análisis de divergencia',
+        'metric4.name':  'Medias Móviles',
+        'metric4.desc':  'Cruce de MAs configurables con señal de tendencia automática',
+        'metric5.name':  'Soporte & Resistencia',
+        'metric5.desc':  'Detección automática de niveles clave vía análisis de máximos y mínimos',
+        'metric6.name':  'Fear & Greed',
+        'metric6.desc':  'Índice de sentimiento del mercado cripto y alertas en extremos',
+        'metric7.name':  'Score de Riesgo IA',
+        'metric7.desc':  'Score dinámico calculado por Claude AI con base en múltiples factores',
+        'metric8.name':  'Sentimiento de Noticias',
+        'metric8.desc':  'La IA analiza noticias y tweets en tiempo real y envía resumen contextual',
+        'assets.label':  'Activos soportados:',
+        'assets.more':   '+ cualquier ticker',
+        'testimonials.badge': 'Testimonios',
+        'testimonials.title': 'Inversores que ya <span class="highlight">confían.</span>',
+        't1.text': 'La alerta de volumen del BTC llegó 18 minutos antes del pump. Entré en el momento justo. El análisis de Claude fue quirúrgico — explicó exactamente lo que estaba pasando en el order book.',
+        't1.name': 'Rafael M.',
+        't1.role': 'Trader de cripto · São Paulo',
+        't2.text': 'Monitoreo mi cartera de ETFs y acciones sin abrir la plataforma del bróker en todo el día. Las alertas llegan a Telegram cuando necesito actuar — el resto lo dejo con Sentinel.',
+        't2.name': 'Camila P.',
+        't2.role': 'Inversora a largo plazo · Curitiba',
+        't3.text': 'Uso el score de riesgo de la IA para calibrar mi sizing. Desde que empecé, reduje los drawdowns y mejoré el Sharpe. Vale cada centavo de los $29.',
+        't3.name': 'Thiago A.',
+        't3.role': 'Swing trader · Río de Janeiro',
+        'pricing.badge':     'Plan único',
+        'pricing.title':     'Simple. Sin trucos.',
+        'pricing.sub':       'Un plan completo. Todo incluido. Cancela cuando quieras.',
+        'pricing.plan_badge':'Más popular',
+        'pricing.period':    '/mes',
+        'pricing.per':       'por portafolio · facturado mensualmente',
+        'feature1': 'Monitoreo de hasta 30 activos simultáneos',
+        'feature2': 'Alertas ilimitadas vía Telegram',
+        'feature3': 'Análisis contextual con Claude AI en cada alerta',
+        'feature4': 'Score de riesgo dinámico 24/7',
+        'feature5': 'Dashboard web con historial completo',
+        'feature6': 'Soporte prioritario vía Telegram',
+        'feature7': 'Sin contrato — cancela cuando quieras',
+        'pricing.cta':  'Empezar ahora →',
+        'pricing.note': 'Sin tarjeta de crédito para probar · 7 días gratis',
+        'finalcta.title': 'El mercado no espera.<br/><span class="highlight">Tú tampoco deberías.</span>',
+        'finalcta.sub':   'Empieza gratis por 7 días. Sin tarjeta. Cancela cuando quieras. Tu portafolio merece atención 24/7.',
+        'finalcta.cta':   'Activar monitoreo ahora →',
+        'footer.copy':    '© 2026 Sentinel Invest. Todos los derechos reservados.',
+        'footer.terms':   'Términos',
+        'footer.privacy': 'Privacidad',
+        'footer.contact': 'Contacto',
+        'lang.flag': '🇪🇸',
+        'lang.code': 'ES',
+      },
+
+      en: {
+        'meta.title':       'Sentinel Invest — AI-Powered Investment Monitoring',
+        'meta.description': 'Monitor any asset — crypto, ETFs, stocks — with artificial intelligence. Personalized alerts via Telegram with Claude AI analysis.',
+        'html.lang':        'en',
+        'nav.benefits': 'Benefits',
+        'nav.how':      'How it works',
+        'nav.metrics':  'Metrics',
+        'nav.pricing':  'Pricing',
+        'nav.cta':      'Get started →',
+        'hero.badge':        'Real-time monitoring',
+        'hero.title':        'Your portfolio.<br/>Watched by <span class="highlight">AI.</span>',
+        'hero.subtitle':     'Sentinel monitors crypto, ETFs and stocks 24/7 and sends precise alerts on Telegram with Claude AI analysis — before the market surprises you.',
+        'hero.cta_primary':  'Start for $29/mo →',
+        'hero.cta_secondary':'See how it works',
+        'hero.trust1':       'No minimum contract',
+        'hero.trust2':       'Cancel anytime',
+        'hero.trust3':       'Setup in under 5 min',
+        'dash.portfolio':   'Total Portfolio',
+        'dash.alerts_today':'Alerts Today',
+        'dash.last_alert':  'Last: <span>12 min ago</span>',
+        'dash.risk_score':  'AI Risk Score',
+        'dash.risk_low':    'Low',
+        'dash.updated':     'Updated <span>just now</span>',
+        'benefits.badge':  'Why Sentinel',
+        'benefits.title':  'Never miss another<br/><span class="highlight">opportunity.</span>',
+        'benefits.sub':    'Three advantages that change the way you invest.',
+        'benefit1.title':  'Analysis with Claude AI',
+        'benefit1.desc':   'Every alert comes with contextual analysis generated by Claude AI. You receive not just the number, but what it means for your portfolio.',
+        'benefit2.title':  'Alerts straight to Telegram',
+        'benefit2.desc':   'No extra apps needed. Alerts arrive where you already are — on Telegram, with clear formatting and context links to act at the right moment.',
+        'benefit3.title':  'Any asset, anytime',
+        'benefit3.desc':   'Bitcoin, AAPL, VOO, gold, commodities — Sentinel monitors 24 hours a day, 7 days a week, without pauses or distractions.',
+        'how.badge':  'How it works',
+        'how.title':  'Ready in <span class="highlight">3 simple steps.</span>',
+        'how.sub':    'From signup to first alert in under 5 minutes.',
+        'step1.title':'Add your assets',
+        'step1.desc': 'Enter the assets you want to monitor — crypto, stocks, ETFs. No API keys or broker access needed. Just the tickers.',
+        'step2.title':'Configure your alerts',
+        'step2.desc': 'Choose your triggers: price change, abnormal volume, RSI, moving average crossovers, or AI-generated risk score.',
+        'step3.title':'Receive on Telegram',
+        'step3.desc': 'Connect your Telegram in one click. Alerts with Claude AI analysis arrive in seconds — wherever you are.',
+        'metrics.badge': 'What we monitor',
+        'metrics.title': 'Data that <span class="highlight">matters.</span>',
+        'metrics.sub':   'Real-time technical and fundamental indicators for every asset.',
+        'metric1.name':  'Price & Change',
+        'metric1.desc':  'Tick-by-tick monitoring with configurable percentage change alerts',
+        'metric2.name':  'Abnormal Volume',
+        'metric2.desc':  'Detects volume spikes that precede significant price movements',
+        'metric3.name':  'RSI & Momentum',
+        'metric3.desc':  'Overbought / oversold alerts with divergence analysis',
+        'metric4.name':  'Moving Averages',
+        'metric4.desc':  'Configurable MA crossovers with automatic trend signal',
+        'metric5.name':  'Support & Resistance',
+        'metric5.desc':  'Automatic detection of key levels via highs and lows analysis',
+        'metric6.name':  'Fear & Greed',
+        'metric6.desc':  'Crypto market sentiment index with extreme alerts',
+        'metric7.name':  'AI Risk Score',
+        'metric7.desc':  'Dynamic score calculated by Claude AI based on multiple factors',
+        'metric8.name':  'News Sentiment',
+        'metric8.desc':  'AI analyzes news and tweets in real time and sends a contextual summary',
+        'assets.label':  'Supported assets:',
+        'assets.more':   '+ any ticker',
+        'testimonials.badge': 'Testimonials',
+        'testimonials.title': 'Investors who already <span class="highlight">trust us.</span>',
+        't1.text': 'The BTC volume alert arrived 18 minutes before the pump. I got in at the right time. Claude\'s analysis was surgical — it explained exactly what was happening with the order book.',
+        't1.name': 'Rafael M.',
+        't1.role': 'Crypto trader · São Paulo',
+        't2.text': 'I monitor my ETF and US stock portfolio without opening the broker platform all day. Alerts arrive on Telegram when I need to act — the rest I leave to Sentinel.',
+        't2.name': 'Camila P.',
+        't2.role': 'Long-term investor · Curitiba',
+        't3.text': 'I use the AI risk score to calibrate my sizing. Since I started, I\'ve reduced drawdowns and improved my Sharpe ratio. Worth every penny of the $29.',
+        't3.name': 'Thiago A.',
+        't3.role': 'Swing trader · Rio de Janeiro',
+        'pricing.badge':     'Single plan',
+        'pricing.title':     'Simple. No tricks.',
+        'pricing.sub':       'One complete plan. Everything included. Cancel anytime.',
+        'pricing.plan_badge':'Most popular',
+        'pricing.period':    '/mo',
+        'pricing.per':       'per portfolio · billed monthly',
+        'feature1': 'Monitor up to 30 assets simultaneously',
+        'feature2': 'Unlimited alerts via Telegram',
+        'feature3': 'Contextual Claude AI analysis with every alert',
+        'feature4': 'Dynamic 24/7 risk score',
+        'feature5': 'Web dashboard with full history',
+        'feature6': 'Priority support via Telegram',
+        'feature7': 'No contract — cancel anytime',
+        'pricing.cta':  'Get started →',
+        'pricing.note': 'No credit card required · 7-day free trial',
+        'finalcta.title': 'The market doesn\'t wait.<br/><span class="highlight">Neither should you.</span>',
+        'finalcta.sub':   'Start free for 7 days. No card. Cancel anytime. Your portfolio deserves 24/7 attention.',
+        'finalcta.cta':   'Activate monitoring now →',
+        'footer.copy':    '© 2026 Sentinel Invest. All rights reserved.',
+        'footer.terms':   'Terms',
+        'footer.privacy': 'Privacy',
+        'footer.contact': 'Contact',
+        'lang.flag': '🇺🇸',
+        'lang.code': 'EN',
+      }
+    };
+
+    /* ── Language detection & persistence ────────────────────────── */
+    function detectLang() {
+      const saved = localStorage.getItem('sentinel-lang');
+      if (saved && T[saved]) return saved;
+      const browser = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+      if (browser.startsWith('pt')) return 'pt';
+      if (browser.startsWith('es')) return 'es';
+      return 'en';
+    }
+
+    /* ── Apply translations ───────────────────────────────────────── */
+    function applyLang(lang) {
+      const dict = T[lang];
+
+      /* <html lang> */
+      document.documentElement.lang = dict['html.lang'];
+
+      /* <title> and <meta description> */
+      document.title = dict['meta.title'];
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', dict['meta.description']);
+
+      /* text content */
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+
+      /* html content (for elements with inline tags like <br>, <span>) */
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.dataset.i18nHtml;
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+
+      /* update lang selector button */
+      document.getElementById('currentFlag').textContent = dict['lang.flag'];
+      document.getElementById('currentCode').textContent = dict['lang.code'];
+
+      /* mark active option */
+      document.querySelectorAll('.lang-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      localStorage.setItem('sentinel-lang', lang);
+    }
+
+    /* ── Dropdown toggle ──────────────────────────────────────────── */
+    const langBtn      = document.getElementById('langBtn');
+    const langDropdown = document.getElementById('langDropdown');
+
+    function openDropdown()  {
+      langDropdown.classList.add('open');
+      langBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeDropdown() {
+      langDropdown.classList.remove('open');
+      langBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    langBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      langDropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+
+    document.addEventListener('click', closeDropdown);
+    langDropdown.addEventListener('click', e => e.stopPropagation());
+
+    /* keyboard: Escape closes */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeDropdown();
+    });
+
+    /* ── Language option clicks ───────────────────────────────────── */
+    document.querySelectorAll('.lang-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyLang(btn.dataset.lang);
+        closeDropdown();
+      });
+    });
+
+    /* ── Scroll animations ────────────────────────────────────────── */
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ── Init ─────────────────────────────────────────────────────── */
+    applyLang(detectLang());
+  })();
+  </script>
+</body>
+</html>
