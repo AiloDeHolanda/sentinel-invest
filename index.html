@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel Invest — Monitoramento de Investimentos com IA</title>
-  <meta name="description" content="Monitore qualquer ativo — cripto, ETFs, ações — com inteligência artificial. Alertas personalizados via Telegram com análises do Claude AI." />
+  <title>Sentinel Invest — Seu Assessor IA Pessoal</title>
+  <meta name="description" content="Um assessor de investimentos que conhece sua carteira real, sua estratégia e seus objetivos. Análises de IA avançada direto no Telegram — 24/7." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -26,6 +26,8 @@
       --text:          #FAFAFA;
       --text-muted:    #A1A1AA;
       --text-faint:    #52525B;
+      --green:         #34D399;
+      --red-muted:     rgba(239, 68, 68, 0.5);
       --radius-sm:     8px;
       --radius:        14px;
       --radius-lg:     22px;
@@ -44,6 +46,17 @@
 
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
+
+    /* ── Noise overlay ────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
 
     /* ── Utilities ────────────────────────────────────────────────── */
     .container {
@@ -71,10 +84,10 @@
       width: 6px; height: 6px;
       background: var(--orange);
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      animation: pulse-dot 2s infinite;
     }
 
-    @keyframes pulse {
+    @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
       50%       { opacity: 0.5; transform: scale(1.4); }
     }
@@ -93,9 +106,17 @@
       font-size: 17px;
       color: var(--text-muted);
       text-align: center;
-      max-width: 560px;
+      max-width: 580px;
       margin-inline: auto;
       margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    .section-divider {
+      width: 48px; height: 3px;
+      background: var(--orange);
+      border-radius: 99px;
+      margin: 16px auto 0;
     }
 
     .highlight { color: var(--orange); }
@@ -142,23 +163,14 @@
       background: var(--orange-subtle);
     }
 
-    /* ── Noise overlay ────────────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
-    }
+    section { padding: 96px 0; position: relative; }
 
     /* ── NAV ──────────────────────────────────────────────────────── */
     .nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(10, 10, 11, 0.85);
+      background: rgba(10, 10, 11, 0.88);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
@@ -215,10 +227,10 @@
       flex-shrink: 0;
     }
 
+    @media (max-width: 768px) { .nav-links { display: none; } }
+
     /* ── Lang Selector ────────────────────────────────────────────── */
-    .lang-selector {
-      position: relative;
-    }
+    .lang-selector { position: relative; }
 
     .lang-btn {
       display: flex;
@@ -229,25 +241,17 @@
       border-radius: var(--radius-sm);
       padding: 7px 11px;
       cursor: pointer;
-      transition: border-color var(--transition), background var(--transition);
+      transition: border-color var(--transition), color var(--transition);
       color: var(--text-muted);
       font-size: 13px;
       font-weight: 600;
       font-family: inherit;
     }
 
-    .lang-btn:hover {
-      border-color: var(--border-orange);
-      color: var(--text);
-    }
-
-    .lang-btn[aria-expanded="true"] {
-      border-color: var(--border-orange);
-      color: var(--text);
-    }
+    .lang-btn:hover,
+    .lang-btn[aria-expanded="true"] { border-color: var(--border-orange); color: var(--text); }
 
     .lang-flag { font-size: 15px; line-height: 1; }
-
     .lang-code { letter-spacing: 0.04em; }
 
     .lang-chevron {
@@ -256,10 +260,7 @@
       opacity: 0.6;
     }
 
-    .lang-btn[aria-expanded="true"] .lang-chevron {
-      transform: rotate(180deg);
-      opacity: 1;
-    }
+    .lang-btn[aria-expanded="true"] .lang-chevron { transform: rotate(180deg); opacity: 1; }
 
     .lang-dropdown {
       position: absolute;
@@ -298,46 +299,25 @@
       font-family: inherit;
       cursor: pointer;
       transition: background var(--transition), color var(--transition);
-      text-align: left;
     }
 
-    .lang-option:hover {
-      background: var(--orange-subtle);
-      color: var(--text);
-    }
-
-    .lang-option.active {
-      color: var(--orange-light);
-      background: var(--orange-subtle);
-    }
-
-    .lang-option .lang-option-flag { font-size: 16px; }
-
-    .lang-option-sep {
-      height: 1px;
-      background: var(--border);
-      margin: 2px 0;
-    }
-
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-    }
+    .lang-option:hover { background: var(--orange-subtle); color: var(--text); }
+    .lang-option.active { color: var(--orange-light); background: var(--orange-subtle); }
+    .lang-option-sep { height: 1px; background: var(--border); }
 
     /* ── HERO ─────────────────────────────────────────────────────── */
     .hero {
       position: relative;
-      padding: 120px 0 100px;
+      padding: 110px 0 96px;
       overflow: hidden;
     }
 
     .hero-glow {
       position: absolute;
-      top: -200px;
-      left: 50%;
+      top: -200px; left: 50%;
       transform: translateX(-50%);
-      width: 900px;
-      height: 600px;
-      background: radial-gradient(ellipse at center, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(249,115,22,0.14) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -345,14 +325,14 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      max-width: 780px;
+      max-width: 800px;
       margin-inline: auto;
     }
 
     .hero-title {
-      font-size: clamp(38px, 6vw, 72px);
+      font-size: clamp(36px, 5.5vw, 68px);
       font-weight: 900;
-      line-height: 1.05;
+      line-height: 1.06;
       letter-spacing: -0.04em;
       margin: 20px 0 24px;
     }
@@ -363,6 +343,7 @@
       max-width: 580px;
       margin-inline: auto;
       margin-bottom: 40px;
+      line-height: 1.7;
     }
 
     .hero-actions {
@@ -374,11 +355,11 @@
     }
 
     .hero-trust {
-      margin-top: 56px;
+      margin-top: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 28px;
       flex-wrap: wrap;
     }
 
@@ -390,182 +371,184 @@
       color: var(--text-muted);
     }
 
-    .trust-icon { color: var(--orange); font-size: 15px; }
+    .trust-icon { color: var(--orange); font-size: 14px; }
 
-    /* Dashboard mockup */
-    .hero-dashboard {
-      position: relative;
-      margin-top: 80px;
-      max-width: 960px;
+    /* ── Telegram mockup ──────────────────────────────────────────── */
+    .tg-wrapper {
+      margin-top: 72px;
+      max-width: 560px;
       margin-inline: auto;
+      position: relative;
     }
 
-    .dashboard-frame {
+    .tg-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .tg-window {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 0 0 1px var(--border), 0 60px 120px -20px rgba(0,0,0,0.8), 0 0 80px rgba(249,115,22,0.06);
+      box-shadow: 0 40px 80px -16px rgba(0,0,0,0.7), 0 0 0 1px var(--border);
+      position: relative;
     }
 
-    .dashboard-bar {
+    .tg-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       padding: 14px 18px;
       background: var(--bg-elevated);
       border-bottom: 1px solid var(--border);
     }
 
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #FF5F57; }
-    .dot-y { background: #FEBC2E; }
-    .dot-g { background: #28C840; }
+    .tg-avatar {
+      width: 38px; height: 38px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
 
-    .dashboard-url {
-      flex: 1;
-      background: rgba(255,255,255,0.05);
-      border-radius: 6px;
-      padding: 5px 12px;
+    .tg-bot-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tg-bot-status {
       font-size: 12px;
-      color: var(--text-faint);
-      text-align: center;
+      color: var(--green);
+      margin-top: 1px;
     }
 
-    .dashboard-body {
-      padding: 28px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
+    .tg-body {
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .dash-card {
+    .tg-msg { display: flex; flex-direction: column; }
+    .tg-msg.bot  { align-items: flex-start; }
+    .tg-msg.user { align-items: flex-end; }
+
+    .tg-bubble {
+      max-width: 88%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .tg-bubble.bot {
       background: var(--bg-elevated);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 20px;
+      border-bottom-left-radius: 4px;
+      color: var(--text-muted);
     }
 
-    .dash-card.featured {
-      border-color: var(--border-orange);
-      background: linear-gradient(135deg, rgba(249,115,22,0.06), transparent);
-    }
-
-    .dash-card-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-faint);
-      margin-bottom: 8px;
-    }
-
-    .dash-card-value {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-
-    .dash-card-value.green  { color: #34D399; }
-    .dash-card-value.orange { color: var(--orange); }
-    .dash-card-value.white  { color: var(--text); }
-
-    .dash-card-change { font-size: 12px; margin-top: 4px; color: var(--text-faint); }
-    .dash-card-change span { color: #34D399; }
-
-    .chart-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-      height: 48px;
-      margin-top: 12px;
-    }
-
-    .chart-bar {
-      flex: 1;
-      background: rgba(249,115,22,0.2);
-      border-radius: 3px 3px 0 0;
-      transition: background 0.2s;
-    }
-
-    .chart-bar.active { background: var(--orange); }
-
-    @media (max-width: 640px) {
-      .dashboard-body { grid-template-columns: 1fr 1fr; }
-      .dash-card:last-child { display: none; }
-    }
-
-    /* ── SECTION COMMON ───────────────────────────────────────────── */
-    section { padding: 96px 0; position: relative; }
-
-    .section-divider {
-      width: 48px;
-      height: 3px;
+    .tg-bubble.user {
       background: var(--orange);
-      border-radius: 99px;
-      margin: 16px auto 0;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      font-weight: 500;
     }
 
-    /* ── BENEFITS ─────────────────────────────────────────────────── */
-    .benefits-grid {
+    .tg-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--orange-light);
+      margin-bottom: 5px;
+      letter-spacing: 0.01em;
+    }
+
+    .tg-time {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 4px;
+      padding-inline: 4px;
+    }
+
+    .tg-typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 4px 2px 0;
+    }
+
+    .tg-typing span {
+      width: 6px; height: 6px;
+      background: var(--text-faint);
+      border-radius: 50%;
+      animation: typing-bounce 1.4s infinite;
+    }
+
+    .tg-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .tg-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+      30%            { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── DIFF section ─────────────────────────────────────────────── */
+    .diff { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .diff-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
       margin-top: 56px;
     }
 
-    @media (max-width: 900px) { .benefits-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .diff-grid { grid-template-columns: 1fr; } }
 
-    .benefit-card {
-      background: var(--bg-card);
+    .diff-card {
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 36px 32px;
+      padding: 36px 30px;
       transition: border-color var(--transition), transform var(--transition);
       position: relative;
       overflow: hidden;
     }
 
-    .benefit-card::before {
+    .diff-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--orange), transparent);
       opacity: 0;
       transition: opacity var(--transition);
     }
 
-    .benefit-card:hover { border-color: var(--border-orange); transform: translateY(-4px); }
-    .benefit-card:hover::before { opacity: 1; }
+    .diff-card:hover { border-color: var(--border-orange); transform: translateY(-4px); }
+    .diff-card:hover::before { opacity: 1; }
 
-    .benefit-icon {
-      width: 52px; height: 52px;
+    .diff-icon {
+      width: 48px; height: 48px;
       background: var(--orange-subtle);
       border: 1px solid var(--border-orange);
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      margin-bottom: 24px;
-    }
-
-    .benefit-title {
       font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
+      margin-bottom: 22px;
     }
 
-    .benefit-desc { font-size: 15px; color: var(--text-muted); line-height: 1.65; }
+    .diff-title { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
+    .diff-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 
     /* ── HOW IT WORKS ─────────────────────────────────────────────── */
-    .how-it-works {
-      background: var(--bg-card);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
     .steps {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -581,7 +564,7 @@
       left: calc(16.66% + 24px);
       right: calc(16.66% + 24px);
       height: 1px;
-      background: linear-gradient(90deg, var(--border-orange), var(--border-orange));
+      background: var(--border-orange);
       pointer-events: none;
     }
 
@@ -612,62 +595,116 @@
     .step-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
     .step-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 
-    /* ── METRICS ──────────────────────────────────────────────────── */
-    .metrics-grid {
+    /* ── WHAT YOUR ADVISOR DOES ───────────────────────────────────── */
+    .does { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .does-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
       margin-top: 56px;
     }
 
-    @media (max-width: 900px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 480px) { .metrics-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .does-grid { grid-template-columns: 1fr; } }
 
-    .metric-card {
-      background: var(--bg-card);
+    .does-card {
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
-      text-align: center;
+      padding: 28px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
       transition: border-color var(--transition);
     }
 
-    .metric-card:hover { border-color: var(--border-orange); }
+    .does-card:hover { border-color: var(--border-orange); }
 
-    .metric-emoji { font-size: 28px; margin-bottom: 12px; }
-    .metric-name  { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .metric-desc  { font-size: 12px; color: var(--text-faint); line-height: 1.5; }
-
-    .metrics-assets { margin-top: 48px; text-align: center; }
-
-    .asset-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
+    .does-emoji {
+      font-size: 26px;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    .asset-tag {
-      background: var(--bg-elevated);
+    .does-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .does-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── FOR WHOM ─────────────────────────────────────────────────── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 640px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    .profile-card {
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: all var(--transition);
+      border-radius: var(--radius-lg);
+      padding: 28px 28px 28px;
+      transition: border-color var(--transition), transform var(--transition);
+      position: relative;
+      overflow: hidden;
     }
 
-    .asset-tag:hover { border-color: var(--border-orange); color: var(--orange-light); }
+    .profile-card:hover { border-color: var(--border-orange); transform: translateY(-3px); }
+
+    .profile-badge {
+      display: inline-block;
+      background: var(--orange-subtle);
+      border: 1px solid var(--border-orange);
+      color: var(--orange-light);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .profile-title { font-size: 17px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.02em; }
+    .profile-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── NOT SECTION ──────────────────────────────────────────────── */
+    .not-section { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .not-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 900px) { .not-grid { grid-template-columns: 1fr; } }
+
+    .not-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+    }
+
+    .not-x {
+      width: 40px; height: 40px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #F87171;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .not-title { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .not-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 
     /* ── TESTIMONIALS ─────────────────────────────────────────────── */
-    .testimonials {
-      background: var(--bg-card);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
     .testimonials-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -678,7 +715,7 @@
     @media (max-width: 900px) { .testimonials-grid { grid-template-columns: 1fr; } }
 
     .testimonial-card {
-      background: var(--bg);
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 32px;
@@ -687,7 +724,7 @@
 
     .testimonial-card:hover { border-color: var(--border-orange); }
 
-    .stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .stars { display: flex; gap: 3px; margin-bottom: 18px; }
     .star  { color: var(--orange); font-size: 14px; }
 
     .testimonial-text {
@@ -711,13 +748,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--orange);
     }
 
     .author-name { font-size: 14px; font-weight: 600; }
-    .author-role { font-size: 12px; color: var(--text-faint); }
+    .author-role { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
 
     /* ── PRICING ──────────────────────────────────────────────────── */
     .pricing-wrapper { max-width: 520px; margin: 56px auto 0; }
@@ -732,11 +769,12 @@
       overflow: hidden;
     }
 
+    @media (max-width: 480px) { .pricing-card { padding: 36px 24px 32px; } }
+
     .pricing-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
+      top: 0; left: 0; right: 0; height: 3px;
       background: linear-gradient(90deg, var(--orange-dark), var(--orange), var(--orange-light));
     }
 
@@ -745,7 +783,7 @@
       top: -80px; left: 50%;
       transform: translateX(-50%);
       width: 400px; height: 300px;
-      background: radial-gradient(ellipse, rgba(249,115,22,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -767,13 +805,25 @@
       align-items: baseline;
       justify-content: center;
       gap: 4px;
-      margin: 8px 0;
+      margin: 8px 0 0;
     }
 
-    .price-currency { font-size: 24px; font-weight: 700; color: var(--text-muted); }
-    .price-amount   { font-size: 72px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
-    .price-period   { font-size: 16px; color: var(--text-muted); }
-    .price-subtitle { font-size: 13px; color: var(--text-faint); margin-bottom: 36px; }
+    .price-currency { font-size: 26px; font-weight: 700; color: var(--text-muted); }
+    .price-amount   { font-size: 80px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+    .price-period   { font-size: 18px; color: var(--text-muted); }
+
+    .price-per { font-size: 13px; color: var(--text-faint); margin: 8px 0 0; }
+
+    .price-currencies {
+      display: inline-block;
+      margin: 12px 0 32px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
 
     .feature-list {
       text-align: left;
@@ -788,25 +838,25 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
     }
 
     .check-icon {
       width: 20px; height: 20px;
-      background: rgba(52, 211, 153, 0.1);
-      border: 1px solid rgba(52, 211, 153, 0.25);
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #34D399;
+      color: var(--green);
       font-size: 11px;
       flex-shrink: 0;
     }
 
     .pricing-cta { width: 100%; font-size: 16px; padding: 16px; border-radius: var(--radius-sm); }
-    .pricing-note { margin-top: 16px; font-size: 12px; color: var(--text-faint); }
+    .pricing-note { margin-top: 14px; font-size: 12px; color: var(--text-faint); }
 
     /* ── FINAL CTA ────────────────────────────────────────────────── */
     .final-cta { text-align: center; padding: 100px 0; position: relative; }
@@ -816,12 +866,12 @@
       bottom: 0; left: 50%;
       transform: translateX(-50%);
       width: 800px; height: 400px;
-      background: radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(249,115,22,0.09) 0%, transparent 70%);
       pointer-events: none;
     }
 
     .final-cta-title {
-      font-size: clamp(32px, 5vw, 56px);
+      font-size: clamp(30px, 5vw, 54px);
       font-weight: 900;
       letter-spacing: -0.04em;
       line-height: 1.1;
@@ -833,9 +883,10 @@
     .final-cta-sub {
       font-size: 17px;
       color: var(--text-muted);
-      max-width: 480px;
+      max-width: 500px;
       margin-inline: auto;
       margin-bottom: 40px;
+      line-height: 1.65;
     }
 
     /* ── FOOTER ───────────────────────────────────────────────────── */
@@ -875,7 +926,6 @@
     }
 
     .fade-up.visible { opacity: 1; transform: translateY(0); }
-
     .fade-up-delay-1 { transition-delay: 0.1s; }
     .fade-up-delay-2 { transition-delay: 0.2s; }
     .fade-up-delay-3 { transition-delay: 0.3s; }
@@ -891,13 +941,11 @@
         <span>Sentinel<span class="highlight"> Invest</span></span>
       </a>
       <ul class="nav-links">
-        <li><a href="#beneficios" data-i18n="nav.benefits"></a></li>
         <li><a href="#como-funciona" data-i18n="nav.how"></a></li>
-        <li><a href="#metricas" data-i18n="nav.metrics"></a></li>
-        <li><a href="#preco" data-i18n="nav.pricing"></a></li>
+        <li><a href="#para-quem"     data-i18n="nav.for_who"></a></li>
+        <li><a href="#preco"         data-i18n="nav.pricing"></a></li>
       </ul>
       <div class="nav-right">
-        <!-- Language Selector -->
         <div class="lang-selector" id="langSelector">
           <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
             <span class="lang-flag" id="currentFlag"></span>
@@ -905,17 +953,11 @@
             <span class="lang-chevron">▾</span>
           </button>
           <div class="lang-dropdown" id="langDropdown" role="menu">
-            <button class="lang-option" data-lang="pt" role="menuitem">
-              <span class="lang-option-flag">🇧🇷</span> Português
-            </button>
+            <button class="lang-option" data-lang="pt" role="menuitem">🇧🇷 Português</button>
             <div class="lang-option-sep"></div>
-            <button class="lang-option" data-lang="es" role="menuitem">
-              <span class="lang-option-flag">🇪🇸</span> Español
-            </button>
+            <button class="lang-option" data-lang="es" role="menuitem">🇪🇸 Español</button>
             <div class="lang-option-sep"></div>
-            <button class="lang-option" data-lang="en" role="menuitem">
-              <span class="lang-option-flag">🇺🇸</span> English
-            </button>
+            <button class="lang-option" data-lang="en" role="menuitem">🇺🇸 English</button>
           </div>
         </div>
         <a href="#preco" class="btn-primary" data-i18n="nav.cta"></a>
@@ -954,56 +996,37 @@
         </div>
       </div>
 
-      <!-- Dashboard mockup -->
-      <div class="hero-dashboard fade-up">
-        <div class="dashboard-frame">
-          <div class="dashboard-bar">
-            <span class="dot dot-r"></span>
-            <span class="dot dot-y"></span>
-            <span class="dot dot-g"></span>
-            <div class="dashboard-url">sentinel-invest.app/dashboard</div>
+      <!-- Telegram mockup -->
+      <div class="tg-wrapper fade-up">
+        <div class="tg-window">
+          <div class="tg-header">
+            <div class="tg-avatar">⚡</div>
+            <div>
+              <div class="tg-bot-name">Sentinel Invest</div>
+              <div class="tg-bot-status" data-i18n="tg.status"></div>
+            </div>
           </div>
-          <div class="dashboard-body">
-            <div class="dash-card featured">
-              <div class="dash-card-label" data-i18n="dash.portfolio"></div>
-              <div class="dash-card-value orange">$48,320</div>
-              <div class="dash-card-change">24h: <span>+$1,240 (+2.6%)</span></div>
-              <div class="chart-bars">
-                <div class="chart-bar" style="height:40%"></div>
-                <div class="chart-bar" style="height:55%"></div>
-                <div class="chart-bar" style="height:45%"></div>
-                <div class="chart-bar" style="height:70%"></div>
-                <div class="chart-bar" style="height:60%"></div>
-                <div class="chart-bar" style="height:85%"></div>
-                <div class="chart-bar active" style="height:100%"></div>
+          <div class="tg-body">
+            <!-- Bot message 1 -->
+            <div class="tg-msg bot">
+              <div class="tg-bubble bot">
+                <div class="tg-label" data-i18n="tg.label"></div>
+                <span data-i18n="tg.msg1"></span>
               </div>
+              <div class="tg-time">14:32</div>
             </div>
-            <div class="dash-card">
-              <div class="dash-card-label" data-i18n="dash.alerts_today"></div>
-              <div class="dash-card-value white">7</div>
-              <div class="dash-card-change" data-i18n-html="dash.last_alert"></div>
-              <div class="chart-bars" style="margin-top:12px;">
-                <div class="chart-bar active" style="height:60%"></div>
-                <div class="chart-bar" style="height:30%"></div>
-                <div class="chart-bar active" style="height:90%"></div>
-                <div class="chart-bar" style="height:50%"></div>
-                <div class="chart-bar active" style="height:70%"></div>
-                <div class="chart-bar" style="height:40%"></div>
-                <div class="chart-bar active" style="height:80%"></div>
-              </div>
+            <!-- User reply -->
+            <div class="tg-msg user">
+              <div class="tg-bubble user" data-i18n="tg.reply"></div>
+              <div class="tg-time">14:33</div>
             </div>
-            <div class="dash-card">
-              <div class="dash-card-label" data-i18n="dash.risk_score"></div>
-              <div class="dash-card-value green" data-i18n="dash.risk_low"></div>
-              <div class="dash-card-change" data-i18n-html="dash.updated"></div>
-              <div class="chart-bars" style="margin-top:12px;">
-                <div class="chart-bar" style="height:20%"></div>
-                <div class="chart-bar" style="height:35%"></div>
-                <div class="chart-bar" style="height:25%"></div>
-                <div class="chart-bar" style="height:40%"></div>
-                <div class="chart-bar" style="height:30%"></div>
-                <div class="chart-bar" style="height:20%"></div>
-                <div class="chart-bar" style="height:28%"></div>
+            <!-- Bot typing indicator -->
+            <div class="tg-msg bot">
+              <div class="tg-bubble bot">
+                <span data-i18n="tg.msg2"></span>
+                <div class="tg-typing">
+                  <span></span><span></span><span></span>
+                </div>
               </div>
             </div>
           </div>
@@ -1012,38 +1035,38 @@
     </div>
   </section>
 
-  <!-- ── BENEFITS ────────────────────────────────────────────────── -->
-  <section id="beneficios">
+  <!-- ── DIFERENCIAIS ─────────────────────────────────────────────── -->
+  <section class="diff" id="diferenciais">
     <div class="container">
       <div class="section-label">
-        <span class="badge" data-i18n="benefits.badge"></span>
+        <span class="badge" data-i18n="diff.badge"></span>
       </div>
-      <h2 class="section-title" data-i18n-html="benefits.title"></h2>
+      <h2 class="section-title" data-i18n-html="diff.title"></h2>
       <div class="section-divider"></div>
-      <p class="section-subtitle" data-i18n="benefits.sub"></p>
+      <p class="section-subtitle" data-i18n="diff.sub"></p>
 
-      <div class="benefits-grid">
-        <div class="benefit-card fade-up">
-          <div class="benefit-icon">🤖</div>
-          <h3 class="benefit-title" data-i18n="benefit1.title"></h3>
-          <p class="benefit-desc" data-i18n="benefit1.desc"></p>
+      <div class="diff-grid">
+        <div class="diff-card fade-up">
+          <div class="diff-icon">🗂️</div>
+          <h3 class="diff-title" data-i18n="diff1.title"></h3>
+          <p class="diff-desc"  data-i18n="diff1.desc"></p>
         </div>
-        <div class="benefit-card fade-up fade-up-delay-1">
-          <div class="benefit-icon">📲</div>
-          <h3 class="benefit-title" data-i18n="benefit2.title"></h3>
-          <p class="benefit-desc" data-i18n="benefit2.desc"></p>
+        <div class="diff-card fade-up fade-up-delay-1">
+          <div class="diff-icon">🎯</div>
+          <h3 class="diff-title" data-i18n="diff2.title"></h3>
+          <p class="diff-desc"  data-i18n="diff2.desc"></p>
         </div>
-        <div class="benefit-card fade-up fade-up-delay-2">
-          <div class="benefit-icon">🌐</div>
-          <h3 class="benefit-title" data-i18n="benefit3.title"></h3>
-          <p class="benefit-desc" data-i18n="benefit3.desc"></p>
+        <div class="diff-card fade-up fade-up-delay-2">
+          <div class="diff-icon">📈</div>
+          <h3 class="diff-title" data-i18n="diff3.title"></h3>
+          <p class="diff-desc"  data-i18n="diff3.desc"></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── HOW IT WORKS ─────────────────────────────────────────────── -->
-  <section id="como-funciona" class="how-it-works">
+  <!-- ── COMO FUNCIONA ────────────────────────────────────────────── -->
+  <section id="como-funciona">
     <div class="container">
       <div class="section-label">
         <span class="badge" data-i18n="how.badge"></span>
@@ -1056,96 +1079,132 @@
         <div class="step fade-up">
           <div class="step-num">1</div>
           <h3 class="step-title" data-i18n="step1.title"></h3>
-          <p class="step-desc" data-i18n="step1.desc"></p>
+          <p class="step-desc"  data-i18n="step1.desc"></p>
         </div>
         <div class="step fade-up fade-up-delay-1">
           <div class="step-num">2</div>
           <h3 class="step-title" data-i18n="step2.title"></h3>
-          <p class="step-desc" data-i18n="step2.desc"></p>
+          <p class="step-desc"  data-i18n="step2.desc"></p>
         </div>
         <div class="step fade-up fade-up-delay-2">
           <div class="step-num">3</div>
           <h3 class="step-title" data-i18n="step3.title"></h3>
-          <p class="step-desc" data-i18n="step3.desc"></p>
+          <p class="step-desc"  data-i18n="step3.desc"></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── METRICS ──────────────────────────────────────────────────── -->
-  <section id="metricas">
+  <!-- ── O QUE SEU ASSESSOR FAZ ──────────────────────────────────── -->
+  <section class="does" id="assessor">
     <div class="container">
       <div class="section-label">
-        <span class="badge" data-i18n="metrics.badge"></span>
+        <span class="badge" data-i18n="does.badge"></span>
       </div>
-      <h2 class="section-title" data-i18n-html="metrics.title"></h2>
+      <h2 class="section-title" data-i18n-html="does.title"></h2>
       <div class="section-divider"></div>
-      <p class="section-subtitle" data-i18n="metrics.sub"></p>
+      <p class="section-subtitle" data-i18n="does.sub"></p>
 
-      <div class="metrics-grid">
-        <div class="metric-card fade-up">
-          <div class="metric-emoji">📈</div>
-          <div class="metric-name" data-i18n="metric1.name"></div>
-          <div class="metric-desc" data-i18n="metric1.desc"></div>
+      <div class="does-grid">
+        <div class="does-card fade-up">
+          <div class="does-emoji">👁️</div>
+          <div>
+            <div class="does-title" data-i18n="does1.title"></div>
+            <div class="does-desc"  data-i18n="does1.desc"></div>
+          </div>
         </div>
-        <div class="metric-card fade-up fade-up-delay-1">
-          <div class="metric-emoji">📊</div>
-          <div class="metric-name" data-i18n="metric2.name"></div>
-          <div class="metric-desc" data-i18n="metric2.desc"></div>
+        <div class="does-card fade-up fade-up-delay-1">
+          <div class="does-emoji">🔔</div>
+          <div>
+            <div class="does-title" data-i18n="does2.title"></div>
+            <div class="does-desc"  data-i18n="does2.desc"></div>
+          </div>
         </div>
-        <div class="metric-card fade-up fade-up-delay-2">
-          <div class="metric-emoji">⚡</div>
-          <div class="metric-name" data-i18n="metric3.name"></div>
-          <div class="metric-desc" data-i18n="metric3.desc"></div>
+        <div class="does-card fade-up fade-up-delay-2">
+          <div class="does-emoji">💬</div>
+          <div>
+            <div class="does-title" data-i18n="does3.title"></div>
+            <div class="does-desc"  data-i18n="does3.desc"></div>
+          </div>
         </div>
-        <div class="metric-card fade-up fade-up-delay-3">
-          <div class="metric-emoji">〰️</div>
-          <div class="metric-name" data-i18n="metric4.name"></div>
-          <div class="metric-desc" data-i18n="metric4.desc"></div>
-        </div>
-        <div class="metric-card fade-up">
-          <div class="metric-emoji">🎯</div>
-          <div class="metric-name" data-i18n="metric5.name"></div>
-          <div class="metric-desc" data-i18n="metric5.desc"></div>
-        </div>
-        <div class="metric-card fade-up fade-up-delay-1">
-          <div class="metric-emoji">😨</div>
-          <div class="metric-name" data-i18n="metric6.name"></div>
-          <div class="metric-desc" data-i18n="metric6.desc"></div>
-        </div>
-        <div class="metric-card fade-up fade-up-delay-2">
-          <div class="metric-emoji">🔒</div>
-          <div class="metric-name" data-i18n="metric7.name"></div>
-          <div class="metric-desc" data-i18n="metric7.desc"></div>
-        </div>
-        <div class="metric-card fade-up fade-up-delay-3">
-          <div class="metric-emoji">📰</div>
-          <div class="metric-name" data-i18n="metric8.name"></div>
-          <div class="metric-desc" data-i18n="metric8.desc"></div>
-        </div>
-      </div>
-
-      <div class="metrics-assets">
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 0;" data-i18n="assets.label"></p>
-        <div class="asset-tags">
-          <span class="asset-tag">Bitcoin (BTC)</span>
-          <span class="asset-tag">Ethereum (ETH)</span>
-          <span class="asset-tag">Solana (SOL)</span>
-          <span class="asset-tag">AAPL</span>
-          <span class="asset-tag">TSLA</span>
-          <span class="asset-tag">NVDA</span>
-          <span class="asset-tag">VOO</span>
-          <span class="asset-tag">QQQ</span>
-          <span class="asset-tag">SPY</span>
-          <span class="asset-tag">Gold (XAU)</span>
-          <span class="asset-tag" data-i18n="assets.more"></span>
+        <div class="does-card fade-up fade-up-delay-3">
+          <div class="does-emoji">📋</div>
+          <div>
+            <div class="does-title" data-i18n="does4.title"></div>
+            <div class="does-desc"  data-i18n="does4.desc"></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── TESTIMONIALS ─────────────────────────────────────────────── -->
-  <section class="testimonials">
+  <!-- ── PARA QUEM ─────────────────────────────────────────────────── -->
+  <section id="para-quem">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="for.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="for.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="for.sub"></p>
+
+      <div class="profile-grid">
+        <div class="profile-card fade-up">
+          <div class="profile-badge" data-i18n="profile1.label"></div>
+          <div class="profile-title" data-i18n="profile1.title"></div>
+          <div class="profile-desc"  data-i18n="profile1.desc"></div>
+        </div>
+        <div class="profile-card fade-up fade-up-delay-1">
+          <div class="profile-badge" data-i18n="profile2.label"></div>
+          <div class="profile-title" data-i18n="profile2.title"></div>
+          <div class="profile-desc"  data-i18n="profile2.desc"></div>
+        </div>
+        <div class="profile-card fade-up fade-up-delay-2">
+          <div class="profile-badge" data-i18n="profile3.label"></div>
+          <div class="profile-title" data-i18n="profile3.title"></div>
+          <div class="profile-desc"  data-i18n="profile3.desc"></div>
+        </div>
+        <div class="profile-card fade-up fade-up-delay-3">
+          <div class="profile-badge" data-i18n="profile4.label"></div>
+          <div class="profile-title" data-i18n="profile4.title"></div>
+          <div class="profile-desc"  data-i18n="profile4.desc"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── O QUE NÃO SOMOS ─────────────────────────────────────────── -->
+  <section class="not-section" id="nao-somos">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="not.badge"></span>
+      </div>
+      <h2 class="section-title" data-i18n-html="not.title"></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle" data-i18n="not.sub"></p>
+
+      <div class="not-grid">
+        <div class="not-card fade-up">
+          <div class="not-x">✕</div>
+          <div class="not-title" data-i18n="not1.title"></div>
+          <div class="not-desc"  data-i18n="not1.desc"></div>
+        </div>
+        <div class="not-card fade-up fade-up-delay-1">
+          <div class="not-x">✕</div>
+          <div class="not-title" data-i18n="not2.title"></div>
+          <div class="not-desc"  data-i18n="not2.desc"></div>
+        </div>
+        <div class="not-card fade-up fade-up-delay-2">
+          <div class="not-x">✕</div>
+          <div class="not-title" data-i18n="not3.title"></div>
+          <div class="not-desc"  data-i18n="not3.desc"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DEPOIMENTOS ──────────────────────────────────────────────── -->
+  <section id="depoimentos">
     <div class="container">
       <div class="section-label">
         <span class="badge" data-i18n="testimonials.badge"></span>
@@ -1161,7 +1220,7 @@
           </div>
           <p class="testimonial-text" data-i18n="t1.text"></p>
           <div class="testimonial-author">
-            <div class="author-avatar">R</div>
+            <div class="author-avatar">M</div>
             <div>
               <div class="author-name" data-i18n="t1.name"></div>
               <div class="author-role" data-i18n="t1.role"></div>
@@ -1176,7 +1235,7 @@
           </div>
           <p class="testimonial-text" data-i18n="t2.text"></p>
           <div class="testimonial-author">
-            <div class="author-avatar">C</div>
+            <div class="author-avatar">D</div>
             <div>
               <div class="author-name" data-i18n="t2.name"></div>
               <div class="author-role" data-i18n="t2.role"></div>
@@ -1191,7 +1250,7 @@
           </div>
           <p class="testimonial-text" data-i18n="t3.text"></p>
           <div class="testimonial-author">
-            <div class="author-avatar">T</div>
+            <div class="author-avatar">C</div>
             <div>
               <div class="author-name" data-i18n="t3.name"></div>
               <div class="author-role" data-i18n="t3.role"></div>
@@ -1203,7 +1262,7 @@
   </section>
 
   <!-- ── PRICING ──────────────────────────────────────────────────── -->
-  <section id="preco">
+  <section id="preco" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
     <div class="container">
       <div class="section-label">
         <span class="badge" data-i18n="pricing.badge"></span>
@@ -1218,10 +1277,11 @@
           <div class="pricing-badge" data-i18n="pricing.plan_badge"></div>
           <div class="price">
             <span class="price-currency">$</span>
-            <span class="price-amount">29</span>
+            <span class="price-amount">49</span>
             <span class="price-period" data-i18n="pricing.period"></span>
           </div>
-          <p class="price-subtitle" data-i18n="pricing.per"></p>
+          <p class="price-per" data-i18n="pricing.per"></p>
+          <div class="price-currencies" data-i18n-html="pricing.currencies"></div>
 
           <ul class="feature-list">
             <li><span class="check-icon">✓</span><span data-i18n="feature1"></span></li>
@@ -1244,6 +1304,9 @@
   <section class="final-cta">
     <div class="final-cta-glow"></div>
     <div class="container" style="position:relative; z-index:1;">
+      <div class="section-label">
+        <span class="badge" data-i18n="finalcta.badge"></span>
+      </div>
       <h2 class="final-cta-title" data-i18n-html="finalcta.title"></h2>
       <p class="final-cta-sub" data-i18n="finalcta.sub"></p>
       <a href="#preco" class="btn-primary" style="font-size:17px; padding:18px 40px;" data-i18n="finalcta.cta"></a>
@@ -1266,213 +1329,245 @@
     </div>
   </footer>
 
-  <!-- ── i18n & Lang Selector ─────────────────────────────────────── -->
+  <!-- ── i18n engine ──────────────────────────────────────────────── -->
   <script>
   (() => {
     /* ── Translations ─────────────────────────────────────────────── */
     const T = {
+
+      /* ════════════════════════════════════════════════════════════ */
       pt: {
-        /* meta */
-        'meta.title':       'Sentinel Invest — Monitoramento de Investimentos com IA',
-        'meta.description': 'Monitore qualquer ativo — cripto, ETFs, ações — com inteligência artificial. Alertas personalizados via Telegram com análises do Claude AI.',
+        'meta.title':       'Sentinel Invest — Seu Assessor IA Pessoal',
+        'meta.description': 'Um assessor de investimentos que conhece sua carteira real, sua estratégia e seus objetivos. Análises de IA avançada direto no Telegram — 24/7.',
         'html.lang':        'pt-BR',
         /* nav */
-        'nav.benefits': 'Benefícios',
-        'nav.how':      'Como funciona',
-        'nav.metrics':  'Métricas',
-        'nav.pricing':  'Preço',
-        'nav.cta':      'Começar agora →',
+        'nav.how':     'Como funciona',
+        'nav.for_who': 'Para quem',
+        'nav.pricing': 'Preço',
+        'nav.cta':     'Quero meu assessor IA',
         /* hero */
-        'hero.badge':        'Monitoramento em tempo real',
-        'hero.title':        'Seu portfólio.<br/>Vigilado pela <span class="highlight">IA.</span>',
-        'hero.subtitle':     'O Sentinel monitora cripto, ETFs e ações 24/7 e envia alertas cirúrgicos no Telegram com análises do Claude AI — antes que o mercado te surpreenda.',
-        'hero.cta_primary':  'Começar por $29/mês →',
-        'hero.cta_secondary':'Ver como funciona',
-        'hero.trust1':       'Sem contrato mínimo',
-        'hero.trust2':       'Cancele quando quiser',
-        'hero.trust3':       'Setup em menos de 5 min',
-        /* dashboard */
-        'dash.portfolio':   'Portfólio Total',
-        'dash.alerts_today':'Alertas Hoje',
-        'dash.last_alert':  'Último: <span>há 12 min</span>',
-        'dash.risk_score':  'Score de Risco IA',
-        'dash.risk_low':    'Baixo',
-        'dash.updated':     'Atualizado <span>agora</span>',
-        /* benefits */
-        'benefits.badge':  'Por que o Sentinel',
-        'benefits.title':  'Não perca mais uma<br/><span class="highlight">oportunidade.</span>',
-        'benefits.sub':    'Três vantagens que mudam a forma como você investe.',
-        'benefit1.title':  'Análise com Claude AI',
-        'benefit1.desc':   'Cada alerta vem acompanhado de uma análise contextual gerada pelo Claude AI. Você recebe não só o número, mas o que ele significa para o seu portfólio.',
-        'benefit2.title':  'Alertas direto no Telegram',
-        'benefit2.desc':   'Nada de apps extras. Os alertas chegam onde você já está — no Telegram, com formatação clara e links de contexto para agir na hora certa.',
-        'benefit3.title':  'Qualquer ativo, qualquer hora',
-        'benefit3.desc':   'Bitcoin, AAPL, VOO, ouro, commodities — o Sentinel monitora 24 horas por dia, 7 dias por semana, sem pausas e sem distrações.',
+        'hero.badge':        'Assessoria personalizada com IA',
+        'hero.title':        'Seu assessor de investimentos<br/>pessoal. <span class="highlight">Potencializado por IA.</span>',
+        'hero.subtitle':     'Nossa IA aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
+        'hero.cta_primary':  'Quero meu assessor IA →',
+        'hero.cta_secondary':'Como funciona',
+        'hero.trust1':       'Onboarding personalizado',
+        'hero.trust2':       'Sem contrato de longo prazo',
+        'hero.trust3':       'Suporte próximo via Telegram',
+        /* telegram mockup */
+        'tg.status': '● online',
+        'tg.label':  '📊 Atualização da sua carteira',
+        'tg.msg1':   'Sua posição em NVDA subiu 4.2% após o earnings. Representa 18% da sua carteira e você sinalizou querer reduzir semicondutores — bom momento para realizar parcialmente?',
+        'tg.reply':  'Sim, por favor!',
+        'tg.msg2':   'Preparando análise da sua posição em NVDA com base no seu histórico de aportes e estratégia atual...',
+        /* diff */
+        'diff.badge': 'O que é diferente',
+        'diff.title': 'Um assessor que te<br/><span class="highlight">conhece de verdade.</span>',
+        'diff.sub':   'Não é software. É um serviço construído em torno da sua realidade como investidor — com contexto real, não respostas genéricas.',
+        'diff1.title':'Conhece sua carteira real',
+        'diff1.desc': 'No onboarding, mapeamos sua carteira atual, seu histórico de aportes, sua estratégia e seus objetivos. Nossos agentes de IA partem do seu contexto específico — não de um perfil genérico.',
+        'diff2.title':'Análise feita para você',
+        'diff2.desc': 'Quando o mercado se move, o alerta que chega não é genérico. É: "dado que você tem 18% em NVDA e sinalizou reduzir semicondutores, veja o que aconteceu hoje."',
+        'diff3.title':'Fica melhor com o tempo',
+        'diff3.desc': 'Cada interação, cada decisão e cada mudança de estratégia enriquece o seu contexto. Quanto mais você usa, mais preciso e útil o seu assessor fica.',
         /* how */
         'how.badge':  'Como funciona',
-        'how.title':  'Pronto em <span class="highlight">3 passos simples.</span>',
-        'how.sub':    'Do cadastro ao primeiro alerta em menos de 5 minutos.',
-        'step1.title':'Cadastre seus ativos',
-        'step1.desc': 'Informe os ativos que deseja monitorar — cripto, ações, ETFs. Sem chaves de API nem acesso à corretora. Apenas os tickers.',
-        'step2.title':'Defina seus alertas',
-        'step2.desc': 'Escolha os gatilhos: variação de preço, volume anormal, RSI, cruzamento de médias ou score de risco gerado pela IA.',
-        'step3.title':'Receba no Telegram',
-        'step3.desc': 'Conecte seu Telegram em um clique. Alertas com análise do Claude AI chegam em segundos — onde você estiver.',
-        /* metrics */
-        'metrics.badge': 'O que monitoramos',
-        'metrics.title': 'Dados que <span class="highlight">importam.</span>',
-        'metrics.sub':   'Indicadores técnicos e fundamentalistas em tempo real para cada ativo.',
-        'metric1.name':  'Preço & Variação',
-        'metric1.desc':  'Monitoramento tick a tick com alertas de variação percentual configuráveis',
-        'metric2.name':  'Volume Anormal',
-        'metric2.desc':  'Detecta picos de volume que precedem movimentos relevantes de preço',
-        'metric3.name':  'RSI & Momentum',
-        'metric3.desc':  'Alerta em sobrecompra / sobrevenda com análise de divergência',
-        'metric4.name':  'Médias Móveis',
-        'metric4.desc':  'Cruzamento de MAs configuráveis com sinal de tendência automático',
-        'metric5.name':  'Suporte & Resistência',
-        'metric5.desc':  'Detecção automática de níveis-chave via análise de máximas e mínimas',
-        'metric6.name':  'Fear & Greed',
-        'metric6.desc':  'Índice de sentimento do mercado cripto e alertas de extremos',
-        'metric7.name':  'Score de Risco IA',
-        'metric7.desc':  'Score dinâmico calculado pelo Claude AI com base em múltiplos fatores',
-        'metric8.name':  'Sentimento de Notícias',
-        'metric8.desc':  'IA analisa notícias e tweets em tempo real e envia resumo contextual',
-        'assets.label':  'Ativos suportados:',
-        'assets.more':   '+ qualquer ticker',
+        'how.title':  'Seu assessor pronto em<br/><span class="highlight">3 etapas.</span>',
+        'how.sub':    'Não é self-service. É um onboarding cuidadoso para que seu assessor te conheça de verdade antes de começar.',
+        'step1.title':'Você nos conta sobre você',
+        'step1.desc': 'Respondemos um onboarding guiado sobre sua carteira atual, plataformas que usa (Fintual, Nomad, exchanges cripto), estratégia, perfil de risco e objetivos de longo prazo.',
+        'step2.title':'Configuramos seu contexto',
+        'step2.desc': 'Montamos seu perfil no sistema — carteira, histórico, estratégia, preferências. Nossos agentes de IA passam a te conhecer antes mesmo de monitorar o primeiro ativo.',
+        'step3.title':'Seu assessor entra em ação',
+        'step3.desc': 'A partir daí, seu assessor monitora seus ativos 24/7, envia alertas contextualizados no Telegram e está disponível para responder suas dúvidas com base no seu perfil real.',
+        /* does */
+        'does.badge':  'O que seu assessor faz',
+        'does.title':  'Presente em cada<br/><span class="highlight">momento que importa.</span>',
+        'does.sub':    'Quatro formas em que seu assessor trabalha para você todos os dias.',
+        'does1.title': 'Monitora seus ativos',
+        'does1.desc':  'Acompanha preço, volume, indicadores técnicos e notícias dos seus ativos específicos — não do mercado em geral.',
+        'does2.title': 'Alerta quando é relevante',
+        'does2.desc':  'Não envia spam de notificações. Avisa quando algo acontece que realmente importa para a sua carteira e a sua estratégia.',
+        'does3.title': 'Responde suas dúvidas',
+        'does3.desc':  'Pergunte qualquer coisa. Seu assessor responde com base no seu contexto real — carteira, histórico, objetivos — não com respostas genéricas da internet.',
+        'does4.title': 'Revisa sua carteira',
+        'does4.desc':  'Periodicamente apresenta uma revisão com análise de concentração, performance e alinhamento com a sua estratégia original.',
+        /* for whom */
+        'for.badge': 'Para quem é',
+        'for.title': 'Para quem leva investimentos<br/><span class="highlight">a sério.</span>',
+        'for.sub':   'Desenhado para o investidor latino-americano — com suas plataformas, suas moedas e suas particularidades.',
+        'profile1.label': 'Iniciante em crescimento',
+        'profile1.title': 'Carteira crescendo, dúvidas crescendo junto',
+        'profile1.desc':  'Tem uma carteira inicial e quer tomar decisões mais embasadas. Não quer virar analista — quer ter alguém de confiança para perguntar.',
+        'profile2.label': 'Investidor diversificado',
+        'profile2.title': 'Fintual, Nomad, cripto e ETFs — tudo junto',
+        'profile2.desc':  'Investe em múltiplos países e plataformas. Precisa de alguém que entenda sua situação multi-câmbio, não de uma ferramenta feita para o investidor americano.',
+        'profile3.label': 'Profissional ocupado',
+        'profile3.title': 'Patrimônio relevante, pouco tempo',
+        'profile3.desc':  'Tem carteira considerável mas não consegue acompanhar tudo. Quer ser alertado quando algo realmente importa — sem ruído desnecessário.',
+        'profile4.label': 'Nômade / Expatriado',
+        'profile4.title': 'Investindo em múltiplos países',
+        'profile4.desc':  'Mora em um país, investe em outro, em uma terceira moeda. Precisa de assessoria que entenda sua realidade, não de um app genérico que ignora o seu contexto.',
+        /* not */
+        'not.badge': 'O que não somos',
+        'not.title': 'Transparência<br/><span class="highlight">total.</span>',
+        'not.sub':   'Três coisas que o Sentinel Invest definitivamente não é.',
+        'not1.title':'Não somos plataforma de analytics',
+        'not1.desc': 'Existem dezenas de dashboards bonitos com gráficos e indicadores. Eles não te conhecem. Não tomam decisões. Não enviam análises contextualizadas. Não é o que fazemos.',
+        'not2.title':'Não somos robô de trading',
+        'not2.desc': 'Não executamos ordens. Não gerenciamos seu capital. Não prometemos retornos. A decisão final é sempre sua — nós te damos o contexto certo para decidir melhor.',
+        'not3.title':'Não somos app genérico de finanças',
+        'not3.desc': 'Não há app para baixar nem interface para explorar. O produto é o serviço: inteligência personalizada entregue onde você já está — no Telegram.',
         /* testimonials */
-        'testimonials.badge': 'Depoimentos',
-        'testimonials.title': 'Investidores que já <span class="highlight">confiam.</span>',
-        't1.text': 'O alerta de volume do BTC chegou 18 minutos antes do pump. Entrei na hora certa. A análise do Claude foi cirúrgica — explicou exatamente o que estava acontecendo com o order book.',
-        't1.name': 'Rafael M.',
-        't1.role': 'Trader de cripto · São Paulo',
-        't2.text': 'Monitoro minha carteira de ETFs e ações americanas sem abrir a plataforma da corretora o dia inteiro. Os alertas chegam no Telegram quando preciso agir — o resto deixo com o Sentinel.',
-        't2.name': 'Camila P.',
-        't2.role': 'Investidora de longo prazo · Curitiba',
-        't3.text': 'Uso o score de risco da IA para calibrar meu sizing. Desde que comecei, reduzi os drawdowns e melhorei o Sharpe. Vale cada centavo dos $29.',
-        't3.name': 'Thiago A.',
-        't3.role': 'Swing trader · Rio de Janeiro',
+        'testimonials.badge': 'Resultados reais',
+        'testimonials.title': 'O que muda quando você tem<br/><span class="highlight">um assessor de verdade.</span>',
+        't1.text': 'Pela primeira vez tenho alguém que entende minha situação de verdade — carteira no Nomad, Fintual e cripto ao mesmo tempo. O assessor me deu contexto que nenhuma plataforma conseguia dar.',
+        't1.name': 'Mariana R.',
+        't1.role': 'Investidora diversificada · Brasil',
+        't2.text': 'Fui avisado antes do earnings da NVDA com uma análise específica para a minha posição. Realizei parte do lucro no momento certo. Sem o Sentinel, teria mantido e perdido a janela.',
+        't2.name': 'Diego S.',
+        't2.role': 'Swing trader · Chile',
+        't3.text': 'Trabalho o dia inteiro e não tenho tempo de ficar olhando gráfico. Agora recebo alertas só quando algo realmente importa para a minha carteira. Mudou minha relação com investimentos.',
+        't3.name': 'Carlos M.',
+        't3.role': 'Profissional ocupado · México',
         /* pricing */
-        'pricing.badge':     'Plano único',
-        'pricing.title':     'Simples. Sem pegadinha.',
-        'pricing.sub':       'Um plano completo. Tudo incluso. Cancele quando quiser.',
-        'pricing.plan_badge':'Mais popular',
+        'pricing.badge':     'Investimento no serviço',
+        'pricing.title':     'Um assessor dedicado à sua carteira.',
+        'pricing.sub':       'Sem plano básico, sem plano premium. Um serviço completo para quem leva investimentos a sério.',
+        'pricing.plan_badge':'Serviço completo',
         'pricing.period':    '/mês',
-        'pricing.per':       'por portfólio · cobrado mensalmente',
-        'feature1': 'Monitoramento de até 30 ativos simultâneos',
-        'feature2': 'Alertas ilimitados via Telegram',
-        'feature3': 'Análise contextual com Claude AI em cada alerta',
-        'feature4': 'Score de risco dinâmico 24/7',
-        'feature5': 'Dashboard web com histórico completo',
-        'feature6': 'Suporte prioritário via Telegram',
-        'feature7': 'Sem contrato — cancele quando quiser',
-        'pricing.cta':  'Começar agora →',
-        'pricing.note': 'Sem cartão de crédito para testar · 7 dias grátis',
+        'pricing.per':       'por carteira · cobrado em USD',
+        'pricing.currencies':'≈ <strong>R$ 290/mês</strong> · CLP 47.000/mês',
+        'feature1': 'Onboarding personalizado da sua carteira',
+        'feature2': 'Monitoramento 24/7 dos seus ativos específicos',
+        'feature3': 'Alertas contextualizados direto no Telegram',
+        'feature4': 'Análises sob demanda — pergunte qualquer coisa',
+        'feature5': 'Revisões periódicas do portfólio',
+        'feature6': 'Suporte humano próximo via Telegram',
+        'feature7': 'Sem contrato mínimo — cancele quando quiser',
+        'pricing.cta':  'Quero meu assessor IA →',
+        'pricing.note': 'Sem cartão para começar · Onboarding gratuito',
         /* final cta */
-        'finalcta.title': 'O mercado não espera.<br/><span class="highlight">Você também não deveria.</span>',
-        'finalcta.sub':   'Comece grátis por 7 dias. Sem cartão. Cancele quando quiser. Seu portfólio merece atenção 24/7.',
-        'finalcta.cta':   'Ativar monitoramento agora →',
+        'finalcta.badge': 'Pronto para começar',
+        'finalcta.title': 'Enquanto você trabalha,<br/><span class="highlight">seu assessor cuida da carteira.</span>',
+        'finalcta.sub':   'Onboarding personalizado. Sem contrato. Uma IA avançada que te conhece — não um investidor genérico.',
+        'finalcta.cta':   'Quero meu assessor IA →',
         /* footer */
         'footer.copy':    '© 2026 Sentinel Invest. Todos os direitos reservados.',
         'footer.terms':   'Termos',
         'footer.privacy': 'Privacidade',
         'footer.contact': 'Contato',
-        /* lang selector */
+        /* lang */
         'lang.flag': '🇧🇷',
         'lang.code': 'PT',
       },
 
+      /* ════════════════════════════════════════════════════════════ */
       es: {
-        'meta.title':       'Sentinel Invest — Monitoreo de Inversiones con IA',
-        'meta.description': 'Monitorea cualquier activo — cripto, ETFs, acciones — con inteligencia artificial. Alertas personalizadas vía Telegram con análisis de Claude AI.',
+        'meta.title':       'Sentinel Invest — Tu Asesor IA Personal',
+        'meta.description': 'Un asesor de inversiones que conoce tu portafolio real, tu estrategia y tus objetivos. Análisis de IA avanzada directo a Telegram — 24/7.',
         'html.lang':        'es',
-        'nav.benefits': 'Beneficios',
-        'nav.how':      'Cómo funciona',
-        'nav.metrics':  'Métricas',
-        'nav.pricing':  'Precio',
-        'nav.cta':      'Empezar ahora →',
-        'hero.badge':        'Monitoreo en tiempo real',
-        'hero.title':        'Tu portafolio.<br/>Vigilado por la <span class="highlight">IA.</span>',
-        'hero.subtitle':     'Sentinel monitorea cripto, ETFs y acciones 24/7 y envía alertas precisas a Telegram con análisis de Claude AI — antes de que el mercado te sorprenda.',
-        'hero.cta_primary':  'Empezar por $29/mes →',
-        'hero.cta_secondary':'Ver cómo funciona',
-        'hero.trust1':       'Sin contrato mínimo',
-        'hero.trust2':       'Cancela cuando quieras',
-        'hero.trust3':       'Configuración en menos de 5 min',
-        'dash.portfolio':   'Portafolio Total',
-        'dash.alerts_today':'Alertas Hoy',
-        'dash.last_alert':  'Última: <span>hace 12 min</span>',
-        'dash.risk_score':  'Score de Riesgo IA',
-        'dash.risk_low':    'Bajo',
-        'dash.updated':     'Actualizado <span>ahora</span>',
-        'benefits.badge':  'Por qué Sentinel',
-        'benefits.title':  'No pierdas más ninguna<br/><span class="highlight">oportunidad.</span>',
-        'benefits.sub':    'Tres ventajas que cambian la forma en que inviertes.',
-        'benefit1.title':  'Análisis con Claude AI',
-        'benefit1.desc':   'Cada alerta incluye un análisis contextual generado por Claude AI. Recibes no solo el número, sino lo que significa para tu portafolio.',
-        'benefit2.title':  'Alertas directo a Telegram',
-        'benefit2.desc':   'Sin apps adicionales. Las alertas llegan donde ya estás — en Telegram, con formato claro y enlaces de contexto para actuar en el momento justo.',
-        'benefit3.title':  'Cualquier activo, a cualquier hora',
-        'benefit3.desc':   'Bitcoin, AAPL, VOO, oro, commodities — Sentinel monitorea las 24 horas del día, los 7 días de la semana, sin pausas.',
+        'nav.how':     'Cómo funciona',
+        'nav.for_who': 'Para quién',
+        'nav.pricing': 'Precio',
+        'nav.cta':     'Quiero mi asesor IA',
+        'hero.badge':        'Asesoría personalizada con IA',
+        'hero.title':        'Tu asesor de inversiones<br/>personal. <span class="highlight">Potenciado por IA.</span>',
+        'hero.subtitle':     'Nuestra IA aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
+        'hero.cta_primary':  'Quiero mi asesor IA →',
+        'hero.cta_secondary':'Cómo funciona',
+        'hero.trust1':       'Onboarding personalizado',
+        'hero.trust2':       'Sin contrato a largo plazo',
+        'hero.trust3':       'Soporte cercano vía Telegram',
+        'tg.status': '● en línea',
+        'tg.label':  '📊 Actualización de tu portafolio',
+        'tg.msg1':   'Tu posición en NVDA subió 4.2% tras el earnings. Representa el 18% de tu portafolio y señalaste reducir semiconductores — ¿buen momento para realizar parcialmente?',
+        'tg.reply':  '¡Sí, por favor!',
+        'tg.msg2':   'Preparando análisis de tu posición en NVDA con base en tu historial de aportes y estrategia actual...',
+        'diff.badge': '¿Qué es diferente?',
+        'diff.title': 'Un asesor que te<br/><span class="highlight">conoce de verdad.</span>',
+        'diff.sub':   'No es software. Es un servicio construido alrededor de tu realidad como inversor — con contexto real, no respuestas genéricas.',
+        'diff1.title':'Conoce tu portafolio real',
+        'diff1.desc': 'En el onboarding, mapeamos tu portafolio actual, historial de aportes, estrategia y objetivos. Nuestros agentes de IA parten de tu contexto específico — no de un perfil genérico.',
+        'diff2.title':'Análisis hecho para ti',
+        'diff2.desc': 'Cuando el mercado se mueve, la alerta que llega no es genérica. Es: "dado que tienes 18% en NVDA y señalaste reducir semiconductores, mira lo que pasó hoy."',
+        'diff3.title':'Mejora con el tiempo',
+        'diff3.desc': 'Cada interacción, cada decisión y cada cambio de estrategia enriquece tu contexto. Cuanto más lo usas, más preciso y útil se vuelve tu asesor.',
         'how.badge':  'Cómo funciona',
-        'how.title':  'Listo en <span class="highlight">3 pasos simples.</span>',
-        'how.sub':    'Del registro a la primera alerta en menos de 5 minutos.',
-        'step1.title':'Registra tus activos',
-        'step1.desc': 'Ingresa los activos que deseas monitorear — cripto, acciones, ETFs. Sin API keys ni acceso al bróker. Solo los tickers.',
-        'step2.title':'Define tus alertas',
-        'step2.desc': 'Elige los disparadores: variación de precio, volumen anormal, RSI, cruce de medias o score de riesgo generado por IA.',
-        'step3.title':'Recibe en Telegram',
-        'step3.desc': 'Conecta tu Telegram en un clic. Las alertas con análisis de Claude AI llegan en segundos — donde sea que estés.',
-        'metrics.badge': 'Qué monitoreamos',
-        'metrics.title': 'Datos que <span class="highlight">importan.</span>',
-        'metrics.sub':   'Indicadores técnicos y fundamentales en tiempo real para cada activo.',
-        'metric1.name':  'Precio & Variación',
-        'metric1.desc':  'Monitoreo tick a tick con alertas de variación porcentual configurables',
-        'metric2.name':  'Volumen Anormal',
-        'metric2.desc':  'Detecta picos de volumen que preceden movimientos relevantes de precio',
-        'metric3.name':  'RSI & Momentum',
-        'metric3.desc':  'Alerta en sobrecompra / sobreventa con análisis de divergencia',
-        'metric4.name':  'Medias Móviles',
-        'metric4.desc':  'Cruce de MAs configurables con señal de tendencia automática',
-        'metric5.name':  'Soporte & Resistencia',
-        'metric5.desc':  'Detección automática de niveles clave vía análisis de máximos y mínimos',
-        'metric6.name':  'Fear & Greed',
-        'metric6.desc':  'Índice de sentimiento del mercado cripto y alertas en extremos',
-        'metric7.name':  'Score de Riesgo IA',
-        'metric7.desc':  'Score dinámico calculado por Claude AI con base en múltiples factores',
-        'metric8.name':  'Sentimiento de Noticias',
-        'metric8.desc':  'La IA analiza noticias y tweets en tiempo real y envía resumen contextual',
-        'assets.label':  'Activos soportados:',
-        'assets.more':   '+ cualquier ticker',
-        'testimonials.badge': 'Testimonios',
-        'testimonials.title': 'Inversores que ya <span class="highlight">confían.</span>',
-        't1.text': 'La alerta de volumen del BTC llegó 18 minutos antes del pump. Entré en el momento justo. El análisis de Claude fue quirúrgico — explicó exactamente lo que estaba pasando en el order book.',
-        't1.name': 'Rafael M.',
-        't1.role': 'Trader de cripto · São Paulo',
-        't2.text': 'Monitoreo mi cartera de ETFs y acciones sin abrir la plataforma del bróker en todo el día. Las alertas llegan a Telegram cuando necesito actuar — el resto lo dejo con Sentinel.',
-        't2.name': 'Camila P.',
-        't2.role': 'Inversora a largo plazo · Curitiba',
-        't3.text': 'Uso el score de riesgo de la IA para calibrar mi sizing. Desde que empecé, reduje los drawdowns y mejoré el Sharpe. Vale cada centavo de los $29.',
-        't3.name': 'Thiago A.',
-        't3.role': 'Swing trader · Río de Janeiro',
-        'pricing.badge':     'Plan único',
-        'pricing.title':     'Simple. Sin trucos.',
-        'pricing.sub':       'Un plan completo. Todo incluido. Cancela cuando quieras.',
-        'pricing.plan_badge':'Más popular',
+        'how.title':  'Tu asesor listo en<br/><span class="highlight">3 etapas.</span>',
+        'how.sub':    'No es self-service. Es un onboarding cuidadoso para que tu asesor te conozca de verdad antes de empezar.',
+        'step1.title':'Tú nos cuentas sobre ti',
+        'step1.desc': 'Completamos un onboarding guiado sobre tu portafolio actual, plataformas que usas (Fintual, Nomad, exchanges cripto), estrategia, perfil de riesgo y objetivos a largo plazo.',
+        'step2.title':'Configuramos tu contexto',
+        'step2.desc': 'Construimos tu perfil en el sistema — portafolio, historial, estrategia, preferencias. Nuestros agentes de IA te conocen antes de monitorear el primer activo.',
+        'step3.title':'Tu asesor entra en acción',
+        'step3.desc': 'Desde ese momento, tu asesor monitorea tus activos 24/7, envía alertas contextualizadas en Telegram y está disponible para responder tus dudas con base en tu perfil real.',
+        'does.badge':  'Qué hace tu asesor',
+        'does.title':  'Presente en cada<br/><span class="highlight">momento que importa.</span>',
+        'does.sub':    'Cuatro formas en que tu asesor trabaja para ti todos los días.',
+        'does1.title': 'Monitorea tus activos',
+        'does1.desc':  'Sigue precio, volumen, indicadores técnicos y noticias de tus activos específicos — no del mercado en general.',
+        'does2.title': 'Alerta cuando es relevante',
+        'does2.desc':  'No te inunda con notificaciones. Avisa cuando algo sucede que realmente importa para tu portafolio y tu estrategia.',
+        'does3.title': 'Responde tus dudas',
+        'does3.desc':  'Pregunta lo que quieras. Tu asesor responde basándose en tu contexto real — portafolio, historial, objetivos — no con respuestas genéricas.',
+        'does4.title': 'Revisa tu portafolio',
+        'does4.desc':  'Periódicamente presenta una revisión con análisis de concentración, rendimiento y alineación con tu estrategia original.',
+        'for.badge': '¿Para quién es?',
+        'for.title': 'Para quienes toman<br/><span class="highlight">las inversiones en serio.</span>',
+        'for.sub':   'Diseñado para el inversor latinoamericano — con sus plataformas, sus monedas y sus particularidades.',
+        'profile1.label': 'Principiante en crecimiento',
+        'profile1.title': 'Portafolio creciendo, dudas creciendo también',
+        'profile1.desc':  'Tiene un portafolio inicial y quiere tomar decisiones más fundamentadas. No quiere convertirse en analista — quiere tener a alguien de confianza a quien preguntar.',
+        'profile2.label': 'Inversor diversificado',
+        'profile2.title': 'Fintual, Nomad, cripto y ETFs — todo junto',
+        'profile2.desc':  'Invierte en múltiples países y plataformas. Necesita a alguien que entienda su situación multidivisa, no una herramienta hecha para el inversor americano.',
+        'profile3.label': 'Profesional ocupado',
+        'profile3.title': 'Patrimonio relevante, poco tiempo',
+        'profile3.desc':  'Tiene un portafolio considerable pero no puede seguirlo todo. Quiere ser alertado cuando algo realmente importa — sin ruido innecesario.',
+        'profile4.label': 'Nómada / Expatriado',
+        'profile4.title': 'Invirtiendo en múltiples países',
+        'profile4.desc':  'Vive en un país, invierte en otro, en una tercera moneda. Necesita asesoría que entienda su realidad, no una app genérica que ignora su contexto.',
+        'not.badge': 'Lo que no somos',
+        'not.title': 'Transparencia<br/><span class="highlight">total.</span>',
+        'not.sub':   'Tres cosas que Sentinel Invest definitivamente no es.',
+        'not1.title':'No somos plataforma de analytics',
+        'not1.desc': 'Existen docenas de dashboards bonitos con gráficos e indicadores. No te conocen. No toman decisiones. No envían análisis contextualizados. Eso no es lo que hacemos.',
+        'not2.title':'No somos robot de trading',
+        'not2.desc': 'No ejecutamos órdenes. No gestionamos tu capital. No prometemos retornos. La decisión final es siempre tuya — nosotros te damos el contexto para decidir mejor.',
+        'not3.title':'No somos app genérica de finanzas',
+        'not3.desc': 'No hay app que descargar ni interfaz que explorar. El producto es el servicio: inteligencia personalizada entregada donde ya estás — en Telegram.',
+        'testimonials.badge': 'Resultados reales',
+        'testimonials.title': 'Lo que cambia cuando tienes<br/><span class="highlight">un asesor de verdad.</span>',
+        't1.text': 'Por primera vez tengo a alguien que entiende mi situación de verdad — portafolio en Nomad, Fintual y cripto al mismo tiempo. El asesor me dio contexto que ninguna plataforma podía dar.',
+        't1.name': 'Mariana R.',
+        't1.role': 'Inversora diversificada · Brasil',
+        't2.text': 'Me avisaron antes del earnings de NVDA con un análisis específico para mi posición. Realicé parte de la ganancia en el momento justo. Sin Sentinel, habría mantenido y perdido la ventana.',
+        't2.name': 'Diego S.',
+        't2.role': 'Swing trader · Chile',
+        't3.text': 'Trabajo todo el día y no tengo tiempo de mirar gráficos. Ahora recibo alertas solo cuando algo realmente importa para mi portafolio. Cambió mi relación con las inversiones.',
+        't3.name': 'Carlos M.',
+        't3.role': 'Profesional ocupado · México',
+        'pricing.badge':     'Inversión en el servicio',
+        'pricing.title':     'Un asesor dedicado a tu portafolio.',
+        'pricing.sub':       'Sin plan básico, sin plan premium. Un servicio completo para quienes toman las inversiones en serio.',
+        'pricing.plan_badge':'Servicio completo',
         'pricing.period':    '/mes',
-        'pricing.per':       'por portafolio · facturado mensualmente',
-        'feature1': 'Monitoreo de hasta 30 activos simultáneos',
-        'feature2': 'Alertas ilimitadas vía Telegram',
-        'feature3': 'Análisis contextual con Claude AI en cada alerta',
-        'feature4': 'Score de riesgo dinámico 24/7',
-        'feature5': 'Dashboard web con historial completo',
-        'feature6': 'Soporte prioritario vía Telegram',
-        'feature7': 'Sin contrato — cancela cuando quieras',
-        'pricing.cta':  'Empezar ahora →',
-        'pricing.note': 'Sin tarjeta de crédito para probar · 7 días gratis',
-        'finalcta.title': 'El mercado no espera.<br/><span class="highlight">Tú tampoco deberías.</span>',
-        'finalcta.sub':   'Empieza gratis por 7 días. Sin tarjeta. Cancela cuando quieras. Tu portafolio merece atención 24/7.',
-        'finalcta.cta':   'Activar monitoreo ahora →',
+        'pricing.per':       'por portafolio · facturado en USD',
+        'pricing.currencies':'≈ <strong>R$ 290/mes</strong> · CLP 47.000/mes',
+        'feature1': 'Onboarding personalizado de tu portafolio',
+        'feature2': 'Monitoreo 24/7 de tus activos específicos',
+        'feature3': 'Alertas contextualizadas directo en Telegram',
+        'feature4': 'Análisis bajo demanda — pregunta lo que quieras',
+        'feature5': 'Revisiones periódicas del portafolio',
+        'feature6': 'Soporte humano cercano vía Telegram',
+        'feature7': 'Sin contrato mínimo — cancela cuando quieras',
+        'pricing.cta':  'Quiero mi asesor IA →',
+        'pricing.note': 'Sin tarjeta para empezar · Onboarding gratuito',
+        'finalcta.badge': 'Listo para empezar',
+        'finalcta.title': 'Mientras trabajas,<br/><span class="highlight">tu asesor cuida el portafolio.</span>',
+        'finalcta.sub':   'Onboarding personalizado. Sin contrato. Una IA avanzada que te conoce — no un inversor genérico.',
+        'finalcta.cta':   'Quiero mi asesor IA →',
         'footer.copy':    '© 2026 Sentinel Invest. Todos los derechos reservados.',
         'footer.terms':   'Términos',
         'footer.privacy': 'Privacidad',
@@ -1481,97 +1576,112 @@
         'lang.code': 'ES',
       },
 
+      /* ════════════════════════════════════════════════════════════ */
       en: {
-        'meta.title':       'Sentinel Invest — AI-Powered Investment Monitoring',
-        'meta.description': 'Monitor any asset — crypto, ETFs, stocks — with artificial intelligence. Personalized alerts via Telegram with Claude AI analysis.',
+        'meta.title':       'Sentinel Invest — Your Personal AI Advisor',
+        'meta.description': 'An investment advisor that knows your real portfolio, your strategy, and your goals. Advanced AI analysis delivered straight to Telegram — 24/7.',
         'html.lang':        'en',
-        'nav.benefits': 'Benefits',
-        'nav.how':      'How it works',
-        'nav.metrics':  'Metrics',
-        'nav.pricing':  'Pricing',
-        'nav.cta':      'Get started →',
-        'hero.badge':        'Real-time monitoring',
-        'hero.title':        'Your portfolio.<br/>Watched by <span class="highlight">AI.</span>',
-        'hero.subtitle':     'Sentinel monitors crypto, ETFs and stocks 24/7 and sends precise alerts on Telegram with Claude AI analysis — before the market surprises you.',
-        'hero.cta_primary':  'Start for $29/mo →',
-        'hero.cta_secondary':'See how it works',
-        'hero.trust1':       'No minimum contract',
-        'hero.trust2':       'Cancel anytime',
-        'hero.trust3':       'Setup in under 5 min',
-        'dash.portfolio':   'Total Portfolio',
-        'dash.alerts_today':'Alerts Today',
-        'dash.last_alert':  'Last: <span>12 min ago</span>',
-        'dash.risk_score':  'AI Risk Score',
-        'dash.risk_low':    'Low',
-        'dash.updated':     'Updated <span>just now</span>',
-        'benefits.badge':  'Why Sentinel',
-        'benefits.title':  'Never miss another<br/><span class="highlight">opportunity.</span>',
-        'benefits.sub':    'Three advantages that change the way you invest.',
-        'benefit1.title':  'Analysis with Claude AI',
-        'benefit1.desc':   'Every alert comes with contextual analysis generated by Claude AI. You receive not just the number, but what it means for your portfolio.',
-        'benefit2.title':  'Alerts straight to Telegram',
-        'benefit2.desc':   'No extra apps needed. Alerts arrive where you already are — on Telegram, with clear formatting and context links to act at the right moment.',
-        'benefit3.title':  'Any asset, anytime',
-        'benefit3.desc':   'Bitcoin, AAPL, VOO, gold, commodities — Sentinel monitors 24 hours a day, 7 days a week, without pauses or distractions.',
+        'nav.how':     'How it works',
+        'nav.for_who': 'Who it\'s for',
+        'nav.pricing': 'Pricing',
+        'nav.cta':     'Get my AI advisor',
+        'hero.badge':        'Personalized AI investment advisory',
+        'hero.title':        'Your personal investment<br/>advisor. <span class="highlight">Powered by AI.</span>',
+        'hero.subtitle':     'Our advanced AI learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
+        'hero.cta_primary':  'Get my AI advisor →',
+        'hero.cta_secondary':'How it works',
+        'hero.trust1':       'Personalized onboarding',
+        'hero.trust2':       'No long-term contract',
+        'hero.trust3':       'Close support via Telegram',
+        'tg.status': '● online',
+        'tg.label':  '📊 Your portfolio update',
+        'tg.msg1':   'Your NVDA position is up 4.2% after earnings. It\'s 18% of your portfolio and you flagged reducing semiconductor exposure — good moment to partially take profits?',
+        'tg.reply':  'Yes, please!',
+        'tg.msg2':   'Preparing analysis of your NVDA position based on your investment history and current strategy...',
+        'diff.badge': 'What\'s different',
+        'diff.title': 'An advisor that truly<br/><span class="highlight">knows you.</span>',
+        'diff.sub':   'This isn\'t software. It\'s a service built around your reality as an investor — with real context, not generic answers.',
+        'diff1.title':'Knows your real portfolio',
+        'diff1.desc': 'During onboarding, we map your current portfolio, investment history, strategy, and goals. Our AI agents start from your specific context — not a generic investor profile.',
+        'diff2.title':'Analysis made for you',
+        'diff2.desc': 'When markets move, the alert you receive isn\'t generic. It\'s: "given that you have 18% in NVDA and flagged reducing semiconductor exposure, here\'s what happened today."',
+        'diff3.title':'Gets better over time',
+        'diff3.desc': 'Every interaction, every decision, and every strategy update enriches your context. The longer you use it, the more precise and useful your advisor becomes.',
         'how.badge':  'How it works',
-        'how.title':  'Ready in <span class="highlight">3 simple steps.</span>',
-        'how.sub':    'From signup to first alert in under 5 minutes.',
-        'step1.title':'Add your assets',
-        'step1.desc': 'Enter the assets you want to monitor — crypto, stocks, ETFs. No API keys or broker access needed. Just the tickers.',
-        'step2.title':'Configure your alerts',
-        'step2.desc': 'Choose your triggers: price change, abnormal volume, RSI, moving average crossovers, or AI-generated risk score.',
-        'step3.title':'Receive on Telegram',
-        'step3.desc': 'Connect your Telegram in one click. Alerts with Claude AI analysis arrive in seconds — wherever you are.',
-        'metrics.badge': 'What we monitor',
-        'metrics.title': 'Data that <span class="highlight">matters.</span>',
-        'metrics.sub':   'Real-time technical and fundamental indicators for every asset.',
-        'metric1.name':  'Price & Change',
-        'metric1.desc':  'Tick-by-tick monitoring with configurable percentage change alerts',
-        'metric2.name':  'Abnormal Volume',
-        'metric2.desc':  'Detects volume spikes that precede significant price movements',
-        'metric3.name':  'RSI & Momentum',
-        'metric3.desc':  'Overbought / oversold alerts with divergence analysis',
-        'metric4.name':  'Moving Averages',
-        'metric4.desc':  'Configurable MA crossovers with automatic trend signal',
-        'metric5.name':  'Support & Resistance',
-        'metric5.desc':  'Automatic detection of key levels via highs and lows analysis',
-        'metric6.name':  'Fear & Greed',
-        'metric6.desc':  'Crypto market sentiment index with extreme alerts',
-        'metric7.name':  'AI Risk Score',
-        'metric7.desc':  'Dynamic score calculated by Claude AI based on multiple factors',
-        'metric8.name':  'News Sentiment',
-        'metric8.desc':  'AI analyzes news and tweets in real time and sends a contextual summary',
-        'assets.label':  'Supported assets:',
-        'assets.more':   '+ any ticker',
-        'testimonials.badge': 'Testimonials',
-        'testimonials.title': 'Investors who already <span class="highlight">trust us.</span>',
-        't1.text': 'The BTC volume alert arrived 18 minutes before the pump. I got in at the right time. Claude\'s analysis was surgical — it explained exactly what was happening with the order book.',
-        't1.name': 'Rafael M.',
-        't1.role': 'Crypto trader · São Paulo',
-        't2.text': 'I monitor my ETF and US stock portfolio without opening the broker platform all day. Alerts arrive on Telegram when I need to act — the rest I leave to Sentinel.',
-        't2.name': 'Camila P.',
-        't2.role': 'Long-term investor · Curitiba',
-        't3.text': 'I use the AI risk score to calibrate my sizing. Since I started, I\'ve reduced drawdowns and improved my Sharpe ratio. Worth every penny of the $29.',
-        't3.name': 'Thiago A.',
-        't3.role': 'Swing trader · Rio de Janeiro',
-        'pricing.badge':     'Single plan',
-        'pricing.title':     'Simple. No tricks.',
-        'pricing.sub':       'One complete plan. Everything included. Cancel anytime.',
-        'pricing.plan_badge':'Most popular',
+        'how.title':  'Your advisor ready in<br/><span class="highlight">3 steps.</span>',
+        'how.sub':    'No self-service. A careful onboarding so your advisor truly knows you before getting started.',
+        'step1.title':'You tell us about yourself',
+        'step1.desc': 'We walk through a guided onboarding about your current portfolio, platforms you use (Fintual, Nomad, crypto exchanges), strategy, risk profile, and long-term goals.',
+        'step2.title':'We set up your context',
+        'step2.desc': 'We build your investor profile in the system — portfolio, history, strategy, preferences. Our AI agents get to know you before monitoring the first asset.',
+        'step3.title':'Your advisor gets to work',
+        'step3.desc': 'From that point, your advisor monitors your assets 24/7, sends contextualized alerts on Telegram, and is available to answer your questions based on your real profile.',
+        'does.badge':  'What your advisor does',
+        'does.title':  'Present at every<br/><span class="highlight">moment that matters.</span>',
+        'does.sub':    'Four ways your advisor works for you every single day.',
+        'does1.title': 'Monitors your assets',
+        'does1.desc':  'Tracks price, volume, technical indicators, and news for your specific assets — not the market in general.',
+        'does2.title': 'Alerts when it matters',
+        'does2.desc':  'Doesn\'t flood you with notifications. Alerts you when something happens that truly matters for your portfolio and your strategy.',
+        'does3.title': 'Answers your questions',
+        'does3.desc':  'Ask anything. Your advisor responds based on your real context — portfolio, history, goals — not with generic internet answers.',
+        'does4.title': 'Reviews your portfolio',
+        'does4.desc':  'Periodically delivers a portfolio review with concentration analysis, performance, and alignment with your original strategy.',
+        'for.badge': 'Who it\'s for',
+        'for.title': 'For those who take<br/><span class="highlight">investing seriously.</span>',
+        'for.sub':   'Designed for the Latin American investor — with their platforms, currencies, and particularities.',
+        'profile1.label': 'Growing beginner',
+        'profile1.title': 'Portfolio growing, questions growing too',
+        'profile1.desc':  'Has a starting portfolio and wants to make more informed decisions. Doesn\'t want to become an analyst — wants a trusted person to ask.',
+        'profile2.label': 'Diversified investor',
+        'profile2.title': 'Fintual, Nomad, crypto and ETFs — all at once',
+        'profile2.desc':  'Invests in multiple countries and platforms. Needs someone who understands their multi-currency situation, not a tool built for the American investor.',
+        'profile3.label': 'Busy professional',
+        'profile3.title': 'Significant wealth, little time',
+        'profile3.desc':  'Has a considerable portfolio but can\'t keep up with everything. Wants to be alerted when something truly matters — without unnecessary noise.',
+        'profile4.label': 'Nomad / Expat',
+        'profile4.title': 'Investing across multiple countries',
+        'profile4.desc':  'Lives in one country, invests in another, in a third currency. Needs advisory that understands their reality, not a generic app that ignores their context.',
+        'not.badge': 'What we\'re not',
+        'not.title': 'Full<br/><span class="highlight">transparency.</span>',
+        'not.sub':   'Three things Sentinel Invest definitively is not.',
+        'not1.title':'Not an analytics platform',
+        'not1.desc': 'There are dozens of beautiful dashboards with charts and indicators. They don\'t know you. They don\'t make decisions. They don\'t send contextualized analysis. That\'s not what we do.',
+        'not2.title':'Not a trading bot',
+        'not2.desc': 'We don\'t execute orders. We don\'t manage your capital. We don\'t promise returns. The final decision is always yours — we give you the right context to decide better.',
+        'not3.title':'Not a generic finance app',
+        'not3.desc': 'There\'s no app to download, no interface to explore. The product is the service: personalized intelligence delivered where you already are — on Telegram.',
+        'testimonials.badge': 'Real results',
+        'testimonials.title': 'What changes when you have<br/><span class="highlight">a real advisor.</span>',
+        't1.text': 'For the first time I have someone who truly understands my situation — portfolio on Nomad, Fintual, and crypto all at once. The advisor gave me context no platform could provide.',
+        't1.name': 'Mariana R.',
+        't1.role': 'Diversified investor · Brazil',
+        't2.text': 'I was alerted before NVDA earnings with analysis specific to my position. I took partial profits at exactly the right time. Without Sentinel, I would have held and missed the window.',
+        't2.name': 'Diego S.',
+        't2.role': 'Swing trader · Chile',
+        't3.text': 'I work all day and have no time to watch charts. Now I get Telegram alerts only when something truly matters for my portfolio. It changed my relationship with investing.',
+        't3.name': 'Carlos M.',
+        't3.role': 'Busy professional · Mexico',
+        'pricing.badge':     'Service investment',
+        'pricing.title':     'An advisor dedicated to your portfolio.',
+        'pricing.sub':       'No basic plan, no premium plan. A complete service for those who take investing seriously.',
+        'pricing.plan_badge':'Complete service',
         'pricing.period':    '/mo',
-        'pricing.per':       'per portfolio · billed monthly',
-        'feature1': 'Monitor up to 30 assets simultaneously',
-        'feature2': 'Unlimited alerts via Telegram',
-        'feature3': 'Contextual Claude AI analysis with every alert',
-        'feature4': 'Dynamic 24/7 risk score',
-        'feature5': 'Web dashboard with full history',
-        'feature6': 'Priority support via Telegram',
-        'feature7': 'No contract — cancel anytime',
-        'pricing.cta':  'Get started →',
-        'pricing.note': 'No credit card required · 7-day free trial',
-        'finalcta.title': 'The market doesn\'t wait.<br/><span class="highlight">Neither should you.</span>',
-        'finalcta.sub':   'Start free for 7 days. No card. Cancel anytime. Your portfolio deserves 24/7 attention.',
-        'finalcta.cta':   'Activate monitoring now →',
+        'pricing.per':       'per portfolio · billed in USD',
+        'pricing.currencies':'≈ <strong>R$ 290/mo</strong> · CLP 47,000/mo',
+        'feature1': 'Personalized portfolio onboarding',
+        'feature2': '24/7 monitoring of your specific assets',
+        'feature3': 'Contextualized alerts straight to Telegram',
+        'feature4': 'On-demand analysis — ask anything',
+        'feature5': 'Periodic portfolio reviews',
+        'feature6': 'Close human support via Telegram',
+        'feature7': 'No minimum contract — cancel anytime',
+        'pricing.cta':  'Get my AI advisor →',
+        'pricing.note': 'No card required to start · Free onboarding',
+        'finalcta.badge': 'Ready to start',
+        'finalcta.title': 'While you work,<br/><span class="highlight">your advisor watches the portfolio.</span>',
+        'finalcta.sub':   'Personalized onboarding. No contract. An advanced AI that knows you — not a generic investor.',
+        'finalcta.cta':   'Get my AI advisor →',
         'footer.copy':    '© 2026 Sentinel Invest. All rights reserved.',
         'footer.terms':   'Terms',
         'footer.privacy': 'Privacy',
@@ -1581,45 +1691,38 @@
       }
     };
 
-    /* ── Language detection & persistence ────────────────────────── */
+    /* ── Language detection ───────────────────────────────────────── */
     function detectLang() {
       const saved = localStorage.getItem('sentinel-lang');
       if (saved && T[saved]) return saved;
-      const browser = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-      if (browser.startsWith('pt')) return 'pt';
-      if (browser.startsWith('es')) return 'es';
+      const b = (navigator.language || 'en').toLowerCase();
+      if (b.startsWith('pt')) return 'pt';
+      if (b.startsWith('es')) return 'es';
       return 'en';
     }
 
     /* ── Apply translations ───────────────────────────────────────── */
     function applyLang(lang) {
-      const dict = T[lang];
+      const d = T[lang];
 
-      /* <html lang> */
-      document.documentElement.lang = dict['html.lang'];
+      document.documentElement.lang = d['html.lang'];
+      document.title = d['meta.title'];
+      const md = document.querySelector('meta[name="description"]');
+      if (md) md.setAttribute('content', d['meta.description']);
 
-      /* <title> and <meta description> */
-      document.title = dict['meta.title'];
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', dict['meta.description']);
-
-      /* text content */
       document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
-        if (dict[key] !== undefined) el.textContent = dict[key];
+        const v = d[el.dataset.i18n];
+        if (v !== undefined) el.textContent = v;
       });
 
-      /* html content (for elements with inline tags like <br>, <span>) */
       document.querySelectorAll('[data-i18n-html]').forEach(el => {
-        const key = el.dataset.i18nHtml;
-        if (dict[key] !== undefined) el.innerHTML = dict[key];
+        const v = d[el.dataset.i18nHtml];
+        if (v !== undefined) el.innerHTML = v;
       });
 
-      /* update lang selector button */
-      document.getElementById('currentFlag').textContent = dict['lang.flag'];
-      document.getElementById('currentCode').textContent = dict['lang.code'];
+      document.getElementById('currentFlag').textContent = d['lang.flag'];
+      document.getElementById('currentCode').textContent = d['lang.code'];
 
-      /* mark active option */
       document.querySelectorAll('.lang-option').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
@@ -1627,49 +1730,30 @@
       localStorage.setItem('sentinel-lang', lang);
     }
 
-    /* ── Dropdown toggle ──────────────────────────────────────────── */
+    /* ── Dropdown ─────────────────────────────────────────────────── */
     const langBtn      = document.getElementById('langBtn');
     const langDropdown = document.getElementById('langDropdown');
 
-    function openDropdown()  {
-      langDropdown.classList.add('open');
-      langBtn.setAttribute('aria-expanded', 'true');
-    }
+    const open  = () => { langDropdown.classList.add('open');    langBtn.setAttribute('aria-expanded', 'true');  };
+    const close = () => { langDropdown.classList.remove('open'); langBtn.setAttribute('aria-expanded', 'false'); };
 
-    function closeDropdown() {
-      langDropdown.classList.remove('open');
-      langBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    langBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      langDropdown.classList.contains('open') ? closeDropdown() : openDropdown();
-    });
-
-    document.addEventListener('click', closeDropdown);
+    langBtn.addEventListener('click', e => { e.stopPropagation(); langDropdown.classList.contains('open') ? close() : open(); });
+    document.addEventListener('click', close);
     langDropdown.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-    /* keyboard: Escape closes */
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeDropdown();
-    });
-
-    /* ── Language option clicks ───────────────────────────────────── */
     document.querySelectorAll('.lang-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyLang(btn.dataset.lang);
-        closeDropdown();
-      });
+      btn.addEventListener('click', () => { applyLang(btn.dataset.lang); close(); });
     });
 
     /* ── Scroll animations ────────────────────────────────────────── */
-    const observer = new IntersectionObserver(
+    const obs = new IntersectionObserver(
       entries => entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
       }),
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
     /* ── Init ─────────────────────────────────────────────────────── */
     applyLang(detectLang());
