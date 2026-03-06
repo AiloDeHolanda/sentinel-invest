@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sentinel Invest — Seu Assessor IA Pessoal</title>
-  <meta name="description" content="Um assessor de investimentos que conhece sua carteira real, sua estratégia e seus objetivos. Análises de IA avançada direto no Telegram — 24/7." />
+  <meta name="description" content="Conheça o AILO — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -918,6 +918,84 @@
     .footer-links a { font-size: 13px; color: var(--text-faint); transition: color var(--transition); }
     .footer-links a:hover { color: var(--text-muted); }
 
+    /* ── AILO Section ────────────────────────────────────────────── */
+    .ailo-name-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-orange);
+      border-radius: var(--radius-lg);
+      padding: 56px 48px 48px;
+      text-align: center;
+      margin: 48px 0 36px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) { .ailo-name-card { padding: 36px 20px 32px; } }
+
+    .ailo-name-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 320px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ailo-big {
+      font-size: clamp(80px, 13vw, 140px);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      color: var(--orange);
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 80px rgba(249,115,22,0.35);
+    }
+
+    .ailo-divider-line {
+      width: 56px; height: 2px;
+      background: var(--border-orange);
+      margin: 22px auto 18px;
+      border-radius: 99px;
+    }
+
+    .ailo-full {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 12px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: var(--text-faint);
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .ailo-full em { font-style: normal; color: var(--orange-light); font-weight: 700; }
+    .ailo-sep { color: var(--border-orange); }
+
+    .ailo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) { .ailo-grid { grid-template-columns: 1fr; } }
+
+    .ailo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .ailo-card:hover { border-color: var(--border-orange); transform: translateY(-3px); }
+    .ailo-card-icon  { font-size: 26px; margin-bottom: 14px; }
+    .ailo-card-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
+    .ailo-card-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
     /* ── Scroll animations ────────────────────────────────────────── */
     .fade-up {
       opacity: 0;
@@ -941,6 +1019,7 @@
         <span>Sentinel<span class="highlight"> Invest</span></span>
       </a>
       <ul class="nav-links">
+        <li><a href="#ailo"          data-i18n="nav.ailo"></a></li>
         <li><a href="#como-funciona" data-i18n="nav.how"></a></li>
         <li><a href="#para-quem"     data-i18n="nav.for_who"></a></li>
         <li><a href="#preco"         data-i18n="nav.pricing"></a></li>
@@ -1030,6 +1109,50 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── AILO ────────────────────────────────────────────────────── -->
+  <section id="ailo" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-label">
+        <span class="badge" data-i18n="ailo.badge"></span>
+      </div>
+
+      <div class="ailo-name-card fade-up">
+        <div class="ailo-name-glow"></div>
+        <div class="ailo-big">AILO</div>
+        <div class="ailo-divider-line"></div>
+        <div class="ailo-full">
+          <span><em>A</em>rtificial</span>
+          <span class="ailo-sep">·</span>
+          <span><em>I</em>ntelligence</span>
+          <span class="ailo-sep">·</span>
+          <span><em>L</em>anguage</span>
+          <span class="ailo-sep">·</span>
+          <span><em>O</em>racle</span>
+        </div>
+      </div>
+
+      <p class="section-subtitle" style="margin-bottom: 48px;" data-i18n="ailo.subtitle"></p>
+
+      <div class="ailo-grid">
+        <div class="ailo-card fade-up">
+          <div class="ailo-card-icon">🔮</div>
+          <div class="ailo-card-title" data-i18n="ailo.oracle.title"></div>
+          <div class="ailo-card-desc"  data-i18n="ailo.oracle.desc"></div>
+        </div>
+        <div class="ailo-card fade-up fade-up-delay-1">
+          <div class="ailo-card-icon">🎯</div>
+          <div class="ailo-card-title" data-i18n="ailo.personal.title"></div>
+          <div class="ailo-card-desc"  data-i18n="ailo.personal.desc"></div>
+        </div>
+        <div class="ailo-card fade-up fade-up-delay-2">
+          <div class="ailo-card-icon">🧠</div>
+          <div class="ailo-card-title" data-i18n="ailo.learns.title"></div>
+          <div class="ailo-card-desc"  data-i18n="ailo.learns.desc"></div>
         </div>
       </div>
     </div>
@@ -1338,7 +1461,7 @@
       /* ════════════════════════════════════════════════════════════ */
       pt: {
         'meta.title':       'Sentinel Invest — Seu Assessor IA Pessoal',
-        'meta.description': 'Um assessor de investimentos que conhece sua carteira real, sua estratégia e seus objetivos. Análises de IA avançada direto no Telegram — 24/7.',
+        'meta.description': 'Conheça o AILO — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7.',
         'html.lang':        'pt-BR',
         /* nav */
         'nav.how':     'Como funciona',
@@ -1347,8 +1470,8 @@
         'nav.cta':     'Quero meu assessor IA',
         /* hero */
         'hero.badge':        'Assessoria personalizada com IA',
-        'hero.title':        'Seu assessor de investimentos<br/>pessoal. <span class="highlight">Potencializado por IA.</span>',
-        'hero.subtitle':     'Nossa IA aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
+        'hero.title':        'Conheça o AILO —<br/>seu assessor de investimentos <span class="highlight">pessoal.</span>',
+        'hero.subtitle':     'O AILO aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
         'hero.cta_primary':  'Quero meu assessor IA →',
         'hero.cta_secondary':'Como funciona',
         'hero.trust1':       'Onboarding personalizado',
@@ -1365,7 +1488,7 @@
         'diff.title': 'Um assessor que te<br/><span class="highlight">conhece de verdade.</span>',
         'diff.sub':   'Não é software. É um serviço construído em torno da sua realidade como investidor — com contexto real, não respostas genéricas.',
         'diff1.title':'Conhece sua carteira real',
-        'diff1.desc': 'No onboarding, mapeamos sua carteira atual, seu histórico de aportes, sua estratégia e seus objetivos. Nossos agentes de IA partem do seu contexto específico — não de um perfil genérico.',
+        'diff1.desc': 'No onboarding, mapeamos sua carteira atual, seu histórico de aportes, sua estratégia e seus objetivos. O AILO parte do seu contexto específico — não de um perfil genérico.',
         'diff2.title':'Análise feita para você',
         'diff2.desc': 'Quando o mercado se move, o alerta que chega não é genérico. É: "dado que você tem 18% em NVDA e sinalizou reduzir semicondutores, veja o que aconteceu hoje."',
         'diff3.title':'Fica melhor com o tempo',
@@ -1377,7 +1500,7 @@
         'step1.title':'Você nos conta sobre você',
         'step1.desc': 'Respondemos um onboarding guiado sobre sua carteira atual, plataformas que usa (Fintual, Nomad, exchanges cripto), estratégia, perfil de risco e objetivos de longo prazo.',
         'step2.title':'Configuramos seu contexto',
-        'step2.desc': 'Montamos seu perfil no sistema — carteira, histórico, estratégia, preferências. Nossos agentes de IA passam a te conhecer antes mesmo de monitorar o primeiro ativo.',
+        'step2.desc': 'Montamos seu perfil no sistema — carteira, histórico, estratégia, preferências. O AILO passa a te conhecer antes mesmo de monitorar o primeiro ativo.',
         'step3.title':'Seu assessor entra em ação',
         'step3.desc': 'A partir daí, seu assessor monitora seus ativos 24/7, envia alertas contextualizados no Telegram e está disponível para responder suas dúvidas com base no seu perfil real.',
         /* does */
@@ -1450,13 +1573,23 @@
         /* final cta */
         'finalcta.badge': 'Pronto para começar',
         'finalcta.title': 'Enquanto você trabalha,<br/><span class="highlight">seu assessor cuida da carteira.</span>',
-        'finalcta.sub':   'Onboarding personalizado. Sem contrato. Uma IA avançada que te conhece — não um investidor genérico.',
+        'finalcta.sub':   'Onboarding personalizado. Sem contrato. O AILO te conhece — não um investidor genérico.',
         'finalcta.cta':   'Quero meu assessor IA →',
         /* footer */
         'footer.copy':    '© 2026 Sentinel Invest. Todos os direitos reservados.',
         'footer.terms':   'Termos',
         'footer.privacy': 'Privacidade',
         'footer.contact': 'Contato',
+        /* ailo */
+        'nav.ailo':           'AILO',
+        'ailo.badge':         'Conheça o AILO',
+        'ailo.subtitle':      'Não é um chatbot genérico. O AILO é um agente de IA construído para conhecer cada detalhe da sua carteira — e antecipar o que o mercado ainda não viu.',
+        'ailo.oracle.title':  'Oracle — antecipa o que vem por aí',
+        'ailo.oracle.desc':   'O AILO analisa padrões, correlações e sinais antes que se tornem óbvios para o mercado. Como um oráculo que não adivinha — calcula.',
+        'ailo.personal.title':'Personalizado para você',
+        'ailo.personal.desc': 'Cada análise, cada alerta e cada resposta parte da sua carteira real, da sua estratégia e dos seus objetivos. Não do investidor genérico.',
+        'ailo.learns.title':  'Aprende e evolui com você',
+        'ailo.learns.desc':   'Quanto mais você usa o AILO, mais ele te conhece. Cada decisão e cada conversa enriquecem o seu perfil — tornando as análises progressivamente mais precisas.',
         /* lang */
         'lang.flag': '🇧🇷',
         'lang.code': 'PT',
@@ -1465,15 +1598,15 @@
       /* ════════════════════════════════════════════════════════════ */
       es: {
         'meta.title':       'Sentinel Invest — Tu Asesor IA Personal',
-        'meta.description': 'Un asesor de inversiones que conoce tu portafolio real, tu estrategia y tus objetivos. Análisis de IA avanzada directo a Telegram — 24/7.',
+        'meta.description': 'Conoce a AILO — tu asesor de inversiones personal con IA. Analiza tu portafolio real y envía alertas personalizadas directo a Telegram, 24/7.',
         'html.lang':        'es',
         'nav.how':     'Cómo funciona',
         'nav.for_who': 'Para quién',
         'nav.pricing': 'Precio',
         'nav.cta':     'Quiero mi asesor IA',
         'hero.badge':        'Asesoría personalizada con IA',
-        'hero.title':        'Tu asesor de inversiones<br/>personal. <span class="highlight">Potenciado por IA.</span>',
-        'hero.subtitle':     'Nuestra IA aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
+        'hero.title':        'Conoce a AILO —<br/>tu asesor de inversiones <span class="highlight">personal.</span>',
+        'hero.subtitle':     'AILO aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
         'hero.cta_primary':  'Quiero mi asesor IA →',
         'hero.cta_secondary':'Cómo funciona',
         'hero.trust1':       'Onboarding personalizado',
@@ -1488,7 +1621,7 @@
         'diff.title': 'Un asesor que te<br/><span class="highlight">conoce de verdad.</span>',
         'diff.sub':   'No es software. Es un servicio construido alrededor de tu realidad como inversor — con contexto real, no respuestas genéricas.',
         'diff1.title':'Conoce tu portafolio real',
-        'diff1.desc': 'En el onboarding, mapeamos tu portafolio actual, historial de aportes, estrategia y objetivos. Nuestros agentes de IA parten de tu contexto específico — no de un perfil genérico.',
+        'diff1.desc': 'En el onboarding, mapeamos tu portafolio actual, historial de aportes, estrategia y objetivos. AILO parte de tu contexto específico — no de un perfil genérico.',
         'diff2.title':'Análisis hecho para ti',
         'diff2.desc': 'Cuando el mercado se mueve, la alerta que llega no es genérica. Es: "dado que tienes 18% en NVDA y señalaste reducir semiconductores, mira lo que pasó hoy."',
         'diff3.title':'Mejora con el tiempo',
@@ -1499,7 +1632,7 @@
         'step1.title':'Tú nos cuentas sobre ti',
         'step1.desc': 'Completamos un onboarding guiado sobre tu portafolio actual, plataformas que usas (Fintual, Nomad, exchanges cripto), estrategia, perfil de riesgo y objetivos a largo plazo.',
         'step2.title':'Configuramos tu contexto',
-        'step2.desc': 'Construimos tu perfil en el sistema — portafolio, historial, estrategia, preferencias. Nuestros agentes de IA te conocen antes de monitorear el primer activo.',
+        'step2.desc': 'Construimos tu perfil en el sistema — portafolio, historial, estrategia, preferencias. AILO te conoce antes de monitorear el primer activo.',
         'step3.title':'Tu asesor entra en acción',
         'step3.desc': 'Desde ese momento, tu asesor monitorea tus activos 24/7, envía alertas contextualizadas en Telegram y está disponible para responder tus dudas con base en tu perfil real.',
         'does.badge':  'Qué hace tu asesor',
@@ -1566,12 +1699,22 @@
         'pricing.note': 'Sin tarjeta para empezar · Onboarding gratuito',
         'finalcta.badge': 'Listo para empezar',
         'finalcta.title': 'Mientras trabajas,<br/><span class="highlight">tu asesor cuida el portafolio.</span>',
-        'finalcta.sub':   'Onboarding personalizado. Sin contrato. Una IA avanzada que te conoce — no un inversor genérico.',
+        'finalcta.sub':   'Onboarding personalizado. Sin contrato. AILO te conoce — no un inversor genérico.',
         'finalcta.cta':   'Quiero mi asesor IA →',
         'footer.copy':    '© 2026 Sentinel Invest. Todos los derechos reservados.',
         'footer.terms':   'Términos',
         'footer.privacy': 'Privacidad',
         'footer.contact': 'Contacto',
+        /* ailo */
+        'nav.ailo':           'AILO',
+        'ailo.badge':         'Conoce a AILO',
+        'ailo.subtitle':      'No es un chatbot genérico. AILO es un agente de IA construido para conocer cada detalle de tu portafolio — y anticipar lo que el mercado aún no ha visto.',
+        'ailo.oracle.title':  'Oracle — anticipa lo que viene',
+        'ailo.oracle.desc':   'AILO analiza patrones, correlaciones y señales antes de que se vuelvan obvias para el mercado. Como un oráculo que no adivina — calcula.',
+        'ailo.personal.title':'Personalizado para ti',
+        'ailo.personal.desc': 'Cada análisis, cada alerta y cada respuesta parte de tu portafolio real, tu estrategia y tus objetivos. No del inversor genérico.',
+        'ailo.learns.title':  'Aprende y evoluciona contigo',
+        'ailo.learns.desc':   'Cuanto más usas AILO, más te conoce. Cada decisión y cada conversación enriquecen tu perfil — haciendo los análisis progresivamente más precisos.',
         'lang.flag': '🇪🇸',
         'lang.code': 'ES',
       },
@@ -1579,15 +1722,15 @@
       /* ════════════════════════════════════════════════════════════ */
       en: {
         'meta.title':       'Sentinel Invest — Your Personal AI Advisor',
-        'meta.description': 'An investment advisor that knows your real portfolio, your strategy, and your goals. Advanced AI analysis delivered straight to Telegram — 24/7.',
+        'meta.description': 'Meet AILO — your personal AI investment advisor. It analyzes your real portfolio and sends personalized alerts straight to Telegram, 24/7.',
         'html.lang':        'en',
         'nav.how':     'How it works',
         'nav.for_who': 'Who it\'s for',
         'nav.pricing': 'Pricing',
         'nav.cta':     'Get my AI advisor',
         'hero.badge':        'Personalized AI investment advisory',
-        'hero.title':        'Your personal investment<br/>advisor. <span class="highlight">Powered by AI.</span>',
-        'hero.subtitle':     'Our advanced AI learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
+        'hero.title':        'Meet AILO —<br/>your personal <span class="highlight">investment advisor.</span>',
+        'hero.subtitle':     'AILO learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
         'hero.cta_primary':  'Get my AI advisor →',
         'hero.cta_secondary':'How it works',
         'hero.trust1':       'Personalized onboarding',
@@ -1602,7 +1745,7 @@
         'diff.title': 'An advisor that truly<br/><span class="highlight">knows you.</span>',
         'diff.sub':   'This isn\'t software. It\'s a service built around your reality as an investor — with real context, not generic answers.',
         'diff1.title':'Knows your real portfolio',
-        'diff1.desc': 'During onboarding, we map your current portfolio, investment history, strategy, and goals. Our AI agents start from your specific context — not a generic investor profile.',
+        'diff1.desc': 'During onboarding, we map your current portfolio, investment history, strategy, and goals. AILO starts from your specific context — not a generic investor profile.',
         'diff2.title':'Analysis made for you',
         'diff2.desc': 'When markets move, the alert you receive isn\'t generic. It\'s: "given that you have 18% in NVDA and flagged reducing semiconductor exposure, here\'s what happened today."',
         'diff3.title':'Gets better over time',
@@ -1613,7 +1756,7 @@
         'step1.title':'You tell us about yourself',
         'step1.desc': 'We walk through a guided onboarding about your current portfolio, platforms you use (Fintual, Nomad, crypto exchanges), strategy, risk profile, and long-term goals.',
         'step2.title':'We set up your context',
-        'step2.desc': 'We build your investor profile in the system — portfolio, history, strategy, preferences. Our AI agents get to know you before monitoring the first asset.',
+        'step2.desc': 'We build your investor profile in the system — portfolio, history, strategy, preferences. AILO gets to know you before monitoring the first asset.',
         'step3.title':'Your advisor gets to work',
         'step3.desc': 'From that point, your advisor monitors your assets 24/7, sends contextualized alerts on Telegram, and is available to answer your questions based on your real profile.',
         'does.badge':  'What your advisor does',
@@ -1680,12 +1823,22 @@
         'pricing.note': 'No card required to start · Free onboarding',
         'finalcta.badge': 'Ready to start',
         'finalcta.title': 'While you work,<br/><span class="highlight">your advisor watches the portfolio.</span>',
-        'finalcta.sub':   'Personalized onboarding. No contract. An advanced AI that knows you — not a generic investor.',
+        'finalcta.sub':   'Personalized onboarding. No contract. AILO knows you — not a generic investor.',
         'finalcta.cta':   'Get my AI advisor →',
         'footer.copy':    '© 2026 Sentinel Invest. All rights reserved.',
         'footer.terms':   'Terms',
         'footer.privacy': 'Privacy',
         'footer.contact': 'Contact',
+        /* ailo */
+        'nav.ailo':           'AILO',
+        'ailo.badge':         'Meet AILO',
+        'ailo.subtitle':      'Not a generic chatbot. AILO is an AI agent built to know every detail of your portfolio — and anticipate what the market hasn\'t seen yet.',
+        'ailo.oracle.title':  'Oracle — anticipates what\'s coming',
+        'ailo.oracle.desc':   'AILO analyzes patterns, correlations, and signals before they become obvious to the market. Like an oracle — it doesn\'t guess, it calculates.',
+        'ailo.personal.title':'Personalized for you',
+        'ailo.personal.desc': 'Every analysis, every alert, and every response starts from your real portfolio, strategy, and goals. Not from the generic investor.',
+        'ailo.learns.title':  'Learns and evolves with you',
+        'ailo.learns.desc':   'The more you use AILO, the better it knows you. Every decision and conversation enriches your profile — making analysis progressively more precise.',
         'lang.flag': '🇺🇸',
         'lang.code': 'EN',
       }
