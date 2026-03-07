@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sentinel Invest — Seu Assessor IA Pessoal</title>
-  <meta name="description" content="Conheça o AILO — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7." />
+  <meta name="description" content="Conheça o AILo — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -996,6 +996,295 @@
     .ailo-card-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
     .ailo-card-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 
+    /* ── Modal ────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-orange);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(18px) scale(0.97);
+      transition: transform 0.25s ease;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-orange) transparent;
+    }
+
+    .modal::-webkit-scrollbar { width: 4px; }
+    .modal::-webkit-scrollbar-thumb { background: var(--border-orange); border-radius: 99px; }
+
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--orange-dark), var(--orange), var(--orange-light));
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      pointer-events: none;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 1;
+    }
+
+    .modal-title { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: border-color var(--transition), color var(--transition);
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .modal-close:hover { border-color: var(--border-orange); color: var(--text); }
+
+    .modal-body { padding: 28px 32px 36px; }
+
+    @media (max-width: 480px) {
+      .modal-header { padding: 22px 20px 16px; }
+      .modal-body   { padding: 20px 20px 28px; }
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .form-label .req { color: var(--orange); margin-left: 2px; }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .form-input::placeholder { color: var(--text-faint); }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+    }
+
+    .form-input.is-error,
+    .form-select.is-error { border-color: #EF4444; }
+
+    .select-wrapper { position: relative; }
+
+    .select-wrapper::after {
+      content: '▾';
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 11px;
+      pointer-events: none;
+    }
+
+    .form-phone { display: flex; gap: 8px; }
+    .form-phone .select-wrapper { flex-shrink: 0; width: 118px; }
+    .form-phone .form-input { flex: 1; }
+
+    .form-error {
+      font-size: 12px;
+      color: #F87171;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .form-error.show { display: block; }
+
+    /* Checkboxes */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 400px) { .checkbox-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+      user-select: none;
+    }
+
+    .checkbox-item:hover { border-color: var(--border-orange); }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 15px; height: 15px;
+      accent-color: var(--orange);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-item.ticked { border-color: var(--border-orange); background: var(--orange-subtle); }
+
+    .checkbox-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .checkbox-item.ticked .checkbox-label { color: var(--text); }
+
+    .form-submit {
+      width: 100%;
+      font-size: 15px;
+      padding: 15px;
+      margin-top: 24px;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Success state */
+    .modal-success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 56px 32px 48px;
+      gap: 14px;
+    }
+
+    .modal-success.show { display: flex; }
+
+    .success-icon {
+      width: 68px; height: 68px;
+      background: rgba(52,211,153,0.1);
+      border: 2px solid rgba(52,211,153,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .success-title { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+
+    .success-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 360px;
+      line-height: 1.65;
+    }
+
+    .success-close-btn { margin-top: 10px; }
+
+    /* ── Brand name styling ───────────────────────────────────────── */
+    .brand-ai { font-weight: 900; }
+    .brand-lo { font-weight: 300; font-style: italic; }
+
+    /* ── Early Adopter pricing ────────────────────────────────────── */
+    .ea-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--orange-dark), var(--orange));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 99px;
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+    }
+
+    .ea-counter { font-size: 13px; color: var(--text-muted); margin: 0 0 22px; }
+    .ea-counter strong { color: var(--orange); font-weight: 800; }
+
+    .price-regular-wrap { margin: 2px 0 4px; }
+    .price-regular {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-faint);
+      text-decoration: line-through;
+    }
+
+    .price-lock { font-size: 12px; color: rgba(52,211,153,0.85); margin: 2px 0 18px; }
+    .price-lock::before { content: '🔒 '; }
+
+    .form-server-error {
+      display: none;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      color: #F87171;
+      font-size: 13px;
+      padding: 11px 14px;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    .form-server-error.show { display: block; }
+
+    .form-submit.loading {
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     /* ── Scroll animations ────────────────────────────────────────── */
     .fade-up {
       opacity: 0;
@@ -1019,7 +1308,7 @@
         <span>Sentinel<span class="highlight"> Invest</span></span>
       </a>
       <ul class="nav-links">
-        <li><a href="#ailo"          data-i18n="nav.ailo"></a></li>
+        <li><a href="#ailo"          data-i18n-html="nav.ailo"></a></li>
         <li><a href="#como-funciona" data-i18n="nav.how"></a></li>
         <li><a href="#para-quem"     data-i18n="nav.for_who"></a></li>
         <li><a href="#preco"         data-i18n="nav.pricing"></a></li>
@@ -1039,7 +1328,7 @@
             <button class="lang-option" data-lang="en" role="menuitem">🇺🇸 English</button>
           </div>
         </div>
-        <a href="#preco" class="btn-primary" data-i18n="nav.cta"></a>
+        <a href="#" class="btn-primary" data-open-modal data-i18n="nav.cta"></a>
       </div>
     </div>
   </nav>
@@ -1056,7 +1345,7 @@
         <h1 class="hero-title" data-i18n-html="hero.title"></h1>
         <p class="hero-subtitle" data-i18n="hero.subtitle"></p>
         <div class="hero-actions">
-          <a href="#preco" class="btn-primary" style="font-size:16px; padding:16px 32px;" data-i18n="hero.cta_primary"></a>
+          <a href="#" class="btn-primary" style="font-size:16px; padding:16px 32px;" data-open-modal data-i18n="hero.cta_primary"></a>
           <a href="#como-funciona" class="btn-secondary" data-i18n="hero.cta_secondary"></a>
         </div>
         <div class="hero-trust">
@@ -1123,7 +1412,7 @@
 
       <div class="ailo-name-card fade-up">
         <div class="ailo-name-glow"></div>
-        <div class="ailo-big">AILO</div>
+        <div class="ailo-big"><span class="brand-ai">AI</span><span class="brand-lo">Lo</span></div>
         <div class="ailo-divider-line"></div>
         <div class="ailo-full">
           <span><em>A</em>rtificial</span>
@@ -1397,12 +1686,16 @@
       <div class="pricing-wrapper">
         <div class="pricing-card fade-up">
           <div class="pricing-glow"></div>
+          <div class="ea-badge" data-i18n="pricing.ea_badge"></div>
+          <p class="ea-counter" data-i18n-html="pricing.ea_counter"></p>
           <div class="pricing-badge" data-i18n="pricing.plan_badge"></div>
           <div class="price">
             <span class="price-currency">$</span>
-            <span class="price-amount">49</span>
+            <span class="price-amount">29</span>
             <span class="price-period" data-i18n="pricing.period"></span>
           </div>
+          <p class="price-regular-wrap"><span class="price-regular" data-i18n="pricing.regular_price"></span></p>
+          <p class="price-lock" data-i18n="pricing.lock"></p>
           <p class="price-per" data-i18n="pricing.per"></p>
           <div class="price-currencies" data-i18n-html="pricing.currencies"></div>
 
@@ -1416,7 +1709,7 @@
             <li><span class="check-icon">✓</span><span data-i18n="feature7"></span></li>
           </ul>
 
-          <a href="#" class="btn-primary pricing-cta" data-i18n="pricing.cta"></a>
+          <a href="#" class="btn-primary pricing-cta" data-open-modal data-i18n="pricing.cta"></a>
           <p class="pricing-note" data-i18n="pricing.note"></p>
         </div>
       </div>
@@ -1432,7 +1725,7 @@
       </div>
       <h2 class="final-cta-title" data-i18n-html="finalcta.title"></h2>
       <p class="final-cta-sub" data-i18n="finalcta.sub"></p>
-      <a href="#preco" class="btn-primary" style="font-size:17px; padding:18px 40px;" data-i18n="finalcta.cta"></a>
+      <a href="#" class="btn-primary" style="font-size:17px; padding:18px 40px;" data-open-modal data-i18n="finalcta.cta"></a>
     </div>
   </section>
 
@@ -1453,6 +1746,114 @@
   </footer>
 
   <!-- ── i18n engine ──────────────────────────────────────────────── -->
+  <!-- ══════════════════════════════════════════════ REGISTRATION MODAL -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+
+      <!-- ── Form view -->
+      <div id="modalFormView">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle" data-i18n-html="modal.title"></h2>
+          <button class="modal-close" id="modalClose" aria-label="Fechar">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="modalForm" novalidate>
+
+            <!-- Nome -->
+            <div class="form-group">
+              <label class="form-label" for="fName" data-i18n="form.name.label"></label>
+              <input class="form-input" id="fName" type="text" autocomplete="name" data-i18n-placeholder="form.name.placeholder" />
+              <span class="form-error" id="errName"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label class="form-label" for="fEmail" data-i18n="form.email.label"></label>
+              <input class="form-input" id="fEmail" type="email" autocomplete="email" data-i18n-placeholder="form.email.placeholder" />
+              <span class="form-error" id="errEmail"></span>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="form-group">
+              <label class="form-label" for="fPhone" data-i18n="form.whatsapp.label"></label>
+              <div class="form-phone">
+                <div class="select-wrapper">
+                  <select class="form-select" id="fCountry" aria-label="Código do país">
+                    <option value="+55">🇧🇷 +55</option>
+                    <option value="+56">🇨🇱 +56</option>
+                    <option value="+57">🇨🇴 +57</option>
+                    <option value="+51">🇵🇪 +51</option>
+                    <option value="+52">🇲🇽 +52</option>
+                    <option value="+54">🇦🇷 +54</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+other">+ outro</option>
+                  </select>
+                </div>
+                <input class="form-input" id="fPhone" type="tel" autocomplete="tel" data-i18n-placeholder="form.whatsapp.placeholder" />
+              </div>
+              <span class="form-error" id="errPhone"></span>
+            </div>
+
+            <!-- Carteira -->
+            <div class="form-group">
+              <label class="form-label" for="fPortfolio" data-i18n="form.portfolio.label"></label>
+              <div class="select-wrapper">
+                <select class="form-select form-input" id="fPortfolio">
+                  <option value="" data-i18n="form.portfolio.opt0"></option>
+                  <option value="1" data-i18n="form.portfolio.opt1"></option>
+                  <option value="2" data-i18n="form.portfolio.opt2"></option>
+                  <option value="3" data-i18n="form.portfolio.opt3"></option>
+                  <option value="4" data-i18n="form.portfolio.opt4"></option>
+                </select>
+              </div>
+              <span class="form-error" id="errPortfolio"></span>
+            </div>
+
+            <!-- Ativos -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="form.assets.label"></label>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" value="crypto" /><span class="checkbox-label" data-i18n="form.assets.crypto"></span></label>
+                <label class="checkbox-item"><input type="checkbox" value="etfs"   /><span class="checkbox-label" data-i18n="form.assets.etfs"></span></label>
+                <label class="checkbox-item"><input type="checkbox" value="br"     /><span class="checkbox-label" data-i18n="form.assets.br"></span></label>
+                <label class="checkbox-item"><input type="checkbox" value="us"     /><span class="checkbox-label" data-i18n="form.assets.us"></span></label>
+                <label class="checkbox-item"><input type="checkbox" value="funds"  /><span class="checkbox-label" data-i18n="form.assets.funds"></span></label>
+                <label class="checkbox-item"><input type="checkbox" value="other"  /><span class="checkbox-label" data-i18n="form.assets.other"></span></label>
+              </div>
+            </div>
+
+            <!-- Fonte -->
+            <div class="form-group">
+              <label class="form-label" for="fSource" data-i18n="form.source.label"></label>
+              <div class="select-wrapper">
+                <select class="form-select form-input" id="fSource">
+                  <option value="" data-i18n="form.source.opt0"></option>
+                  <option value="instagram" data-i18n="form.source.opt1"></option>
+                  <option value="linkedin"  data-i18n="form.source.opt2"></option>
+                  <option value="referral"  data-i18n="form.source.opt3"></option>
+                  <option value="google"    data-i18n="form.source.opt4"></option>
+                  <option value="other"     data-i18n="form.source.opt5"></option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary form-submit" id="formSubmitBtn" data-i18n="form.submit"></button>
+            <div class="form-server-error" id="formServerError" data-i18n="form.error.server"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Success view -->
+      <div class="modal-success" id="modalSuccess">
+        <div class="success-icon">✓</div>
+        <p class="success-title" data-i18n="form.success.title"></p>
+        <p class="success-desc"  data-i18n="form.success.desc"></p>
+        <button class="btn-primary form-submit success-close-btn" id="modalSuccessBtn" data-i18n="form.success.close"></button>
+      </div>
+
+    </div>
+  </div>
+
   <script>
   (() => {
     /* ── Translations ─────────────────────────────────────────────── */
@@ -1461,7 +1862,7 @@
       /* ════════════════════════════════════════════════════════════ */
       pt: {
         'meta.title':       'Sentinel Invest — Seu Assessor IA Pessoal',
-        'meta.description': 'Conheça o AILO — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7.',
+        'meta.description': 'Conheça o AILo — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7.',
         'html.lang':        'pt-BR',
         /* nav */
         'nav.how':     'Como funciona',
@@ -1470,8 +1871,8 @@
         'nav.cta':     'Quero meu assessor IA',
         /* hero */
         'hero.badge':        'Assessoria personalizada com IA',
-        'hero.title':        'Conheça o AILO —<br/>seu assessor de investimentos <span class="highlight">pessoal.</span>',
-        'hero.subtitle':     'O AILO aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
+        'hero.title':        'Conheça o <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>seu assessor de investimentos <span class="highlight">pessoal.</span>',
+        'hero.subtitle':     'O AILo aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
         'hero.cta_primary':  'Quero meu assessor IA →',
         'hero.cta_secondary':'Como funciona',
         'hero.trust1':       'Onboarding personalizado',
@@ -1488,7 +1889,7 @@
         'diff.title': 'Um assessor que te<br/><span class="highlight">conhece de verdade.</span>',
         'diff.sub':   'Não é software. É um serviço construído em torno da sua realidade como investidor — com contexto real, não respostas genéricas.',
         'diff1.title':'Conhece sua carteira real',
-        'diff1.desc': 'No onboarding, mapeamos sua carteira atual, seu histórico de aportes, sua estratégia e seus objetivos. O AILO parte do seu contexto específico — não de um perfil genérico.',
+        'diff1.desc': 'No onboarding, mapeamos sua carteira atual, seu histórico de aportes, sua estratégia e seus objetivos. O AILo parte do seu contexto específico — não de um perfil genérico.',
         'diff2.title':'Análise feita para você',
         'diff2.desc': 'Quando o mercado se move, o alerta que chega não é genérico. É: "dado que você tem 18% em NVDA e sinalizou reduzir semicondutores, veja o que aconteceu hoje."',
         'diff3.title':'Fica melhor com o tempo',
@@ -1500,7 +1901,7 @@
         'step1.title':'Você nos conta sobre você',
         'step1.desc': 'Respondemos um onboarding guiado sobre sua carteira atual, plataformas que usa (Fintual, Nomad, exchanges cripto), estratégia, perfil de risco e objetivos de longo prazo.',
         'step2.title':'Configuramos seu contexto',
-        'step2.desc': 'Montamos seu perfil no sistema — carteira, histórico, estratégia, preferências. O AILO passa a te conhecer antes mesmo de monitorar o primeiro ativo.',
+        'step2.desc': 'Montamos seu perfil no sistema — carteira, histórico, estratégia, preferências. O AILo passa a te conhecer antes mesmo de monitorar o primeiro ativo.',
         'step3.title':'Seu assessor entra em ação',
         'step3.desc': 'A partir daí, seu assessor monitora seus ativos 24/7, envia alertas contextualizados no Telegram e está disponível para responder suas dúvidas com base no seu perfil real.',
         /* does */
@@ -1568,12 +1969,16 @@
         'feature5': 'Revisões periódicas do portfólio',
         'feature6': 'Suporte humano próximo via Telegram',
         'feature7': 'Sem contrato mínimo — cancele quando quiser',
-        'pricing.cta':  'Quero meu assessor IA →',
+        'pricing.ea_badge':   '🚀 Early Adopter',
+        'pricing.ea_counter': 'Restam <strong>23</strong> de 50 vagas Early Adopter',
+        'pricing.regular_price': '$49/mês',
+        'pricing.lock':       'Preço travado enquanto mantiver assinatura ativa',
+        'pricing.cta':  'Quero meu AILo →',
         'pricing.note': 'Sem cartão para começar · Onboarding gratuito',
         /* final cta */
         'finalcta.badge': 'Pronto para começar',
         'finalcta.title': 'Enquanto você trabalha,<br/><span class="highlight">seu assessor cuida da carteira.</span>',
-        'finalcta.sub':   'Onboarding personalizado. Sem contrato. O AILO te conhece — não um investidor genérico.',
+        'finalcta.sub':   'Onboarding personalizado. Sem contrato. O AILo te conhece — não um investidor genérico.',
         'finalcta.cta':   'Quero meu assessor IA →',
         /* footer */
         'footer.copy':    '© 2026 Sentinel Invest. Todos os direitos reservados.',
@@ -1581,15 +1986,50 @@
         'footer.privacy': 'Privacidade',
         'footer.contact': 'Contato',
         /* ailo */
-        'nav.ailo':           'AILO',
-        'ailo.badge':         'Conheça o AILO',
-        'ailo.subtitle':      'Não é um chatbot genérico. O AILO é um agente de IA construído para conhecer cada detalhe da sua carteira — e antecipar o que o mercado ainda não viu.',
+        'nav.ailo':           '<span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'ailo.badge':         'Conheça o AILo',
+        'ailo.subtitle':      'Não é um chatbot genérico. O AILo é um agente de IA construído para conhecer cada detalhe da sua carteira — e antecipar o que o mercado ainda não viu.',
         'ailo.oracle.title':  'Oracle — antecipa o que vem por aí',
-        'ailo.oracle.desc':   'O AILO analisa padrões, correlações e sinais antes que se tornem óbvios para o mercado. Como um oráculo que não adivinha — calcula.',
+        'ailo.oracle.desc':   'O AILo analisa padrões, correlações e sinais antes que se tornem óbvios para o mercado. Como um oráculo que não adivinha — calcula.',
         'ailo.personal.title':'Personalizado para você',
         'ailo.personal.desc': 'Cada análise, cada alerta e cada resposta parte da sua carteira real, da sua estratégia e dos seus objetivos. Não do investidor genérico.',
         'ailo.learns.title':  'Aprende e evolui com você',
-        'ailo.learns.desc':   'Quanto mais você usa o AILO, mais ele te conhece. Cada decisão e cada conversa enriquecem o seu perfil — tornando as análises progressivamente mais precisas.',
+        'ailo.learns.desc':   'Quanto mais você usa o AILo, mais ele te conhece. Cada decisão e cada conversa enriquecem o seu perfil — tornando as análises progressivamente mais precisas.',
+        /* modal */
+        'modal.title':             'Quero conhecer o <span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'form.name.label':         'Nome completo',
+        'form.name.placeholder':   'Seu nome completo',
+        'form.email.label':        'Email',
+        'form.email.placeholder':  'seu@email.com',
+        'form.whatsapp.label':     'WhatsApp',
+        'form.whatsapp.placeholder':'(11) 99999-9999',
+        'form.portfolio.label':    'Tamanho da sua carteira',
+        'form.portfolio.opt0':     'Selecione...',
+        'form.portfolio.opt1':     'Até R$ 50.000',
+        'form.portfolio.opt2':     'R$ 50.000 – R$ 200.000',
+        'form.portfolio.opt3':     'R$ 200.000 – R$ 500.000',
+        'form.portfolio.opt4':     'Acima de R$ 500.000',
+        'form.assets.label':       'Quais ativos você monitora?',
+        'form.assets.crypto':      'Cripto (BTC, ETH…)',
+        'form.assets.etfs':        'ETFs internacionais',
+        'form.assets.br':          'Ações BR (B3)',
+        'form.assets.us':          'Ações EUA',
+        'form.assets.funds':       'Fundos (Fintual, XP…)',
+        'form.assets.other':       'Outros',
+        'form.source.label':       'Como nos conheceu?',
+        'form.source.opt0':        'Selecione...',
+        'form.source.opt1':        'Instagram',
+        'form.source.opt2':        'LinkedIn',
+        'form.source.opt3':        'Indicação de amigo',
+        'form.source.opt4':        'Google',
+        'form.source.opt5':        'Outro',
+        'form.submit':             'Quero meu AILo →',
+        'form.error.required':     'Este campo é obrigatório',
+        'form.error.email':        'Insira um email válido',
+        'form.error.server':       'Algo deu errado. Tente novamente em alguns instantes.',
+        'form.success.title':      'Ótimo! Entraremos em contato.',
+        'form.success.desc':       'Entraremos em contato em até 24h via WhatsApp.',
+        'form.success.close':      'Fechar',
         /* lang */
         'lang.flag': '🇧🇷',
         'lang.code': 'PT',
@@ -1598,15 +2038,15 @@
       /* ════════════════════════════════════════════════════════════ */
       es: {
         'meta.title':       'Sentinel Invest — Tu Asesor IA Personal',
-        'meta.description': 'Conoce a AILO — tu asesor de inversiones personal con IA. Analiza tu portafolio real y envía alertas personalizadas directo a Telegram, 24/7.',
+        'meta.description': 'Conoce al AILo — tu asesor de inversiones personal con IA. Analiza tu portafolio real y envía alertas personalizadas directo a Telegram, 24/7.',
         'html.lang':        'es',
         'nav.how':     'Cómo funciona',
         'nav.for_who': 'Para quién',
         'nav.pricing': 'Precio',
         'nav.cta':     'Quiero mi asesor IA',
         'hero.badge':        'Asesoría personalizada con IA',
-        'hero.title':        'Conoce a AILO —<br/>tu asesor de inversiones <span class="highlight">personal.</span>',
-        'hero.subtitle':     'AILO aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
+        'hero.title':        'Conoce al <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>tu asesor de inversiones <span class="highlight">personal.</span>',
+        'hero.subtitle':     'AILo aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
         'hero.cta_primary':  'Quiero mi asesor IA →',
         'hero.cta_secondary':'Cómo funciona',
         'hero.trust1':       'Onboarding personalizado',
@@ -1621,7 +2061,7 @@
         'diff.title': 'Un asesor que te<br/><span class="highlight">conoce de verdad.</span>',
         'diff.sub':   'No es software. Es un servicio construido alrededor de tu realidad como inversor — con contexto real, no respuestas genéricas.',
         'diff1.title':'Conoce tu portafolio real',
-        'diff1.desc': 'En el onboarding, mapeamos tu portafolio actual, historial de aportes, estrategia y objetivos. AILO parte de tu contexto específico — no de un perfil genérico.',
+        'diff1.desc': 'En el onboarding, mapeamos tu portafolio actual, historial de aportes, estrategia y objetivos. AILo parte de tu contexto específico — no de un perfil genérico.',
         'diff2.title':'Análisis hecho para ti',
         'diff2.desc': 'Cuando el mercado se mueve, la alerta que llega no es genérica. Es: "dado que tienes 18% en NVDA y señalaste reducir semiconductores, mira lo que pasó hoy."',
         'diff3.title':'Mejora con el tiempo',
@@ -1632,7 +2072,7 @@
         'step1.title':'Tú nos cuentas sobre ti',
         'step1.desc': 'Completamos un onboarding guiado sobre tu portafolio actual, plataformas que usas (Fintual, Nomad, exchanges cripto), estrategia, perfil de riesgo y objetivos a largo plazo.',
         'step2.title':'Configuramos tu contexto',
-        'step2.desc': 'Construimos tu perfil en el sistema — portafolio, historial, estrategia, preferencias. AILO te conoce antes de monitorear el primer activo.',
+        'step2.desc': 'Construimos tu perfil en el sistema — portafolio, historial, estrategia, preferencias. AILo te conoce antes de monitorear el primer activo.',
         'step3.title':'Tu asesor entra en acción',
         'step3.desc': 'Desde ese momento, tu asesor monitorea tus activos 24/7, envía alertas contextualizadas en Telegram y está disponible para responder tus dudas con base en tu perfil real.',
         'does.badge':  'Qué hace tu asesor',
@@ -1695,26 +2135,65 @@
         'feature5': 'Revisiones periódicas del portafolio',
         'feature6': 'Soporte humano cercano vía Telegram',
         'feature7': 'Sin contrato mínimo — cancela cuando quieras',
-        'pricing.cta':  'Quiero mi asesor IA →',
+        'pricing.ea_badge':   '🚀 Early Adopter',
+        'pricing.ea_counter': 'Quedan <strong>23</strong> de 50 cupos Early Adopter',
+        'pricing.regular_price': '$49/mes',
+        'pricing.lock':       'Precio bloqueado mientras mantengas tu suscripción',
+        'pricing.cta':  'Quiero mi AILo →',
         'pricing.note': 'Sin tarjeta para empezar · Onboarding gratuito',
         'finalcta.badge': 'Listo para empezar',
         'finalcta.title': 'Mientras trabajas,<br/><span class="highlight">tu asesor cuida el portafolio.</span>',
-        'finalcta.sub':   'Onboarding personalizado. Sin contrato. AILO te conoce — no un inversor genérico.',
+        'finalcta.sub':   'Onboarding personalizado. Sin contrato. AILo te conoce — no un inversor genérico.',
         'finalcta.cta':   'Quiero mi asesor IA →',
         'footer.copy':    '© 2026 Sentinel Invest. Todos los derechos reservados.',
         'footer.terms':   'Términos',
         'footer.privacy': 'Privacidad',
         'footer.contact': 'Contacto',
         /* ailo */
-        'nav.ailo':           'AILO',
-        'ailo.badge':         'Conoce a AILO',
-        'ailo.subtitle':      'No es un chatbot genérico. AILO es un agente de IA construido para conocer cada detalle de tu portafolio — y anticipar lo que el mercado aún no ha visto.',
+        'nav.ailo':           '<span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'ailo.badge':         'Conoce al AILo',
+        'ailo.subtitle':      'No es un chatbot genérico. AILo es un agente de IA construido para conocer cada detalle de tu portafolio — y anticipar lo que el mercado aún no ha visto.',
         'ailo.oracle.title':  'Oracle — anticipa lo que viene',
-        'ailo.oracle.desc':   'AILO analiza patrones, correlaciones y señales antes de que se vuelvan obvias para el mercado. Como un oráculo que no adivina — calcula.',
+        'ailo.oracle.desc':   'AILo analiza patrones, correlaciones y señales antes de que se vuelvan obvias para el mercado. Como un oráculo que no adivina — calcula.',
         'ailo.personal.title':'Personalizado para ti',
         'ailo.personal.desc': 'Cada análisis, cada alerta y cada respuesta parte de tu portafolio real, tu estrategia y tus objetivos. No del inversor genérico.',
         'ailo.learns.title':  'Aprende y evoluciona contigo',
-        'ailo.learns.desc':   'Cuanto más usas AILO, más te conoce. Cada decisión y cada conversación enriquecen tu perfil — haciendo los análisis progresivamente más precisos.',
+        'ailo.learns.desc':   'Cuanto más usas AILo, más te conoce. Cada decisión y cada conversación enriquecen tu perfil — haciendo los análisis progresivamente más precisos.',
+        /* modal */
+        'modal.title':             'Quiero conocer al <span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'form.name.label':         'Nombre completo',
+        'form.name.placeholder':   'Tu nombre completo',
+        'form.email.label':        'Email',
+        'form.email.placeholder':  'tu@email.com',
+        'form.whatsapp.label':     'WhatsApp',
+        'form.whatsapp.placeholder':'(9) 9999-9999',
+        'form.portfolio.label':    'Tamaño de tu cartera',
+        'form.portfolio.opt0':     'Selecciona...',
+        'form.portfolio.opt1':     'Hasta USD 15.000',
+        'form.portfolio.opt2':     'USD 15.000 – USD 50.000',
+        'form.portfolio.opt3':     'USD 50.000 – USD 150.000',
+        'form.portfolio.opt4':     'Más de USD 150.000',
+        'form.assets.label':       '¿Qué activos monitoras?',
+        'form.assets.crypto':      'Cripto (BTC, ETH…)',
+        'form.assets.etfs':        'ETFs internacionales',
+        'form.assets.br':          'Acciones BR (B3)',
+        'form.assets.us':          'Acciones EEUU',
+        'form.assets.funds':       'Fondos (Fintual, XP…)',
+        'form.assets.other':       'Otros',
+        'form.source.label':       '¿Cómo nos conociste?',
+        'form.source.opt0':        'Selecciona...',
+        'form.source.opt1':        'Instagram',
+        'form.source.opt2':        'LinkedIn',
+        'form.source.opt3':        'Recomendación de amigo',
+        'form.source.opt4':        'Google',
+        'form.source.opt5':        'Otro',
+        'form.submit':             'Quiero mi AILo →',
+        'form.error.required':     'Este campo es obligatorio',
+        'form.error.email':        'Ingresa un email válido',
+        'form.error.server':       'Algo salió mal. Intenta de nuevo en unos instantes.',
+        'form.success.title':      '¡Genial! Te contactaremos.',
+        'form.success.desc':       'Te contactaremos en menos de 24h por WhatsApp.',
+        'form.success.close':      'Cerrar',
         'lang.flag': '🇪🇸',
         'lang.code': 'ES',
       },
@@ -1722,15 +2201,15 @@
       /* ════════════════════════════════════════════════════════════ */
       en: {
         'meta.title':       'Sentinel Invest — Your Personal AI Advisor',
-        'meta.description': 'Meet AILO — your personal AI investment advisor. It analyzes your real portfolio and sends personalized alerts straight to Telegram, 24/7.',
+        'meta.description': 'Meet AILo — your personal AI investment advisor. It analyzes your real portfolio and sends personalized alerts straight to Telegram, 24/7.',
         'html.lang':        'en',
         'nav.how':     'How it works',
         'nav.for_who': 'Who it\'s for',
         'nav.pricing': 'Pricing',
         'nav.cta':     'Get my AI advisor',
         'hero.badge':        'Personalized AI investment advisory',
-        'hero.title':        'Meet AILO —<br/>your personal <span class="highlight">investment advisor.</span>',
-        'hero.subtitle':     'AILO learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
+        'hero.title':        'Meet <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>your personal <span class="highlight">investment advisor.</span>',
+        'hero.subtitle':     'AILo learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
         'hero.cta_primary':  'Get my AI advisor →',
         'hero.cta_secondary':'How it works',
         'hero.trust1':       'Personalized onboarding',
@@ -1745,7 +2224,7 @@
         'diff.title': 'An advisor that truly<br/><span class="highlight">knows you.</span>',
         'diff.sub':   'This isn\'t software. It\'s a service built around your reality as an investor — with real context, not generic answers.',
         'diff1.title':'Knows your real portfolio',
-        'diff1.desc': 'During onboarding, we map your current portfolio, investment history, strategy, and goals. AILO starts from your specific context — not a generic investor profile.',
+        'diff1.desc': 'During onboarding, we map your current portfolio, investment history, strategy, and goals. AILo starts from your specific context — not a generic investor profile.',
         'diff2.title':'Analysis made for you',
         'diff2.desc': 'When markets move, the alert you receive isn\'t generic. It\'s: "given that you have 18% in NVDA and flagged reducing semiconductor exposure, here\'s what happened today."',
         'diff3.title':'Gets better over time',
@@ -1756,7 +2235,7 @@
         'step1.title':'You tell us about yourself',
         'step1.desc': 'We walk through a guided onboarding about your current portfolio, platforms you use (Fintual, Nomad, crypto exchanges), strategy, risk profile, and long-term goals.',
         'step2.title':'We set up your context',
-        'step2.desc': 'We build your investor profile in the system — portfolio, history, strategy, preferences. AILO gets to know you before monitoring the first asset.',
+        'step2.desc': 'We build your investor profile in the system — portfolio, history, strategy, preferences. AILo gets to know you before monitoring the first asset.',
         'step3.title':'Your advisor gets to work',
         'step3.desc': 'From that point, your advisor monitors your assets 24/7, sends contextualized alerts on Telegram, and is available to answer your questions based on your real profile.',
         'does.badge':  'What your advisor does',
@@ -1819,26 +2298,65 @@
         'feature5': 'Periodic portfolio reviews',
         'feature6': 'Close human support via Telegram',
         'feature7': 'No minimum contract — cancel anytime',
-        'pricing.cta':  'Get my AI advisor →',
+        'pricing.ea_badge':   '🚀 Early Adopter',
+        'pricing.ea_counter': '<strong>23</strong> of 50 Early Adopter spots remaining',
+        'pricing.regular_price': '$49/mo',
+        'pricing.lock':       'Price locked as long as you keep your subscription',
+        'pricing.cta':  'I want my AILo →',
         'pricing.note': 'No card required to start · Free onboarding',
         'finalcta.badge': 'Ready to start',
         'finalcta.title': 'While you work,<br/><span class="highlight">your advisor watches the portfolio.</span>',
-        'finalcta.sub':   'Personalized onboarding. No contract. AILO knows you — not a generic investor.',
+        'finalcta.sub':   'Personalized onboarding. No contract. AILo knows you — not a generic investor.',
         'finalcta.cta':   'Get my AI advisor →',
         'footer.copy':    '© 2026 Sentinel Invest. All rights reserved.',
         'footer.terms':   'Terms',
         'footer.privacy': 'Privacy',
         'footer.contact': 'Contact',
         /* ailo */
-        'nav.ailo':           'AILO',
-        'ailo.badge':         'Meet AILO',
-        'ailo.subtitle':      'Not a generic chatbot. AILO is an AI agent built to know every detail of your portfolio — and anticipate what the market hasn\'t seen yet.',
+        'nav.ailo':           '<span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'ailo.badge':         'Meet AILo',
+        'ailo.subtitle':      'Not a generic chatbot. AILo is an AI agent built to know every detail of your portfolio — and anticipate what the market hasn\'t seen yet.',
         'ailo.oracle.title':  'Oracle — anticipates what\'s coming',
-        'ailo.oracle.desc':   'AILO analyzes patterns, correlations, and signals before they become obvious to the market. Like an oracle — it doesn\'t guess, it calculates.',
+        'ailo.oracle.desc':   'AILo analyzes patterns, correlations, and signals before they become obvious to the market. Like an oracle — it doesn\'t guess, it calculates.',
         'ailo.personal.title':'Personalized for you',
         'ailo.personal.desc': 'Every analysis, every alert, and every response starts from your real portfolio, strategy, and goals. Not from the generic investor.',
         'ailo.learns.title':  'Learns and evolves with you',
-        'ailo.learns.desc':   'The more you use AILO, the better it knows you. Every decision and conversation enriches your profile — making analysis progressively more precise.',
+        'ailo.learns.desc':   'The more you use AILo, the better it knows you. Every decision and conversation enriches your profile — making analysis progressively more precise.',
+        /* modal */
+        'modal.title':             'I want to meet <span class="brand-ai">AI</span><span class="brand-lo">Lo</span>',
+        'form.name.label':         'Full name',
+        'form.name.placeholder':   'Your full name',
+        'form.email.label':        'Email',
+        'form.email.placeholder':  'you@email.com',
+        'form.whatsapp.label':     'WhatsApp',
+        'form.whatsapp.placeholder':'+1 (555) 000-0000',
+        'form.portfolio.label':    'Portfolio size',
+        'form.portfolio.opt0':     'Select...',
+        'form.portfolio.opt1':     'Under USD 15,000',
+        'form.portfolio.opt2':     'USD 15,000 – USD 50,000',
+        'form.portfolio.opt3':     'USD 50,000 – USD 150,000',
+        'form.portfolio.opt4':     'Over USD 150,000',
+        'form.assets.label':       'Which assets do you monitor?',
+        'form.assets.crypto':      'Crypto (BTC, ETH…)',
+        'form.assets.etfs':        'International ETFs',
+        'form.assets.br':          'Brazilian stocks (B3)',
+        'form.assets.us':          'US stocks',
+        'form.assets.funds':       'Funds (Fintual, XP…)',
+        'form.assets.other':       'Others',
+        'form.source.label':       'How did you find us?',
+        'form.source.opt0':        'Select...',
+        'form.source.opt1':        'Instagram',
+        'form.source.opt2':        'LinkedIn',
+        'form.source.opt3':        'Friend referral',
+        'form.source.opt4':        'Google',
+        'form.source.opt5':        'Other',
+        'form.submit':             'I want my AILo →',
+        'form.error.required':     'This field is required',
+        'form.error.email':        'Enter a valid email',
+        'form.error.server':       'Something went wrong. Please try again in a moment.',
+        'form.success.title':      'Great! We\'ll be in touch.',
+        'form.success.desc':       'We\'ll contact you within 24h via WhatsApp.',
+        'form.success.close':      'Close',
         'lang.flag': '🇺🇸',
         'lang.code': 'EN',
       }
@@ -1871,6 +2389,11 @@
       document.querySelectorAll('[data-i18n-html]').forEach(el => {
         const v = d[el.dataset.i18nHtml];
         if (v !== undefined) el.innerHTML = v;
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const v = d[el.dataset.i18nPlaceholder];
+        if (v !== undefined) el.setAttribute('placeholder', v);
       });
 
       document.getElementById('currentFlag').textContent = d['lang.flag'];
@@ -1907,6 +2430,131 @@
       { threshold: 0.08 }
     );
     document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    /* ── Modal ────────────────────────────────────────────────────── */
+    const overlay    = document.getElementById('modalOverlay');
+    const formView   = document.getElementById('modalFormView');
+    const successDiv = document.getElementById('modalSuccess');
+    const form       = document.getElementById('modalForm');
+
+    function openModal() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      formView.style.display = '';
+      successDiv.classList.remove('show');
+      form.reset();
+      document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('#modalForm .form-input, #modalForm .form-select').forEach(e => e.classList.remove('is-error'));
+      document.querySelectorAll('.checkbox-item').forEach(e => e.classList.remove('ticked'));
+      document.getElementById('formServerError').classList.remove('show');
+      const btn = document.getElementById('formSubmitBtn');
+      btn.classList.remove('loading');
+      const _lang = localStorage.getItem('sentinel-lang') || 'pt';
+      btn.textContent = T[_lang]['form.submit'];
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('click', e => {
+      const trigger = e.target.closest('[data-open-modal]');
+      if (trigger) { e.preventDefault(); openModal(); }
+    });
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalSuccessBtn').addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => cb.closest('.checkbox-item').classList.toggle('ticked', cb.checked));
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const lang = localStorage.getItem('sentinel-lang') || 'pt';
+      const d = T[lang];
+      let valid = true;
+
+      const fields = [
+        { el: document.getElementById('fName'),      err: document.getElementById('errName'),      type: 'required' },
+        { el: document.getElementById('fEmail'),     err: document.getElementById('errEmail'),     type: 'email'    },
+        { el: document.getElementById('fPhone'),     err: document.getElementById('errPhone'),     type: 'required' },
+        { el: document.getElementById('fPortfolio'), err: document.getElementById('errPortfolio'), type: 'required' },
+      ];
+
+      const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      fields.forEach(({ el, err, type }) => {
+        let msg = '';
+        if (!el.value.trim()) {
+          msg = d['form.error.required'];
+        } else if (type === 'email' && !emailRx.test(el.value.trim())) {
+          msg = d['form.error.email'];
+        }
+        if (msg) {
+          el.classList.add('is-error');
+          err.textContent = msg;
+          err.classList.add('show');
+          valid = false;
+        } else {
+          el.classList.remove('is-error');
+          err.classList.remove('show');
+        }
+      });
+
+      if (!valid) return;
+
+      const submitBtn   = document.getElementById('formSubmitBtn');
+      const serverError = document.getElementById('formServerError');
+
+      /* reset server error */
+      serverError.classList.remove('show');
+
+      /* loading state */
+      submitBtn.classList.add('loading');
+      const origText = submitBtn.textContent;
+      submitBtn.textContent = '…';
+
+      const ativos = Array.from(
+        document.querySelectorAll('#modalForm .checkbox-item input[type="checkbox"]:checked')
+      ).map(cb => cb.value);
+
+      const payload = {
+        nome:             document.getElementById('fName').value.trim(),
+        email:            document.getElementById('fEmail').value.trim(),
+        whatsapp:         document.getElementById('fPhone').value.trim(),
+        pais:             document.getElementById('fCountry').value,
+        tamanho_carteira: document.getElementById('fPortfolio').value,
+        ativos,
+        como_conheceu:    document.getElementById('fSource').value,
+        idioma:           (localStorage.getItem('sentinel-lang') || 'pt').toUpperCase(),
+        data_hora:        new Date().toISOString(),
+      };
+
+      fetch('https://exaggerated-festinately-izola.ngrok-free.dev/webhook-test/sentinel-leads', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          formView.style.display = 'none';
+          successDiv.classList.add('show');
+        })
+        .catch(() => {
+          serverError.textContent = d['form.error.server'];
+          serverError.classList.add('show');
+          submitBtn.textContent = origText;
+          submitBtn.classList.remove('loading');
+        });
+    });
 
     /* ── Init ─────────────────────────────────────────────────────── */
     applyLang(detectLang());
