@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sentinel Invest — Seu Assessor IA Pessoal</title>
-  <meta name="description" content="Conheça o AILo — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7." />
+  <meta name="description" content="Conheça o AILo seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     /* ── Reset & Base ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,6 +27,10 @@
       --text-muted:    #A1A1AA;
       --text-faint:    #52525B;
       --green:         #34D399;
+      --gold:          #c9a84c;
+      --gold2:         #e8c97a;
+      --gold3:         #f5e0a0;
+      --ice:           #7eb8d4;
       --red-muted:     rgba(239, 68, 68, 0.5);
       --radius-sm:     8px;
       --radius:        14px;
@@ -37,7 +41,7 @@
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Outfit', system-ui, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.6;
@@ -1306,6 +1310,24 @@
     .fade-up-delay-1 { transition-delay: 0.1s; }
     .fade-up-delay-2 { transition-delay: 0.2s; }
     .fade-up-delay-3 { transition-delay: 0.3s; }
+
+    /* ── AILo Logotype ─────────────────────────────────────────────── */
+    .ailo-logotype {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      color: var(--gold2);
+    }
+    .ailo-logotype strong {
+      font-weight: 700;
+      font-style: normal;
+      color: var(--gold2);
+    }
+    .ailo-logotype em {
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gold3);
+    }
   </style>
 </head>
 <body>
@@ -1314,7 +1336,7 @@
   <nav class="nav">
     <div class="container nav-inner">
       <a href="#" class="nav-logo">
-        <div class="nav-logo-icon">⚡</div>
+        <span class="ailo-logotype"><strong>AI</strong><em>Lo</em></span>
         <span>Sentinel<span class="highlight"> Invest</span></span>
       </a>
       <ul class="nav-links">
@@ -1743,7 +1765,7 @@
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-logo">
-        <div class="footer-logo-icon">⚡</div>
+        <span class="ailo-logotype"><strong>AI</strong><em>Lo</em></span>
         <span>Sentinel<span class="highlight"> Invest</span></span>
       </div>
       <p class="footer-copy" data-i18n="footer.copy"></p>
@@ -1873,7 +1895,7 @@
       /* ════════════════════════════════════════════════════════════ */
       pt: {
         'meta.title':       'Sentinel Invest — Seu Assessor IA Pessoal',
-        'meta.description': 'Conheça o AILo — seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7.',
+        'meta.description': 'Conheça o AILo seu assessor de investimentos pessoal com IA. Analisa sua carteira real e envia alertas personalizados direto no Telegram, 24/7.',
         'html.lang':        'pt-BR',
         /* nav */
         'nav.how':     'Como funciona',
@@ -1882,7 +1904,7 @@
         'nav.cta':     'Quero meu assessor IA',
         /* hero */
         'hero.badge':        'Assessoria personalizada com IA',
-        'hero.title':        'Conheça o <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>seu assessor de investimentos <span class="highlight">pessoal.</span>',
+        'hero.title':        'Conheça o <span class="brand-ai">AI</span><span class="brand-lo">Lo</span><br/>seu assessor de investimentos <span class="highlight">pessoal.</span>',
         'hero.subtitle':     'O AILo aprende sobre a sua carteira real, a sua estratégia e os seus objetivos. Monitora o mercado 24/7 e envia análises feitas para você — não para o investidor genérico.',
         'hero.cta_primary':  'Quero meu assessor IA →',
         'hero.cta_secondary':'Como funciona',
@@ -2056,7 +2078,7 @@
         'nav.pricing': 'Precio',
         'nav.cta':     'Quiero mi asesor IA',
         'hero.badge':        'Asesoría personalizada con IA',
-        'hero.title':        'Conoce al <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>tu asesor de inversiones <span class="highlight">personal.</span>',
+        'hero.title':        'Conoce al <span class="brand-ai">AI</span><span class="brand-lo">Lo</span><br/>tu asesor de inversiones <span class="highlight">personal.</span>',
         'hero.subtitle':     'AILo aprende sobre tu portafolio real, tu estrategia y tus objetivos. Monitorea el mercado 24/7 y envía análisis hechos para ti — no para el inversor genérico.',
         'hero.cta_primary':  'Quiero mi asesor IA →',
         'hero.cta_secondary':'Cómo funciona',
@@ -2219,7 +2241,7 @@
         'nav.pricing': 'Pricing',
         'nav.cta':     'Get my AI advisor',
         'hero.badge':        'Personalized AI investment advisory',
-        'hero.title':        'Meet <span class="brand-ai">AI</span><span class="brand-lo">Lo</span> —<br/>your personal <span class="highlight">investment advisor.</span>',
+        'hero.title':        'Meet <span class="brand-ai">AI</span><span class="brand-lo">Lo</span><br/>your personal <span class="highlight">investment advisor.</span>',
         'hero.subtitle':     'AILo learns about your real portfolio, your strategy, and your goals. It monitors the market 24/7 and sends analysis made for you — not for the generic investor.',
         'hero.cta_primary':  'Get my AI advisor →',
         'hero.cta_secondary':'How it works',
