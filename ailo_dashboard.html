@@ -1377,7 +1377,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 /* ══════════════════════════════════════════════════════
    TOKEN & DATA SYSTEM
 ══════════════════════════════════════════════════════ */
-const API_BASE = 'https://exaggerated-festinately-izola.ngrok-free.dev/api';
+const API_BASE = 'https://app.sentinelinvest.co/api';
 
 const FALLBACK_DATA = {
   client_name: 'Investidor',
@@ -1535,14 +1535,15 @@ async function submitToken() {
     return;
   }
 
-  // Granted (API ok or API down → fallback)
+  // Granted only if API confirmed token
+  if (!result.ok) {
+    setGateMessage('Acesso negado. Token inválido.', 'error');
+    btn.disabled = false;
+    return;
+  }
   setTokenInURL(token);
   hideGate();
-  populateData(result.ok ? result.data : FALLBACK_DATA);
-
-  if (!result.ok) {
-    console.warn('[AILO] API indisponível — usando dados locais como fallback.');
-  }
+  populateData(result.data);
 }
 
 /* ── Boot ── */
