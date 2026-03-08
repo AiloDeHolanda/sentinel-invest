@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AILO — Artificial Intelligence Language Oracle</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Outfit:wght@200;300;400;500&display=swap');
+
+:root {
+  --void:    #04060a;
+  --deep:    #080c12;
+  --surface: #0d1219;
+  --panel:   #111820;
+  --border:  #1a2535;
+  --border2: #243040;
+  --gold:    #c9a84c;
+  --gold2:   #e8c97a;
+  --gold3:   #f5e0a0;
+  --ice:     #7eb8d4;
+  --ice2:    #a8d4e8;
+  --text:    #c5d4e0;
+  --muted:   #4a6070;
+  --dim:     #2a3a48;
+  --danger:  #c0392b;
+  --green:   #2ecc71;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* GRAIN OVERLAY */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════
+   ACCESS GATE
+═══════════════════════════════ */
+#accessGate {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--void);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  transition: opacity 0.4s ease;
+}
+
+.gate-card {
+  max-width: 440px;
+  width: 100%;
+  border: 1px solid var(--border2);
+  padding: 52px 48px;
+  position: relative;
+  text-align: center;
+  background: var(--deep);
+}
+
+.gate-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.gate-corner { position: absolute; width: 20px; height: 20px; }
+.gate-corner-tl { top: 14px; left: 14px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+.gate-corner-tr { top: 14px; right: 14px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+.gate-corner-bl { bottom: 14px; left: 14px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+.gate-corner-br { bottom: 14px; right: 14px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+
+.gate-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 300;
+  color: transparent;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 40%, var(--gold3) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: 6px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.gate-subtitle {
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.gate-divider {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 28px;
+}
+
+.gate-title {
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.gate-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gate-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'Courier Prime', monospace;
+  font-size: 15px;
+  padding: 14px 16px;
+  letter-spacing: 4px;
+  outline: none;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gate-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201,168,76,0.1);
+}
+
+.gate-input::placeholder {
+  color: var(--dim);
+  letter-spacing: 2px;
+  font-size: 10px;
+}
+
+.gate-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--void);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: opacity 0.2s;
+}
+
+.gate-btn:hover { opacity: 0.85; }
+.gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.gate-message {
+  margin-top: 14px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  min-height: 16px;
+  display: none;
+}
+
+.gate-message.error { color: var(--danger); display: block; }
+.gate-message.loading { color: var(--gold); display: block; }
+
+/* ═══════════════════════════════
+   CLIENT BADGE (nav)
+═══════════════════════════════ */
+.client-badge {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid rgba(201,168,76,0.35);
+  padding: 5px 12px;
+}
+
+.client-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════
+   HERO / LANDING
+═══════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 60px 24px;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+.hero-line {
+  position: absolute;
+  top: 0; right: 15%;
+  width: 1px; height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.3), transparent);
+  transform: rotate(8deg);
+  transform-origin: top;
+}
+
+.hero-line2 {
+  position: absolute;
+  top: 0; left: 20%;
+  width: 1px; height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(126,184,212,0.15), transparent);
+  transform: rotate(-5deg);
+  transform-origin: top;
+}
+
+.corner { position: absolute; width: 40px; height: 40px; }
+.corner-tl { top: 24px; left: 24px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+.corner-tr { top: 24px; right: 24px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+.corner-bl { bottom: 24px; left: 24px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+.corner-br { bottom: 24px; right: 24px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 860px;
+}
+
+.pre-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.pre-label::before,
+.pre-label::after {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+.ailo-logotype {
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.4s forwards;
+}
+
+.ailo-letters {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(100px, 20vw, 180px);
+  letter-spacing: -4px;
+  line-height: 0.9;
+  color: transparent;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 40%, var(--gold3) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+}
+
+.ailo-letters span,
+.ailo-letters em {
+  color: transparent;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-style: inherit;
+}
+
+.ailo-letters::after {
+  content: 'AILO';
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 40%, var(--gold3) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: blur(20px);
+  opacity: 0.3;
+}
+
+.acronym-row {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.7s forwards;
+}
+
+.acronym-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 clamp(12px, 3vw, 32px);
+  position: relative;
+}
+
+.acronym-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  height: 30px; width: 1px;
+  background: var(--border2);
+}
+
+.acronym-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 600;
+  color: var(--gold2);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.acronym-word {
+  font-family: 'Courier Prime', monospace;
+  font-size: clamp(8px, 1.5vw, 11px);
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ice2);
+  margin-bottom: 48px;
+  line-height: 1.5;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.9s forwards;
+}
+
+.hero-desc {
+  font-size: clamp(13px, 1.8vw, 15px);
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 560px;
+  margin: 0 auto 56px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.1s forwards;
+}
+
+.cta-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.3s forwards;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--void);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border: 1px solid rgba(201,168,76,0.4);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-secondary:hover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+/* ═══════════════════════════════
+   PILLARS SECTION
+═══════════════════════════════ */
+.pillars { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+
+.section-header { text-align: center; margin-bottom: 64px; }
+
+.section-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.section-label::before,
+.section-label::after { content: ''; width: 30px; height: 1px; background: var(--gold); opacity: 0.4; }
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.section-title em { font-style: italic; color: var(--gold2); }
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px;
+  background: var(--border);
+}
+
+.pillar {
+  background: var(--deep);
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.pillar:hover { background: var(--surface); }
+
+.pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pillar:hover::before { opacity: 1; }
+
+.pillar-icon { font-size: 28px; margin-bottom: 20px; display: block; }
+.pillar-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--gold2); margin-bottom: 12px; }
+.pillar-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+.pillar-num {
+  position: absolute;
+  bottom: 20px; right: 24px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.pillar:hover .pillar-num { color: var(--dim); }
+
+/* ═══════════════════════════════
+   SIGNAL WATCH DASHBOARD
+═══════════════════════════════ */
+.dashboard-section {
+  background: var(--deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 24px;
+}
+
+.dashboard-inner { max-width: 1100px; margin: 0 auto; }
+
+.playbook-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.playbook-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.steps-row {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  gap: 0;
+  padding-bottom: 4px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 80px;
+  position: relative;
+}
+
+.step-item::after {
+  content: '';
+  position: absolute;
+  top: 13px; left: 50%;
+  width: 100%; height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.step-item:last-child::after { display: none; }
+
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: var(--void);
+  color: var(--muted);
+  position: relative;
+  z-index: 1;
+}
+
+.step-item.done .step-num  { background: rgba(46,204,113,0.15); border-color: var(--green); color: var(--green); }
+.step-item.current .step-num {
+  background: rgba(201,168,76,0.2);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 16px rgba(201,168,76,0.4);
+  animation: stepPulse 2s infinite;
+}
+.step-item.next .step-num { border-color: var(--ice); color: var(--ice); }
+
+@keyframes stepPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(201,168,76,0.4); }
+  50%       { box-shadow: 0 0 28px rgba(201,168,76,0.7); }
+}
+
+.step-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 70px;
+}
+
+.step-item.done .step-label    { color: var(--green); }
+.step-item.current .step-label { color: var(--gold);  }
+.step-item.next .step-label    { color: var(--ice);   }
+
+.alert-banner {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid;
+}
+
+.alert-banner.watching { border-color: rgba(201,168,76,0.3);  background: rgba(201,168,76,0.05);  }
+.alert-banner.active   { border-color: rgba(46,204,113,0.4);  background: rgba(46,204,113,0.05);  }
+.alert-banner.danger   { border-color: rgba(192,57,43,0.4);   background: rgba(192,57,43,0.05);   }
+
+.alert-icon { font-size: 24px; }
+
+.alert-title {
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.alert-banner.watching .alert-title { color: var(--gold);   }
+.alert-banner.active   .alert-title { color: var(--green);  }
+.alert-banner.danger   .alert-title { color: var(--danger); }
+
+.alert-sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background: var(--surface);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.metric-card:hover { background: var(--panel); }
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px; height: 100%;
+}
+
+.metric-card.oil      ::before { background: #e67e22; }
+.metric-card.sp       ::before { background: var(--green); }
+.metric-card.gold-card::before { background: var(--gold);  }
+
+.metric-name {
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.metric-ticker { font-size: 8px; background: var(--panel); padding: 2px 6px; border: 1px solid var(--border); color: var(--dim); }
+
+.metric-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.metric-card.oil      .metric-price { color: #e67e22; }
+.metric-card.sp       .metric-price { color: var(--green); }
+.metric-card.gold-card.metric-price { color: var(--gold);  }
+.metric-card.gold-card .metric-price { color: var(--gold); }
+
+.metric-change { font-family: 'Courier Prime', monospace; font-size: 11px; font-weight: 700; margin-bottom: 12px; }
+.metric-change.up   { color: var(--green);  }
+.metric-change.down { color: var(--danger); }
+
+.threshold-label { font-family: 'Courier Prime', monospace; font-size: 8px; color: var(--muted); letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase; }
+.threshold-bar   { height: 3px; background: var(--border); margin-bottom: 4px; }
+.threshold-fill  { height: 100%; transition: width 0.5s; }
+
+.metric-card.oil      .threshold-fill { background: #e67e22; }
+.metric-card.sp       .threshold-fill { background: var(--green); }
+.metric-card.gold-card .threshold-fill { background: var(--gold); }
+
+.threshold-vals { display: flex; justify-content: space-between; font-family: 'Courier Prime', monospace; font-size: 8px; color: var(--dim); }
+.threshold-vals .warn { color: var(--gold); }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+
+.signal-panel { background: var(--surface); padding: 20px; }
+
+.panel-title {
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge { font-size: 8px; padding: 2px 7px; border: 1px solid; letter-spacing: 1px; }
+.badge.primary { border-color: var(--gold);  color: var(--gold);  }
+.badge.muted   { border-color: var(--muted); color: var(--muted); }
+.badge.active  { border-color: var(--green); color: var(--green); }
+
+.signal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(26,37,53,0.5);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.signal-item:last-child { border-bottom: none; }
+
+.signal-check {
+  width: 16px; height: 16px;
+  border: 1px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+
+.signal-item.checked .signal-check { background: var(--green); border-color: var(--green); color: var(--void); font-weight: 700; }
+.signal-item.checked .signal-text  { color: var(--green); }
+
+.signal-text { font-size: 12px; line-height: 1.4; color: var(--text); }
+.signal-text small { display: block; font-family: 'Courier Prime', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+.tranche-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.tranche-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tranche-row:last-child { border-bottom: none; }
+
+.tranche-badge {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.t1 { background: rgba(201,168,76,0.1);  border: 1px solid var(--gold);  color: var(--gold);  }
+.t2 { background: rgba(126,184,212,0.1); border: 1px solid var(--ice);   color: var(--ice);   }
+.t3 { background: rgba(46,204,113,0.1);  border: 1px solid var(--green); color: var(--green); }
+
+.tranche-info h4 { font-size: 13px; font-weight: 400; color: var(--text); margin-bottom: 3px; }
+.tranche-info p  { font-family: 'Courier Prime', monospace; font-size: 9px; color: var(--muted); line-height: 1.5; }
+
+.tranche-amount { text-align: right; }
+
+.tranche-amt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  display: block;
+}
+
+.tranche-row:nth-child(1) .tranche-amt { color: var(--gold);  }
+.tranche-row:nth-child(2) .tranche-amt { color: var(--ice);   }
+.tranche-row:nth-child(3) .tranche-amt { color: var(--green); }
+
+.tranche-status { font-family: 'Courier Prime', monospace; font-size: 8px; color: var(--muted); letter-spacing: 1px; }
+
+.links-panel { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.link-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.link-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.04); }
+.link-btn .icon { font-size: 16px; }
+
+.notes-panel { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
+
+.notes-panel textarea {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  padding: 12px;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+
+.notes-panel textarea:focus { border-color: var(--gold); }
+.notes-panel textarea::placeholder { color: var(--dim); }
+
+/* ═══════════════════════════════
+   MANIFESTO
+═══════════════════════════════ */
+.manifesto { padding: 100px 24px; max-width: 760px; margin: 0 auto; text-align: center; }
+
+.manifesto-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.manifesto-quote::before {
+  content: '"';
+  font-size: 120px;
+  color: var(--border2);
+  position: absolute;
+  top: -30px; left: -20px;
+  line-height: 1;
+  font-style: normal;
+}
+
+.manifesto-attr { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+
+.divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 48px auto; }
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--gold); letter-spacing: 2px; }
+.footer-copy { font-family: 'Courier Prime', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+.live-dot { display: flex; align-items: center; gap: 7px; font-family: 'Courier Prime', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; }
+
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ═══════════════════════════════
+   ANIMATIONS
+═══════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════
+   NAV
+═══════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  background: rgba(4,6,10,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(26,37,53,0.6);
+}
+
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold); letter-spacing: 3px; }
+
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--gold); }
+
+/* ═══════════════════════════════
+   RESPONSIVE
+═══════════════════════════════ */
+@media (max-width: 700px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .links-grid { grid-template-columns: repeat(3, 1fr); }
+  .acronym-row { gap: 0; }
+  footer { justify-content: center; text-align: center; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ ACCESS GATE -->
+<div id="accessGate">
+  <div class="gate-card">
+    <div class="gate-corner gate-corner-tl"></div>
+    <div class="gate-corner gate-corner-tr"></div>
+    <div class="gate-corner gate-corner-bl"></div>
+    <div class="gate-corner gate-corner-br"></div>
+
+    <div class="gate-logo"><span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
+    <div class="gate-subtitle">Artificial Intelligence Language Oracle</div>
+
+    <div class="gate-divider"></div>
+
+    <div class="gate-title">Acesso Restrito</div>
+    <div class="gate-desc">Este dashboard é privado.<br>Insira seu token de acesso para continuar.</div>
+
+    <input
+      class="gate-input"
+      id="gateTokenInput"
+      type="text"
+      placeholder="Insira seu token"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="gate-btn" id="gateBtn">Acessar →</button>
+
+    <div class="gate-message" id="gateMessage"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#sentinel">Signal Watch</a></li>
+    <li><a href="#manifesto">Filosofia</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="client-badge" id="clientBadge">
+      <div class="client-badge-dot"></div>
+      <span id="clientBadgeName">—</span>
+    </div>
+    <div class="live-dot">
+      <div class="dot"></div>
+      ATIVO
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line2"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="hero-content">
+    <div class="pre-label">Sistema de Inteligência de Mercado</div>
+
+    <div class="ailo-logotype">
+      <div class="ailo-letters"><span style="font-style:normal;font-weight:700">AI</span><em style="font-style:italic;font-weight:300">Lo</em></div>
+    </div>
+
+    <div class="acronym-row">
+      <div class="acronym-item">
+        <div class="acronym-letter">A</div>
+        <div class="acronym-word">Artificial</div>
+      </div>
+      <div class="acronym-item">
+        <div class="acronym-letter">I</div>
+        <div class="acronym-word">Intelligence</div>
+      </div>
+      <div class="acronym-item">
+        <div class="acronym-letter">L</div>
+        <div class="acronym-word">Language</div>
+      </div>
+      <div class="acronym-item">
+        <div class="acronym-letter">O</div>
+        <div class="acronym-word">Oracle</div>
+      </div>
+    </div>
+
+    <div class="tagline">Quem antecipa padrões, não reage a ruídos.</div>
+
+    <div class="hero-desc">
+      <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> é um sistema de inteligência artificial especializado em análise macro, geopolítica e estratégia de portfolio. Combina reconhecimento de padrões históricos com sinais de mercado em tempo real para antecipar movimentos antes da multidão.
+    </div>
+
+    <div class="cta-row">
+      <a href="#sentinel" class="btn-primary">Signal Watch →</a>
+      <a href="#sobre" class="btn-secondary">Conheça o <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></a>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars" id="sobre">
+  <div class="section-header">
+    <div class="section-label">Capacidades</div>
+    <div class="section-title">O que o <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> faz</div>
+  </div>
+
+  <div class="pillars-grid">
+    <div class="pillar">
+      <span class="pillar-icon">🌐</span>
+      <div class="pillar-title">Análise Geopolítica</div>
+      <div class="pillar-text">Monitora conflitos, mudanças de regime e padrões diplomáticos. Aplica frameworks como o Kobeissi Conflict Playbook para antecipar movimentos de mercado antes dos anúncios oficiais.</div>
+      <div class="pillar-num">01</div>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">📊</span>
+      <div class="pillar-title">Macro Framework</div>
+      <div class="pillar-text">Integra o Big Cycle de Ray Dalio, análise de dívida soberana, ciclos monetários e fluxos de capital global para construir uma tese de longo prazo coerente e defensável.</div>
+      <div class="pillar-num">02</div>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">⚡</span>
+      <div class="pillar-title">Signal Watch</div>
+      <div class="pillar-text">Dashboard de monitoramento em tempo real de Brent, S&P 500, Ouro e VIX. Identifica os gatilhos específicos que precedem grandes movimentos de mercado e aciona alertas de deploy.</div>
+      <div class="pillar-num">03</div>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">🏦</span>
+      <div class="pillar-title">Gestão de Portfolio</div>
+      <div class="pillar-text">Estratégia de alocação baseada em pesos-alvo, DCA sistemático, rebalanceamento semestral e disciplina de tranches para deploy de capital em momentos de máxima oportunidade.</div>
+      <div class="pillar-num">04</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNAL WATCH DASHBOARD -->
+<section class="dashboard-section" id="sentinel">
+  <div class="dashboard-inner">
+
+    <div class="section-header" style="margin-bottom:40px;">
+      <div class="section-label">Módulo Operacional</div>
+      <div class="section-title"><span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> <em>Signal Watch</em></div>
+    </div>
+
+    <!-- Playbook -->
+    <div class="playbook-bar">
+      <div class="playbook-label">Trump Conflict Playbook — Kobeissi Letter</div>
+      <div class="steps-row">
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Verbal Pressure</div></div>
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Postura Militar</div></div>
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Strike Sex Noite</div></div>
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Risk Premium</div></div>
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">"Forever War"</div></div>
+        <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Precif. Longo</div></div>
+        <div class="step-item current"> <div class="step-num">7</div><div class="step-label">De-escalada Condicional</div></div>
+        <div class="step-item next">    <div class="step-num">8</div><div class="step-label">Feedback Loop</div></div>
+        <div class="step-item">        <div class="step-num">9</div><div class="step-label">O Deal</div></div>
+        <div class="step-item">        <div class="step-num">10</div><div class="step-label">Violent Repricing</div></div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert-banner active" id="alertBanner">
+      <div class="alert-icon">🟢</div>
+      <div>
+        <div class="alert-title">Step 7 Confirmado — Irã pedindo deal</div>
+        <div class="alert-sub">Trump revelou que líderes iranianos estão ligando pedindo acordo. Tranche #1 em avaliação para ativação.</div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card oil" ondblclick="updateMetric(this)">
+        <div class="metric-name">Brent Crude <span class="metric-ticker">UKOIL</span></div>
+        <div class="metric-price" id="oilPrice">$82.84</div>
+        <div class="metric-change up" id="oilChange">▲ +1.72% hoje</div>
+        <div class="threshold-label">Gatilho deal → $90</div>
+        <div class="threshold-bar"><div class="threshold-fill" style="width:69%"></div></div>
+        <div class="threshold-vals"><span>$70</span><span class="warn">$90 ⚡</span><span>$110</span></div>
+      </div>
+      <div class="metric-card sp" ondblclick="updateMetric(this)">
+        <div class="metric-name">S&P 500 <span class="metric-ticker">SPX</span></div>
+        <div class="metric-price" id="spPrice">6,794</div>
+        <div class="metric-change down" id="spChange">▼ -1.09% hoje</div>
+        <div class="threshold-label">Distância do gatilho -5%</div>
+        <div class="threshold-bar"><div class="threshold-fill" style="width:22%"></div></div>
+        <div class="threshold-vals"><span>Atual</span><span class="warn">-5% ⚡</span><span>-10%</span></div>
+      </div>
+      <div class="metric-card gold-card" ondblclick="updateMetric(this)">
+        <div class="metric-name">Ouro / PAXG <span class="metric-ticker">XAUUSD</span></div>
+        <div class="metric-price" id="goldPrice">$5,069</div>
+        <div class="metric-change down" id="goldChange">▼ -1.41% hoje</div>
+        <div class="threshold-label">Suporte crítico $4,950</div>
+        <div class="threshold-bar"><div class="threshold-fill" style="width:58%"></div></div>
+        <div class="threshold-vals"><span>$4,800</span><span class="warn">$4,950 ⚡</span><span>$5,500</span></div>
+      </div>
+    </div>
+
+    <!-- Signals -->
+    <div class="two-col">
+      <div class="signal-panel">
+        <div class="panel-title">Sinais Primários — Gatilho Deploy <span class="badge primary">Monitora</span></div>
+        <div class="signal-item checked" onclick="toggleSignal(this)">
+          <div class="signal-check">✓</div>
+          <div class="signal-text">Irã pedindo deal publicamente<small>Trump revelou chamadas diretas — Step 7 confirmado</small></div>
+        </div>
+        <div class="signal-item checked" onclick="toggleSignal(this)">
+          <div class="signal-check">✓</div>
+          <div class="signal-text">NYT reportou oferta secreta via espionagem<small>Canal diplomático ativo antes do anúncio público</small></div>
+        </div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">Brent cai $5-8 abruptamente de pico<small>Sem notícia de oferta = alguém sabe do deal</small></div>
+        </div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">S&P sobe +2% sem notícia clara<small>Smart money entrando antes do anúncio</small></div>
+        </div>
+      </div>
+      <div class="signal-panel">
+        <div class="panel-title">Sinais Secundários — Confirmação <span class="badge muted">Aguarda</span></div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">Ouro cai enquanto equities sobem<small>Rotação saindo de safe haven</small></div>
+        </div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">VIX cai abruptamente abaixo de 20<small>Colapso do prêmio de risco</small></div>
+        </div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">Ceasefire formal anunciado<small>Gatilho da Tranche #2</small></div>
+        </div>
+        <div class="signal-item" onclick="toggleSignal(this)">
+          <div class="signal-check"></div>
+          <div class="signal-text">Estreito de Ormuz reabre oficialmente<small>Supply chain risk eliminado</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tranches (dynamically populated) -->
+    <div class="tranche-panel">
+      <div class="panel-title" style="font-family:'Courier Prime',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);text-transform:uppercase;" id="tranchesPanelTitle">
+        Plano de Deploy — $8,000 Cash Reservado
+      </div>
+      <div id="tranchesContainer">
+        <div class="tranche-row">
+          <div class="tranche-badge t1">1</div>
+          <div class="tranche-info">
+            <h4>Tranche Antecipação</h4>
+            <p>Gatilho: Irã pedindo deal (ATIVO) · Destino: SMH 50% · QQQM 50%</p>
+          </div>
+          <div class="tranche-amount">
+            <span class="tranche-amt">$1,500</span>
+            <span class="tranche-status">EM AVALIAÇÃO</span>
+          </div>
+        </div>
+        <div class="tranche-row">
+          <div class="tranche-badge t2">2</div>
+          <div class="tranche-info">
+            <h4>Tranche Confirmação</h4>
+            <p>Gatilho: Ceasefire formal · Destino: SMH 40% · QQQM 40% · PAXG 20%</p>
+          </div>
+          <div class="tranche-amount">
+            <span class="tranche-amt">$2,000</span>
+            <span class="tranche-status">AGUARDANDO</span>
+          </div>
+        </div>
+        <div class="tranche-row">
+          <div class="tranche-badge t3">3</div>
+          <div class="tranche-info">
+            <h4>Reserva Permanente</h4>
+            <p>Oportunidade estrutural maior · Nunca deploya em evento único</p>
+          </div>
+          <div class="tranche-amount">
+            <span class="tranche-amt">$4,500</span>
+            <span class="tranche-status">RESERVA FIXA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links + Notes -->
+    <div class="two-col">
+      <div class="links-panel">
+        <div class="panel-title">Acesso Rápido</div>
+        <div class="links-grid">
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=UKOIL"  target="_blank"><span class="icon">🛢️</span>Brent</a>
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=SPX"    target="_blank"><span class="icon">📈</span>S&P 500</a>
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=XAUUSD" target="_blank"><span class="icon">🥇</span>Ouro</a>
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=BTCUSD" target="_blank"><span class="icon">₿</span>BTC</a>
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=SMH"    target="_blank"><span class="icon">💾</span>SMH</a>
+          <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=QQQM"   target="_blank"><span class="icon">🔬</span>QQQM</a>
+          <a class="link-btn" href="https://truthsocial.com/@realDonaldTrump"         target="_blank"><span class="icon">📢</span>Trump</a>
+          <a class="link-btn" href="https://twitter.com/KobeissiLetter"               target="_blank"><span class="icon">📊</span>Kobeissi</a>
+          <a class="link-btn" href="https://finance.yahoo.com/quote/%5EVIX/"          target="_blank"><span class="icon">😱</span>VIX</a>
+        </div>
+      </div>
+      <div class="notes-panel">
+        <div class="panel-title">Notas de Campo — <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> Log</div>
+        <textarea id="notesTextarea" placeholder="06/03 — Step 7 confirmado. Trump revelou chamadas do Irã pedindo deal. Marinha iraniana destruída. Tranche #1 em avaliação..."></textarea>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="section-label">Filosofia <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
+  <div class="divider"></div>
+  <div class="manifesto-quote">
+    Quem reage a notícias já chegou tarde. O Oracle antecipa o padrão antes que ele se torne manchete.
+  </div>
+  <div class="manifesto-attr">— <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> · Artificial Intelligence Language Oracle</div>
+  <div class="divider"></div>
+  <p style="font-size:14px;color:var(--muted);line-height:1.9;max-width:560px;margin:0 auto;">
+    <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> não é um robô de trading. É um sistema de pensamento — uma estrutura para processar incerteza macro, geopolítica e de mercado com clareza e disciplina. A cada conflito, cada tarifa, cada ciclo de dívida, os padrões se repetem. <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> existe para reconhecê-los antes da multidão.
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
+  <div class="footer-copy">Artificial Intelligence Language Oracle · Sistema Privado</div>
+  <div class="live-dot"><div class="dot"></div>Sistema Ativo</div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   ORIGINAL DASHBOARD LOGIC
+══════════════════════════════════════════════════════ */
+function toggleSignal(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.signal-check').textContent = el.classList.contains('checked') ? '✓' : '';
+  checkAlerts();
+}
+
+function checkAlerts() {
+  const primary   = document.querySelectorAll('.signal-panel:first-child .signal-item.checked').length;
+  const secondary = document.querySelectorAll('.signal-panel:last-child .signal-item.checked').length;
+  const banner    = document.getElementById('alertBanner');
+
+  if (primary >= 3 && secondary >= 2) {
+    banner.className = 'alert-banner active';
+    banner.innerHTML = `<div class="alert-icon">🚀</div><div><div class="alert-title">Deal Confirmado — Executar Tranches 1 e 2</div><div class="alert-sub">Sinais primários e secundários confirmados. Violent repricing em andamento. Executar SMH e QQQM imediatamente.</div></div>`;
+  } else if (primary >= 2) {
+    banner.className = 'alert-banner active';
+    banner.innerHTML = `<div class="alert-icon">🟢</div><div><div class="alert-title">Step 7 Confirmado — Tranche #1 em avaliação</div><div class="alert-sub">Sinais primários acumulados. Monitora confirmação secundária antes de executar.</div></div>`;
+  } else {
+    banner.className = 'alert-banner watching';
+    banner.innerHTML = `<div class="alert-icon">⚠️</div><div><div class="alert-title">Aguardando Sinais de De-escalada</div><div class="alert-sub">Step 6 em andamento. Cash preservado. Monitora gatilhos primários.</div></div>`;
+  }
+}
+
+function updateMetric(card) {
+  const priceEl = card.querySelector('.metric-price');
+  const changeEl = card.querySelector('.metric-change');
+  const name = card.querySelector('.metric-name').childNodes[0].textContent.trim();
+  const val = prompt(`Atualizar ${name} — novo preço:`);
+  if (val) {
+    priceEl.textContent = val;
+    const chg = prompt('Variação % (ex: +1.5% ou -2.3%):');
+    if (chg) {
+      const isUp = !chg.startsWith('-');
+      changeEl.textContent = (isUp ? '▲ ' : '▼ ') + chg + ' hoje';
+      changeEl.className = 'metric-change ' + (isUp ? 'up' : 'down');
+    }
+  }
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   TOKEN & DATA SYSTEM
+══════════════════════════════════════════════════════ */
+const API_BASE = 'http://192.168.1.95:8001';
+
+const FALLBACK_DATA = {
+  client_name: 'Investidor',
+  notas: '06/03 — Step 7 confirmado. Trump revelou chamadas do Irã pedindo deal. Marinha iraniana destruída. Tranche #1 em avaliação para ativação imediata.',
+  tranches: [
+    {
+      numero: 1,
+      classe: 't1',
+      nome: 'Tranche Antecipação',
+      descricao: 'Gatilho: Irã pedindo deal (ATIVO) · Destino: SMH 50% · QQQM 50%',
+      valor: '$1,500',
+      status: 'EM AVALIAÇÃO'
+    },
+    {
+      numero: 2,
+      classe: 't2',
+      nome: 'Tranche Confirmação',
+      descricao: 'Gatilho: Ceasefire formal · Destino: SMH 40% · QQQM 40% · PAXG 20%',
+      valor: '$2,000',
+      status: 'AGUARDANDO'
+    },
+    {
+      numero: 3,
+      classe: 't3',
+      nome: 'Reserva Permanente',
+      descricao: 'Oportunidade estrutural maior · Nunca deploya em evento único',
+      valor: '$4,500',
+      status: 'RESERVA FIXA'
+    }
+  ]
+};
+
+function getTokenFromURL() {
+  return new URLSearchParams(window.location.search).get('token');
+}
+
+function setTokenInURL(token) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('token', token);
+  window.history.replaceState({}, '', url);
+}
+
+function showGate(errorMsg) {
+  const gate = document.getElementById('accessGate');
+  gate.style.opacity = '1';
+  gate.style.display = 'flex';
+  if (errorMsg) {
+    const msg = document.getElementById('gateMessage');
+    msg.textContent = errorMsg;
+    msg.className = 'gate-message error';
+  }
+}
+
+function hideGate() {
+  const gate = document.getElementById('accessGate');
+  gate.style.opacity = '0';
+  gate.style.transition = 'opacity 0.4s ease';
+  setTimeout(() => { gate.style.display = 'none'; }, 420);
+}
+
+function populateData(data) {
+  // Client name badge in nav
+  if (data.client_name) {
+    const badge = document.getElementById('clientBadge');
+    document.getElementById('clientBadgeName').textContent = data.client_name;
+    badge.style.display = 'flex';
+  }
+
+  // Notes textarea
+  if (data.notas) {
+    const ta = document.getElementById('notesTextarea');
+    if (ta) ta.value = data.notas;
+  }
+
+  // Tranches
+  if (Array.isArray(data.tranches) && data.tranches.length) {
+    const container = document.getElementById('tranchesContainer');
+    if (container) {
+      container.innerHTML = data.tranches.map(t => `
+        <div class="tranche-row">
+          <div class="tranche-badge ${t.classe}">${t.numero}</div>
+          <div class="tranche-info">
+            <h4>${t.nome}</h4>
+            <p>${t.descricao}</p>
+          </div>
+          <div class="tranche-amount">
+            <span class="tranche-amt">${t.valor}</span>
+            <span class="tranche-status">${t.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+async function fetchClientData(token) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 7000);
+  try {
+    const res = await fetch(`${API_BASE}/cliente?token=${encodeURIComponent(token)}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!res.ok) throw Object.assign(new Error('http'), { status: res.status });
+    return { ok: true, data: await res.json() };
+  } catch (err) {
+    clearTimeout(timeout);
+    const isAuthError = err.status === 401 || err.status === 403;
+    return { ok: false, authError: isAuthError };
+  }
+}
+
+async function initWithToken(token) {
+  const result = await fetchClientData(token);
+
+  if (!result.ok && result.authError) {
+    // Token explicitly rejected by the API
+    showGate('Token inválido ou sessão expirada.');
+    return;
+  }
+
+  // API ok or API unreachable → show dashboard
+  hideGate();
+  populateData(result.ok ? result.data : FALLBACK_DATA);
+
+  if (!result.ok) {
+    console.warn('[AILO] API indisponível — usando dados locais como fallback.');
+  }
+}
+
+function setGateMessage(text, type) {
+  const el = document.getElementById('gateMessage');
+  el.textContent = text;
+  el.className = `gate-message ${type}`;
+}
+
+async function submitToken() {
+  const input = document.getElementById('gateTokenInput');
+  const btn   = document.getElementById('gateBtn');
+  const token = input.value.trim();
+
+  if (!token) {
+    setGateMessage('Insira um token de acesso.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  setGateMessage('◌ Verificando acesso…', 'loading');
+
+  const result = await fetchClientData(token);
+
+  if (!result.ok && result.authError) {
+    setGateMessage('Token inválido ou sessão expirada.', 'error');
+    btn.disabled = false;
+    return;
+  }
+
+  // Granted (API ok or API down → fallback)
+  setTokenInURL(token);
+  hideGate();
+  populateData(result.ok ? result.data : FALLBACK_DATA);
+
+  if (!result.ok) {
+    console.warn('[AILO] API indisponível — usando dados locais como fallback.');
+  }
+}
+
+/* ── Boot ── */
+(function boot() {
+  const token = getTokenFromURL();
+  if (token) {
+    // Token in URL: hide gate optimistically, then validate
+    document.getElementById('accessGate').style.display = 'none';
+    initWithToken(token);
+  } else {
+    showGate();
+  }
+})();
+
+document.getElementById('gateBtn').addEventListener('click', submitToken);
+document.getElementById('gateTokenInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitToken();
+});
+</script>
+
+</body>
+</html>
