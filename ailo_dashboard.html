@@ -994,6 +994,20 @@ nav {
   .nav-links { display: none; }
 }
 </style>
+<style>
+    /* ── Prompts Section ──────────────────────────────────────────── */
+    .prompts-section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+    .prompts-intro { color: var(--muted); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 40px; }
+    .prompts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .prompt-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+    .prompt-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .prompt-icon { font-size: 24px; margin-bottom: 12px; }
+    .prompt-label { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .prompt-text { font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 16px; }
+    .prompt-copy { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; display: inline-block; border-radius: 2px; transition: all 0.2s; }
+    .prompt-card:hover .prompt-copy { color: var(--gold); border-color: var(--gold); }
+    .prompt-card.copied { border-color: var(--green); }
+</style>
 </head>
 <body>
 
@@ -1107,7 +1121,7 @@ nav {
     <div class="pillar">
       <span class="pillar-icon">🌐</span>
       <div class="pillar-title">Análise Geopolítica</div>
-      <div class="pillar-text">Monitora conflitos, mudanças de regime e padrões diplomáticos. Aplica frameworks como o Kobeissi Conflict Playbook para antecipar movimentos de mercado antes dos anúncios oficiais.</div>
+      <div class="pillar-text">Monitora conflitos, mudanças de regime e padrões diplomáticos. Aplica frameworks como o Framework de Análise Geopolítica AILo para antecipar movimentos de mercado antes dos anúncios oficiais.</div>
       <div class="pillar-num">01</div>
     </div>
     <div class="pillar">
@@ -1142,7 +1156,7 @@ nav {
 
     <!-- Playbook -->
     <div class="playbook-bar">
-      <div class="playbook-label">Trump Conflict Playbook — Kobeissi Letter</div>
+      <div class="playbook-label">Protocolo de Análise de Conflito — AILo</div>
       <div class="steps-row">
         <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Verbal Pressure</div></div>
         <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Postura Militar</div></div>
@@ -1161,8 +1175,8 @@ nav {
     <div class="alert-banner active" id="alertBanner">
       <div class="alert-icon">🟢</div>
       <div>
-        <div class="alert-title">Step 7 Confirmado — Irã pedindo deal</div>
-        <div class="alert-sub">Trump revelou que líderes iranianos estão ligando pedindo acordo. Tranche #1 em avaliação para ativação.</div>
+        <div class="alert-title">Protocolo Step 7 Confirmado</div>
+        <div class="alert-sub">Sinais primários de desescalada confirmados por fontes diplomáticas. Tranche #1 em avaliação para ativação.</div>
       </div>
     </div>
 
@@ -1200,7 +1214,7 @@ nav {
         <div class="panel-title">Sinais Primários — Gatilho Deploy <span class="badge primary">Monitora</span></div>
         <div class="signal-item checked" onclick="toggleSignal(this)">
           <div class="signal-check">✓</div>
-          <div class="signal-text">Irã pedindo deal publicamente<small>Trump revelou chamadas diretas — Step 7 confirmado</small></div>
+          <div class="signal-text">Sinal de desescalada confirmado<small>Sinal primário confirmado — Protocolo Step 7 ativo</small></div>
         </div>
         <div class="signal-item checked" onclick="toggleSignal(this)">
           <div class="signal-check">✓</div>
@@ -1246,7 +1260,7 @@ nav {
           <div class="tranche-badge t1">1</div>
           <div class="tranche-info">
             <h4>Tranche Antecipação</h4>
-            <p>Gatilho: Irã pedindo deal (ATIVO) · Destino: SMH 50% · QQQM 50%</p>
+            <p>Gatilho: Sinal de desescalada (ATIVO) · Destino: SMH 50% · QQQM 50%</p>
           </div>
           <div class="tranche-amount">
             <span class="tranche-amt">$1,500</span>
@@ -1289,14 +1303,14 @@ nav {
           <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=BTCUSD" target="_blank"><span class="icon">₿</span>BTC</a>
           <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=SMH"    target="_blank"><span class="icon">💾</span>SMH</a>
           <a class="link-btn" href="https://www.tradingview.com/chart/?symbol=QQQM"   target="_blank"><span class="icon">🔬</span>QQQM</a>
-          <a class="link-btn" href="https://truthsocial.com/@realDonaldTrump"         target="_blank"><span class="icon">📢</span>Trump</a>
-          <a class="link-btn" href="https://twitter.com/KobeissiLetter"               target="_blank"><span class="icon">📊</span>Kobeissi</a>
+          <a class="link-btn" href="https://sentinelinvest.co"         target="_blank"><span class="icon">📢</span>Geopolítica</a>
+          <a class="link-btn" href="https://sentinelinvest.co"               target="_blank"><span class="icon">📊</span>AILo Signal</a>
           <a class="link-btn" href="https://finance.yahoo.com/quote/%5EVIX/"          target="_blank"><span class="icon">😱</span>VIX</a>
         </div>
       </div>
       <div class="notes-panel">
         <div class="panel-title">Notas de Campo — <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em> Log</div>
-        <textarea id="notesTextarea" placeholder="06/03 — Step 7 confirmado. Trump revelou chamadas do Irã pedindo deal. Marinha iraniana destruída. Tranche #1 em avaliação..."></textarea>
+        <textarea id="notesTextarea" placeholder="06/03 — Step 7 confirmado. Sinais primários de desescalada acumulados. Monitorando confirmação secundária. Tranche #1 em avaliação..."></textarea>
       </div>
     </div>
 
@@ -1304,6 +1318,14 @@ nav {
 </section>
 
 <!-- MANIFESTO -->
+
+<section class="prompts-section" id="prompts">
+  <div class="section-label">Pergunte ao <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
+  <div class="divider"></div>
+  <div class="prompts-intro" id="prompts-intro"></div>
+  <div class="prompts-grid" id="prompts-grid"></div>
+</section>
+
 <section class="manifesto" id="manifesto">
   <div class="section-label">Filosofia <span style="font-weight:700">AI</span><em style="font-weight:300">Lo</em></div>
   <div class="divider"></div>
@@ -1381,13 +1403,13 @@ const API_BASE = 'https://app.sentinelinvest.co/api';
 
 const FALLBACK_DATA = {
   client_name: 'Investidor',
-  notas: '06/03 — Step 7 confirmado. Trump revelou chamadas do Irã pedindo deal. Marinha iraniana destruída. Tranche #1 em avaliação para ativação imediata.',
+  notas: '06/03 — Step 7 confirmado. Sinais primários de desescalada acumulados. Monitorando confirmação secundária. Tranche #1 em avaliação para ativação imediata.',
   tranches: [
     {
       numero: 1,
       classe: 't1',
       nome: 'Tranche Antecipação',
-      descricao: 'Gatilho: Irã pedindo deal (ATIVO) · Destino: SMH 50% · QQQM 50%',
+      descricao: 'Gatilho: Sinal de desescalada (ATIVO) · Destino: SMH 50% · QQQM 50%',
       valor: '$1,500',
       status: 'EM AVALIAÇÃO'
     },
@@ -1562,6 +1584,79 @@ document.getElementById('gateBtn').addEventListener('click', submitToken);
 document.getElementById('gateTokenInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitToken();
 });
+
+const PROMPTS = {
+  pt: {
+    intro: "Use estes prompts no Telegram como ponto de partida — ou crie os seus próprios.",
+    items: [
+      { icon: "📊", label: "Análise Macro", text: "Como o VIX acima de 25 e o Fear & Greed em medo extremo historicamente afetaram ETFs como SMH e QQQM? É momento de entrar ou esperar?" },
+      { icon: "🌍", label: "Impacto Geopolítico", text: "O que um ceasefire formal significaria para minha estratégia de tranches? Quais ativos se beneficiariam primeiro?" },
+      { icon: "🔗", label: "Correlação de Indicadores", text: "Ouro acima de $5.000, DXY abaixo de 100 e Bitcoin em $67k ao mesmo tempo — o que esse conjunto de sinais indica sobre o apetite de risco global?" },
+      { icon: "⏱️", label: "Decisão de Timing", text: "Tenho capital para alocar em SMH e QQQM. Dado o VIX atual e o sentimento de medo extremo, faz mais sentido entrar de uma vez ou escalonar em 3 entradas semanais?" },
+      { icon: "🔍", label: "Revisão de Estratégia", text: "Tenho ETFs de semicondutores, ouro físico tokenizado e Bitcoin. Existe algum risco de correlação que eu não estou vendo neste cenário atual?" }
+    ],
+    copy: "Copiar", copied: "✓ Copiado!"
+  },
+  es: {
+    intro: "Usa estos prompts en Telegram como punto de partida — o crea los tuyos propios.",
+    items: [
+      { icon: "📊", label: "Análisis Macro", text: "¿Cómo el VIX por encima de 25 y el Fear & Greed en miedo extremo han afectado históricamente ETFs como SMH y QQQM? ¿Es momento de entrar o esperar?" },
+      { icon: "🌍", label: "Impacto Geopolítico", text: "¿Qué significaría un alto al fuego formal para mi estrategia de tranches? ¿Qué activos se beneficiarían primero?" },
+      { icon: "🔗", label: "Correlación de Indicadores", text: "Oro por encima de $5.000, DXY bajo 100 y Bitcoin en $67k al mismo tiempo — ¿qué indica este conjunto de señales sobre el apetito de riesgo global?" },
+      { icon: "⏱️", label: "Decisión de Timing", text: "Tengo capital para asignar en SMH y QQQM. Dado el VIX actual y el sentimiento de miedo extremo, ¿es mejor entrar de una vez o escalonar en 3 entradas semanales?" },
+      { icon: "🔍", label: "Revisión de Estrategia", text: "Tengo ETFs de semiconductores, oro físico tokenizado y Bitcoin. ¿Existe algún riesgo de correlación que no estoy viendo en el escenario actual?" }
+    ],
+    copy: "Copiar", copied: "✓ Copiado!"
+  },
+  en: {
+    intro: "Use these prompts on Telegram as a starting point — or create your own.",
+    items: [
+      { icon: "📊", label: "Macro Analysis", text: "How have VIX above 25 and Fear & Greed in extreme fear historically affected ETFs like SMH and QQQM? Is it time to enter or wait?" },
+      { icon: "🌍", label: "Geopolitical Impact", text: "What would a formal ceasefire mean for my tranche strategy? Which assets would benefit first?" },
+      { icon: "🔗", label: "Indicator Correlation", text: "Gold above $5,000, DXY below 100 and Bitcoin at $67k at the same time — what does this set of signals indicate about global risk appetite?" },
+      { icon: "⏱️", label: "Timing Decision", text: "I have capital to allocate in SMH and QQQM. Given the current VIX and extreme fear sentiment, is it better to enter all at once or scale in over 3 weekly entries?" },
+      { icon: "🔍", label: "Strategy Review", text: "I hold semiconductor ETFs, tokenized physical gold and Bitcoin. Is there any correlation risk I'm not seeing in the current scenario?" }
+    ],
+    copy: "Copy", copied: "✓ Copied!"
+  }
+};
+
+function detectLang() {
+  const lang = (navigator.language || navigator.userLanguage || 'pt').toLowerCase();
+  if (lang.startsWith('es')) return 'es';
+  if (lang.startsWith('en')) return 'en';
+  return 'pt';
+}
+
+function renderPrompts() {
+  const lang = detectLang();
+  const data = PROMPTS[lang];
+  document.getElementById('prompts-intro').textContent = data.intro;
+  const grid = document.getElementById('prompts-grid');
+  grid.innerHTML = data.items.map(p => `
+    <div class="prompt-card" onclick="copyPrompt(this, '${lang}')">
+      <div class="prompt-icon">${p.icon}</div>
+      <div class="prompt-label">${p.label}</div>
+      <div class="prompt-text">${p.text}</div>
+      <div class="prompt-copy">${data.copy}</div>
+    </div>
+  `).join('');
+}
+
+function copyPrompt(card, lang) {
+  const text = card.querySelector('.prompt-text').innerText;
+  const data = PROMPTS[lang];
+  navigator.clipboard.writeText(text).then(() => {
+    card.classList.add('copied');
+    card.querySelector('.prompt-copy').innerText = data.copied;
+    setTimeout(() => {
+      card.classList.remove('copied');
+      card.querySelector('.prompt-copy').innerText = data.copy;
+    }, 2000);
+  });
+}
+
+renderPrompts();
 </script>
 
 </body>
