@@ -665,7 +665,7 @@ body::after {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--border);
   margin-bottom: 20px;
@@ -695,8 +695,8 @@ body::after {
 
 .metric-name {
   font-family: 'Courier Prime', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 13px;
+  letter-spacing: 1px;
   color: var(--muted);
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -995,6 +995,25 @@ nav {
 }
 </style>
 <style>
+    /* ── Market Indicators Bar ─────────────────────────────────────── */
+    .market-indicators {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 8px 16px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      flex-wrap: wrap;
+    }
+    .market-indicators strong { color: var(--text); font-weight: 700; }
+    .market-indicators .ind-sep { color: var(--border2); padding: 0 12px; }
+
     /* ── Prompts Section ──────────────────────────────────────────── */
     .prompts-section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
     .prompts-intro { color: var(--muted); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 40px; }
@@ -1155,7 +1174,7 @@ nav {
     </div>
 
     <!-- Playbook -->
-    <div class="playbook-bar">
+    <div class="playbook-bar" style="display:none">
       <div class="playbook-label">Protocolo de Análise de Conflito — AILo</div>
       <div class="steps-row">
         <div class="step-item done">    <div class="step-num">✓</div><div class="step-label">Verbal Pressure</div></div>
@@ -1172,81 +1191,23 @@ nav {
     </div>
 
     <!-- Alert -->
-    <div class="alert-banner active" id="alertBanner">
-      <div class="alert-icon">🟢</div>
-      <div>
-        <div class="alert-title">Protocolo Step 7 Confirmado</div>
-        <div class="alert-sub">Sinais primários de desescalada confirmados por fontes diplomáticas. Tranche #1 em avaliação para ativação.</div>
-      </div>
-    </div>
+    <div class="alert-banner" id="alertBanner" style="display:none"></div>
+
+    <!-- Market Indicators -->
+    <div id="marketIndicators"></div>
 
     <!-- Metrics -->
-    <div class="metrics-grid">
-      <div class="metric-card oil" ondblclick="updateMetric(this)">
-        <div class="metric-name">Brent Crude <span class="metric-ticker">UKOIL</span></div>
-        <div class="metric-price" id="oilPrice">$82.84</div>
-        <div class="metric-change up" id="oilChange">▲ +1.72% hoje</div>
-        <div class="threshold-label">Gatilho deal → $90</div>
-        <div class="threshold-bar"><div class="threshold-fill" style="width:69%"></div></div>
-        <div class="threshold-vals"><span>$70</span><span class="warn">$90 ⚡</span><span>$110</span></div>
-      </div>
-      <div class="metric-card sp" ondblclick="updateMetric(this)">
-        <div class="metric-name">S&P 500 <span class="metric-ticker">SPX</span></div>
-        <div class="metric-price" id="spPrice">6,794</div>
-        <div class="metric-change down" id="spChange">▼ -1.09% hoje</div>
-        <div class="threshold-label">Distância do gatilho -5%</div>
-        <div class="threshold-bar"><div class="threshold-fill" style="width:22%"></div></div>
-        <div class="threshold-vals"><span>Atual</span><span class="warn">-5% ⚡</span><span>-10%</span></div>
-      </div>
-      <div class="metric-card gold-card" ondblclick="updateMetric(this)">
-        <div class="metric-name">Ouro / PAXG <span class="metric-ticker">XAUUSD</span></div>
-        <div class="metric-price" id="goldPrice">$5,069</div>
-        <div class="metric-change down" id="goldChange">▼ -1.41% hoje</div>
-        <div class="threshold-label">Suporte crítico $4,950</div>
-        <div class="threshold-bar"><div class="threshold-fill" style="width:58%"></div></div>
-        <div class="threshold-vals"><span>$4,800</span><span class="warn">$4,950 ⚡</span><span>$5,500</span></div>
-      </div>
-    </div>
+    <div class="metrics-grid" id="metricsGrid"></div>
 
     <!-- Signals -->
     <div class="two-col">
       <div class="signal-panel">
         <div class="panel-title">Sinais Primários — Gatilho Deploy <span class="badge primary">Monitora</span></div>
-        <div class="signal-item checked" onclick="toggleSignal(this)">
-          <div class="signal-check">✓</div>
-          <div class="signal-text">Sinal de desescalada confirmado<small>Sinal primário confirmado — Protocolo Step 7 ativo</small></div>
-        </div>
-        <div class="signal-item checked" onclick="toggleSignal(this)">
-          <div class="signal-check">✓</div>
-          <div class="signal-text">NYT reportou oferta secreta via espionagem<small>Canal diplomático ativo antes do anúncio público</small></div>
-        </div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">Brent cai $5-8 abruptamente de pico<small>Sem notícia de oferta = alguém sabe do deal</small></div>
-        </div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">S&P sobe +2% sem notícia clara<small>Smart money entrando antes do anúncio</small></div>
-        </div>
+        <div id="signalsPrimarios"></div>
       </div>
       <div class="signal-panel">
         <div class="panel-title">Sinais Secundários — Confirmação <span class="badge muted">Aguarda</span></div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">Ouro cai enquanto equities sobem<small>Rotação saindo de safe haven</small></div>
-        </div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">VIX cai abruptamente abaixo de 20<small>Colapso do prêmio de risco</small></div>
-        </div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">Ceasefire formal anunciado<small>Gatilho da Tranche #2</small></div>
-        </div>
-        <div class="signal-item" onclick="toggleSignal(this)">
-          <div class="signal-check"></div>
-          <div class="signal-text">Estreito de Ormuz reabre oficialmente<small>Supply chain risk eliminado</small></div>
-        </div>
+        <div id="signalsSecundarios"></div>
       </div>
     </div>
 
@@ -1255,41 +1216,7 @@ nav {
       <div class="panel-title" style="font-family:'Courier Prime',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);text-transform:uppercase;" id="tranchesPanelTitle">
         Plano de Deploy — $8,000 Cash Reservado
       </div>
-      <div id="tranchesContainer">
-        <div class="tranche-row">
-          <div class="tranche-badge t1">1</div>
-          <div class="tranche-info">
-            <h4>Tranche Antecipação</h4>
-            <p>Gatilho: Sinal de desescalada (ATIVO) · Destino: SMH 50% · QQQM 50%</p>
-          </div>
-          <div class="tranche-amount">
-            <span class="tranche-amt">$1,500</span>
-            <span class="tranche-status">EM AVALIAÇÃO</span>
-          </div>
-        </div>
-        <div class="tranche-row">
-          <div class="tranche-badge t2">2</div>
-          <div class="tranche-info">
-            <h4>Tranche Confirmação</h4>
-            <p>Gatilho: Ceasefire formal · Destino: SMH 40% · QQQM 40% · PAXG 20%</p>
-          </div>
-          <div class="tranche-amount">
-            <span class="tranche-amt">$2,000</span>
-            <span class="tranche-status">AGUARDANDO</span>
-          </div>
-        </div>
-        <div class="tranche-row">
-          <div class="tranche-badge t3">3</div>
-          <div class="tranche-info">
-            <h4>Reserva Permanente</h4>
-            <p>Oportunidade estrutural maior · Nunca deploya em evento único</p>
-          </div>
-          <div class="tranche-amount">
-            <span class="tranche-amt">$4,500</span>
-            <span class="tranche-status">RESERVA FIXA</span>
-          </div>
-        </div>
-      </div>
+      <div id="tranchesContainer"></div>
     </div>
 
     <!-- Links + Notes -->
@@ -1403,33 +1330,10 @@ const API_BASE = 'https://app.sentinelinvest.co/api';
 
 const FALLBACK_DATA = {
   client_name: 'Investidor',
-  notas: '06/03 — Step 7 confirmado. Sinais primários de desescalada acumulados. Monitorando confirmação secundária. Tranche #1 em avaliação para ativação imediata.',
-  tranches: [
-    {
-      numero: 1,
-      classe: 't1',
-      nome: 'Tranche Antecipação',
-      descricao: 'Gatilho: Sinal de desescalada (ATIVO) · Destino: SMH 50% · QQQM 50%',
-      valor: '$1,500',
-      status: 'EM AVALIAÇÃO'
-    },
-    {
-      numero: 2,
-      classe: 't2',
-      nome: 'Tranche Confirmação',
-      descricao: 'Gatilho: Ceasefire formal · Destino: SMH 40% · QQQM 40% · PAXG 20%',
-      valor: '$2,000',
-      status: 'AGUARDANDO'
-    },
-    {
-      numero: 3,
-      classe: 't3',
-      nome: 'Reserva Permanente',
-      descricao: 'Oportunidade estrutural maior · Nunca deploya em evento único',
-      valor: '$4,500',
-      status: 'RESERVA FIXA'
-    }
-  ]
+  notas: '',
+  tranches: [],
+  signals: { primarios: [], secundarios: [] },
+  playbook: null
 };
 
 function getTokenFromURL() {
@@ -1514,6 +1418,7 @@ async function fetchClientData(token) {
 
 async function initWithToken(token) {
   const result = await fetchClientData(token);
+  fetchMercado();
 
   if (!result.ok && result.authError) {
     // Token explicitly rejected by the API
@@ -1584,6 +1489,50 @@ document.getElementById('gateBtn').addEventListener('click', submitToken);
 document.getElementById('gateTokenInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitToken();
 });
+
+async function fetchMercado() {
+  try {
+    const res = await fetch(`${API_BASE}/mercado`);
+    if (!res.ok) return;
+    const d = await res.json();
+    renderMetrics(d);
+  } catch(e) { console.warn('[AILO] Erro mercado:', e); }
+}
+
+function renderMetrics(d) {
+  const grid = document.getElementById('metricsGrid');
+  if (!grid) return;
+  const fmt = (v, dec=0) => v != null ? Number(v).toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec}) : '—';
+
+  // Indicators bar
+  const ind = document.getElementById('marketIndicators');
+  if (ind) {
+    const fg = d.fear_greed_value != null
+      ? d.fear_greed_value + (d.fear_greed_label ? ' \u2014 ' + d.fear_greed_label : '')
+      : '\u2014';
+    ind.innerHTML = '<div class="market-indicators">'
+      + 'VIX: <strong>' + (d.vix ?? '\u2014') + '</strong>'
+      + '<span class="ind-sep">|</span>'
+      + 'Nasdaq: <strong>' + fmt(d.nasdaq) + '</strong>'
+      + '<span class="ind-sep">|</span>'
+      + 'DXY: <strong>' + (d.dxy ?? '\u2014') + '</strong>'
+      + '<span class="ind-sep">|</span>'
+      + 'Fear &amp; Greed: <strong>' + fg + '</strong>'
+      + '</div>';
+  }
+
+  // Price cards — only name + ticker + value
+  const cards = [
+    { cls: 'oil',       label: 'Brent Crude', ticker: 'UKOIL',  value: '$' + fmt(d.brent, 2) },
+    { cls: 'sp',        label: 'S&P 500',      ticker: 'SPX',    value: fmt(d.sp500)           },
+    { cls: 'gold-card', label: 'Ouro / PAXG',  ticker: 'XAUUSD', value: '$' + fmt(d.ouro)      },
+    { cls: 'sp',        label: 'Bitcoin',       ticker: 'BTC',    value: '$' + fmt(d.bitcoin)   },
+  ];
+  grid.innerHTML = cards.map(c => '<div class="metric-card ' + c.cls + '">'
+    + '<div class="metric-name">' + c.label + ' <span class="metric-ticker">' + c.ticker + '</span></div>'
+    + '<div class="metric-price">' + c.value + '</div>'
+    + '</div>').join('');
+}
 
 const PROMPTS = {
   pt: {
