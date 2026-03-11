@@ -1365,6 +1365,9 @@ function hideGate() {
 }
 
 function populateData(data) {
+  // Re-render prompts with client's language (pt/es/en), fallback to browser
+  renderPrompts(data.idioma || null);
+
   // Client name badge in nav
   if (data.client_name) {
     const badge = document.getElementById('clientBadge');
@@ -1577,8 +1580,8 @@ function detectLang() {
   return 'pt';
 }
 
-function renderPrompts() {
-  const lang = detectLang();
+function renderPrompts(clientLang) {
+  const lang = (clientLang && PROMPTS[clientLang]) ? clientLang : detectLang();
   const data = PROMPTS[lang];
   document.getElementById('prompts-intro').textContent = data.intro;
   const grid = document.getElementById('prompts-grid');
