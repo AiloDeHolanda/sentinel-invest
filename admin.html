@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AILo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --void:    #0A0A0B;
+      --deep:    #0D0D0F;
+      --surface: #111113;
+      --panel:   #18181B;
+      --border:  #27272A;
+      --border2: #3F3F46;
+      --gold:    #C9A84C;
+      --gold2:   #E8C97A;
+      --gold3:   #A07830;
+      --text:    #FAFAFA;
+      --muted:   #71717A;
+      --green:   #4ADE80;
+      --danger:  #F87171;
+      --blue:    #60A5FA;
+    }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--void);
+    }
+
+    .login-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      width: 360px;
+    }
+
+    .login-logo {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .login-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    /* ── ADMIN PANEL ── */
+    #adminPanel { display: none; }
+
+    .admin-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-logo {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .admin-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* ── TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: left;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      font-weight: 400;
+    }
+
+    .data-table td {
+      padding: 11px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .data-table tr.selected td { background: rgba(201,168,76,0.06); }
+
+    .mono { font-family: 'Courier Prime', monospace; font-size: 12px; color: var(--muted); }
+
+    .badge {
+      display: inline-block;
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .badge-green { color: var(--green); border-color: var(--green); }
+    .badge-muted { color: var(--muted); border-color: var(--border2); }
+    .badge-gold  { color: var(--gold);  border-color: var(--gold3); }
+    .badge-blue  { color: var(--blue);  border-color: var(--blue); }
+    .badge-red   { color: var(--danger);border-color: var(--danger); }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── FORMS ── */
+    .inline-form {
+      display: none;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 18px;
+    }
+
+    .inline-form.open { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+
+    .form-group label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--panel);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 8px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-group textarea { resize: vertical; min-height: 60px; }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--gold3); }
+
+    .form-group select option { background: var(--panel); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border: 1px solid;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: none;
+    }
+
+    .btn-primary { color: var(--gold); border-color: var(--gold3); }
+    .btn-primary:hover { background: rgba(201,168,76,0.1); }
+
+    .btn-ghost { color: var(--muted); border-color: var(--border2); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+    .btn-danger { color: var(--danger); border-color: var(--danger); }
+    .btn-danger:hover { background: rgba(248,113,113,0.1); }
+
+    .btn-small { padding: 4px 10px; font-size: 9px; }
+
+    .btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    /* ── ALERTS ── */
+    .flash {
+      display: none;
+      padding: 10px 16px;
+      font-size: 12px;
+      margin: 12px 18px;
+      border-left: 3px solid;
+    }
+    .flash.ok  { border-color: var(--green); color: var(--green); background: rgba(74,222,128,0.06); }
+    .flash.err { border-color: var(--danger); color: var(--danger); background: rgba(248,113,113,0.06); }
+
+    /* ── CLIENT DETAIL ── */
+    #clientDetail { display: none; }
+
+    .client-detail-bar {
+      background: var(--surface);
+      border: 1px solid var(--gold3);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .client-detail-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .client-detail-token {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    /* ── MISC ── */
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: 'Courier Prime', monospace;
+      letter-spacing: 1px;
+    }
+
+    .step-badge {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+    }
+    .step-badge.done    { border-color: var(--green); color: var(--green); }
+    .step-badge.current { border-color: var(--gold);  color: var(--gold); }
+    .step-badge.next    { border-color: var(--blue);  color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">AILo</div>
+    <div class="login-title">Painel Admin</div>
+    <div class="login-error" id="loginError"></div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Senha</label>
+      <input type="password" id="senhaInput" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') submitLogin()">
+    </div>
+    <button class="btn btn-primary" onclick="submitLogin()" style="width:100%;justify-content:center;">
+      Entrar →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════ ADMIN PANEL ═══════════════ -->
+<div id="adminPanel">
+  <div class="admin-header">
+    <div class="admin-logo">AILo · Admin</div>
+    <button class="btn btn-ghost btn-small" onclick="location.reload()">↺ Recarregar</button>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- FLASH -->
+    <div class="flash" id="globalFlash"></div>
+
+    <!-- ── CLIENTES ── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Clientes</span>
+        <button class="btn btn-primary btn-small" onclick="toggleForm('formNovoCliente')">+ Novo Cliente</button>
+      </div>
+
+      <!-- Formulário novo cliente -->
+      <div class="inline-form" id="formNovoCliente">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Token</label>
+            <input type="text" id="nc_token" placeholder="ailo-nome-XXXXXXXX">
+          </div>
+          <div class="form-group">
+            <label>Nome</label>
+            <input type="text" id="nc_nome">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="nc_email">
+          </div>
+          <div class="form-group">
+            <label>Idioma</label>
+            <select id="nc_idioma">
+              <option value="pt">PT — Português</option>
+              <option value="es">ES — Español</option>
+              <option value="en">EN — English</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="criarCliente()">Criar Cliente</button>
+          <button class="btn btn-ghost" onclick="toggleForm('formNovoCliente')">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Tabela clientes -->
+      <div id="clientesTableWrap">
+        <div class="empty-state">Carregando clientes…</div>
+      </div>
+    </div>
+
+    <!-- ── DETALHE DO CLIENTE ── -->
+    <div id="clientDetail">
+      <div class="client-detail-bar">
+        <div>
+          <div class="client-detail-name" id="clientDetailName"></div>
+          <div class="client-detail-token" id="clientDetailToken"></div>
+        </div>
+        <button class="btn btn-ghost btn-small" onclick="closeDetail()">✕ Fechar</button>
+      </div>
+
+      <div class="section">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" id="tab-tranches" onclick="setTab('tranches')">Tranches</button>
+          <button class="tab-btn" id="tab-signals"  onclick="setTab('signals')">Signals</button>
+          <button class="tab-btn" id="tab-playbook" onclick="setTab('playbook')">Playbook</button>
+        </div>
+
+        <!-- ── TAB TRANCHES ── -->
+        <div class="tab-content active" id="tabTranches">
+          <div class="section-header" style="border-top:none; border-bottom:1px solid var(--border)">
+            <span class="section-title">Tranches do Cliente</span>
+            <button class="btn btn-primary btn-small" onclick="toggleForm('formTranche')">+ Nova Tranche</button>
+          </div>
+
+          <div class="inline-form" id="formTranche">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Número</label>
+                <input type="number" id="tr_numero" min="1">
+              </div>
+              <div class="form-group">
+                <label>Classe</label>
+                <select id="tr_classe">
+                  <option value="t1">T1</option>
+                  <option value="t2">T2</option>
+                  <option value="t3">T3</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="tr_nome">
+              </div>
+              <div class="form-group">
+                <label>Valor</label>
+                <input type="text" id="tr_valor" placeholder="ex: $5.000">
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="tr_status">
+                  <option value="pendente">Pendente</option>
+                  <option value="executado">Executado</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Descrição</label>
+                <textarea id="tr_descricao"></textarea>
+              </div>
+            </div>
+            <input type="hidden" id="tr_id">
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="salvarTranche()">Salvar Tranche</button>
+              <button class="btn btn-ghost" onclick="cancelarFormTranche()">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="tranchesWrap">
+            <div class="empty-state">Selecione um cliente para ver tranches.</div>
+          </div>
+        </div>
+
+        <!-- ── TAB SIGNALS ── -->
+        <div class="tab-content" id="tabSignals">
+          <div class="section-header" style="border-top:none; border-bottom:1px solid var(--border)">
+            <span class="section-title">Signals do Cliente</span>
+            <button class="btn btn-primary btn-small" onclick="toggleForm('formSignal')">+ Novo Signal</button>
+          </div>
+
+          <div class="inline-form" id="formSignal">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Categoria</label>
+                <select id="sg_categoria">
+                  <option value="primario">Primário</option>
+                  <option value="secundario">Secundário</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Checked</label>
+                <select id="sg_checked">
+                  <option value="false">Não</option>
+                  <option value="true">Sim</option>
+                </select>
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Texto</label>
+                <input type="text" id="sg_texto">
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Subtexto</label>
+                <input type="text" id="sg_subtexto">
+              </div>
+            </div>
+            <input type="hidden" id="sg_id">
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="salvarSignal()">Salvar Signal</button>
+              <button class="btn btn-ghost" onclick="cancelarFormSignal()">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="signalsWrap">
+            <div class="empty-state">Selecione um cliente para ver signals.</div>
+          </div>
+        </div>
+
+        <!-- ── TAB PLAYBOOK ── -->
+        <div class="tab-content" id="tabPlaybook">
+          <div class="section-header" style="border-top:none; border-bottom:1px solid var(--border)">
+            <span class="section-title">Playbook do Cliente</span>
+          </div>
+
+          <!-- Playbook header form -->
+          <div style="padding:16px 18px; border-bottom:1px solid var(--border)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Título</label>
+                <input type="text" id="pb_titulo">
+              </div>
+              <div class="form-group">
+                <label>Step Atual</label>
+                <input type="number" id="pb_step_atual" min="1">
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Texto do Alert</label>
+                <input type="text" id="pb_alert_texto">
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Sub do Alert</label>
+                <input type="text" id="pb_alert_sub">
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary btn-small" onclick="salvarPlaybook()">Salvar Playbook</button>
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div class="section-header" style="border-bottom:1px solid var(--border)">
+            <span class="section-title">Steps</span>
+            <button class="btn btn-primary btn-small" onclick="toggleForm('formStep')">+ Novo Step</button>
+          </div>
+
+          <div class="inline-form" id="formStep">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Número</label>
+                <input type="number" id="st_numero" min="1">
+              </div>
+              <div class="form-group">
+                <label>Label</label>
+                <input type="text" id="st_label">
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="st_status">
+                  <option value="pending">Pending</option>
+                  <option value="done">Done</option>
+                  <option value="current">Current</option>
+                  <option value="next">Next</option>
+                </select>
+              </div>
+            </div>
+            <input type="hidden" id="st_id">
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="salvarStep()">Salvar Step</button>
+              <button class="btn btn-ghost" onclick="cancelarFormStep()">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="stepsWrap">
+            <div class="empty-state">Selecione um cliente para ver o playbook.</div>
+          </div>
+        </div>
+
+      </div><!-- /.section (detail tabs) -->
+    </div><!-- /#clientDetail -->
+
+  </div><!-- /.admin-main -->
+</div><!-- /#adminPanel -->
+
+<script>
+const API_BASE   = 'https://app.sentinelinvest.co/api';
+const ALLOWED_IP = '186.106.187.135';
+
+let selectedClient = null;
+let activeTab      = 'tranches';
+let editingClientToken = null;
+
+/* ═══════════ BOOT ═══════════ */
+(async function boot() {
+  try {
+    const r  = await fetch('https://api.ipify.org?format=json');
+    const { ip } = await r.json();
+    if (ip === ALLOWED_IP) {
+      showAdmin();
+    } else {
+      showLogin();
+    }
+  } catch(e) {
+    showLogin();
+  }
+})();
+
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showAdmin() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display  = 'block';
+  loadClientes();
+}
+
+async function submitLogin() {
+  const senha = document.getElementById('senhaInput').value.trim();
+  if (!senha) return;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  try {
+    const r = await fetch(`${API_BASE}/admin/auth?senha=${encodeURIComponent(senha)}`);
+    if (r.ok) {
+      showAdmin();
+    } else {
+      errEl.textContent = 'Senha incorreta.';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Erro ao verificar senha.';
+    errEl.style.display = 'block';
+  }
+}
+
+/* ═══════════ FLASH ═══════════ */
+function flash(msg, type = 'ok') {
+  const el = document.getElementById('globalFlash');
+  el.textContent = msg;
+  el.className   = 'flash ' + type;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+/* ═══════════ UTILS ═══════════ */
+function toggleForm(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function closeForm(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function val(id) {
+  return document.getElementById(id).value;
+}
+
+function setVal(id, v) {
+  const el = document.getElementById(id);
+  if (el) el.value = (v == null ? '' : v);
+}
+
+async function apiCall(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(`${API_BASE}${path}`, opts);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json().catch(() => ({}));
+}
+
+/* ═══════════ CLIENTES ═══════════ */
+async function loadClientes() {
+  try {
+    const data = await apiCall('GET', '/admin/clientes');
+    renderClientes(Array.isArray(data) ? data : (data.clientes || []));
+  } catch(e) {
+    document.getElementById('clientesTableWrap').innerHTML =
+      '<div class="empty-state">Erro ao carregar clientes.</div>';
+  }
+}
+
+function renderClientes(clientes) {
+  const wrap = document.getElementById('clientesTableWrap');
+  if (!clientes.length) {
+    wrap.innerHTML = '<div class="empty-state">Nenhum cliente cadastrado.</div>';
+    return;
+  }
+
+  const rows = clientes.map(c => {
+    const sel   = selectedClient && selectedClient.token === c.token ? 'selected' : '';
+    const badge = c.ativo !== false
+      ? '<span class="badge badge-green">Ativo</span>'
+      : '<span class="badge badge-muted">Inativo</span>';
+    const langBadge = `<span class="badge badge-gold">${(c.idioma || 'pt').toUpperCase()}</span>`;
+    return `<tr class="${sel}" onclick="selectClient(${JSON.stringify(JSON.stringify(c))})">
+      <td class="mono">${c.token}</td>
+      <td>${c.nome}</td>
+      <td class="mono" style="color:var(--muted)">${c.email || '—'}</td>
+      <td>${langBadge}</td>
+      <td>${badge}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-small" onclick="abrirEditarCliente(${JSON.stringify(JSON.stringify(c))})">Editar</button>
+          <button class="btn btn-ghost btn-small"
+            onclick="window.open('ailo_dashboard.html?token=${c.token}','_blank')">Dashboard ↗</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Token</th><th>Nome</th><th>Email</th><th>Idioma</th><th>Status</th><th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+async function criarCliente() {
+  const body = {
+    token:  val('nc_token'),
+    nome:   val('nc_nome'),
+    email:  val('nc_email'),
+    idioma: val('nc_idioma'),
+  };
+  if (!body.token || !body.nome) { flash('Token e Nome são obrigatórios.', 'err'); return; }
+  try {
+    await apiCall('POST', '/admin/cliente', body);
+    flash('Cliente criado com sucesso.');
+    closeForm('formNovoCliente');
+    ['nc_token','nc_nome','nc_email'].forEach(id => setVal(id, ''));
+    loadClientes();
+  } catch(e) { flash('Erro ao criar cliente.', 'err'); }
+}
+
+function abrirEditarCliente(jsonStr) {
+  const c = JSON.parse(jsonStr);
+  editingClientToken = c.token;
+  setVal('nc_token',  c.token);
+  setVal('nc_nome',   c.nome);
+  setVal('nc_email',  c.email);
+  setVal('nc_idioma', c.idioma || 'pt');
+  document.getElementById('nc_token').readOnly = true;
+  document.getElementById('formNovoCliente').classList.add('open');
+
+  // Swap create button to update
+  document.querySelector('#formNovoCliente .btn-primary').textContent = 'Salvar Alterações';
+  document.querySelector('#formNovoCliente .btn-primary').onclick = salvarEdicaoCliente;
+}
+
+async function salvarEdicaoCliente() {
+  const body = {
+    nome:   val('nc_nome'),
+    email:  val('nc_email'),
+    idioma: val('nc_idioma'),
+  };
+  try {
+    await apiCall('PUT', `/admin/cliente/${editingClientToken}`, body);
+    flash('Cliente atualizado.');
+    resetFormCliente();
+    loadClientes();
+  } catch(e) { flash('Erro ao atualizar cliente.', 'err'); }
+}
+
+function resetFormCliente() {
+  editingClientToken = null;
+  ['nc_token','nc_nome','nc_email'].forEach(id => setVal(id, ''));
+  document.getElementById('nc_token').readOnly = false;
+  const btn = document.querySelector('#formNovoCliente .btn-primary');
+  btn.textContent = 'Criar Cliente';
+  btn.onclick = criarCliente;
+  closeForm('formNovoCliente');
+}
+
+/* ═══════════ SELECT CLIENT ═══════════ */
+function selectClient(jsonStr) {
+  const c = JSON.parse(jsonStr);
+  selectedClient = c;
+  document.getElementById('clientDetailName').textContent  = c.nome;
+  document.getElementById('clientDetailToken').textContent = c.token;
+  document.getElementById('clientDetail').style.display    = 'block';
+  document.getElementById('clientDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTab(activeTab);
+  // Highlight row
+  document.querySelectorAll('.data-table tr').forEach(tr => tr.classList.remove('selected'));
+  document.querySelectorAll('.data-table tbody tr').forEach(tr => {
+    if (tr.textContent.includes(c.token)) tr.classList.add('selected');
+  });
+}
+
+function closeDetail() {
+  selectedClient = null;
+  document.getElementById('clientDetail').style.display = 'none';
+  document.querySelectorAll('.data-table tr').forEach(tr => tr.classList.remove('selected'));
+}
+
+/* ═══════════ TABS ═══════════ */
+function setTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  if (!selectedClient) return;
+  if (tab === 'tranches') loadTranches();
+  else if (tab === 'signals') loadSignals();
+  else if (tab === 'playbook') loadPlaybook();
+}
+
+/* ═══════════ TRANCHES ═══════════ */
+async function loadTranches() {
+  const wrap = document.getElementById('tranchesWrap');
+  wrap.innerHTML = '<div class="empty-state">Carregando…</div>';
+  try {
+    const data = await apiCall('GET', `/admin/tranches?token=${selectedClient.token}`);
+    renderTranches(Array.isArray(data) ? data : (data.tranches || []));
+  } catch(e) { wrap.innerHTML = '<div class="empty-state">Erro ao carregar tranches.</div>'; }
+}
+
+function renderTranches(tranches) {
+  const wrap = document.getElementById('tranchesWrap');
+  if (!tranches.length) {
+    wrap.innerHTML = '<div class="empty-state">Nenhuma tranche cadastrada.</div>';
+    return;
+  }
+
+  const statusBadge = s => {
+    if (s === 'executado') return '<span class="badge badge-green">Executado</span>';
+    if (s === 'cancelado') return '<span class="badge badge-red">Cancelado</span>';
+    return '<span class="badge badge-muted">Pendente</span>';
+  };
+
+  const rows = tranches.map(t => `
+    <tr>
+      <td class="mono">#${t.numero}</td>
+      <td><span class="badge badge-gold">${(t.classe||'').toUpperCase()}</span></td>
+      <td>${t.nome}</td>
+      <td style="color:var(--muted);max-width:260px">${t.descricao || '—'}</td>
+      <td class="mono">${t.valor || '—'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-small" onclick="editarTranche(${JSON.stringify(JSON.stringify(t))})">Editar</button>
+          <button class="btn btn-danger btn-small" onclick="deletarTranche(${t.id})">Remover</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Classe</th><th>Nome</th><th>Descrição</th><th>Valor</th><th>Status</th><th>Ações</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function editarTranche(jsonStr) {
+  const t = JSON.parse(jsonStr);
+  setVal('tr_id',       t.id);
+  setVal('tr_numero',   t.numero);
+  setVal('tr_classe',   t.classe);
+  setVal('tr_nome',     t.nome);
+  setVal('tr_valor',    t.valor);
+  setVal('tr_status',   t.status);
+  setVal('tr_descricao',t.descricao);
+  document.getElementById('formTranche').classList.add('open');
+}
+
+async function salvarTranche() {
+  const id = val('tr_id');
+  const body = {
+    token:     selectedClient.token,
+    numero:    parseInt(val('tr_numero')),
+    classe:    val('tr_classe'),
+    nome:      val('tr_nome'),
+    valor:     val('tr_valor'),
+    status:    val('tr_status'),
+    descricao: val('tr_descricao'),
+  };
+  try {
+    if (id) {
+      await apiCall('PUT', `/admin/tranche/${id}`, body);
+    } else {
+      await apiCall('POST', '/admin/tranche', body);
+    }
+    flash('Tranche salva.');
+    cancelarFormTranche();
+    loadTranches();
+  } catch(e) { flash('Erro ao salvar tranche.', 'err'); }
+}
+
+async function deletarTranche(id) {
+  if (!confirm('Remover esta tranche?')) return;
+  try {
+    await apiCall('DELETE', `/admin/tranche/${id}`);
+    flash('Tranche removida.');
+    loadTranches();
+  } catch(e) { flash('Erro ao remover tranche.', 'err'); }
+}
+
+function cancelarFormTranche() {
+  ['tr_id','tr_numero','tr_nome','tr_valor','tr_descricao'].forEach(i => setVal(i,''));
+  setVal('tr_classe', 't1');
+  setVal('tr_status', 'pendente');
+  closeForm('formTranche');
+}
+
+/* ═══════════ SIGNALS ═══════════ */
+async function loadSignals() {
+  const wrap = document.getElementById('signalsWrap');
+  wrap.innerHTML = '<div class="empty-state">Carregando…</div>';
+  try {
+    const data = await apiCall('GET', `/admin/signals?token=${selectedClient.token}`);
+    renderSignals(Array.isArray(data) ? data : (data.signals || []));
+  } catch(e) { wrap.innerHTML = '<div class="empty-state">Erro ao carregar signals.</div>'; }
+}
+
+function renderSignals(signals) {
+  const wrap = document.getElementById('signalsWrap');
+  if (!signals.length) {
+    wrap.innerHTML = '<div class="empty-state">Nenhum signal cadastrado.</div>';
+    return;
+  }
+
+  const catBadge = c => c === 'primario'
+    ? '<span class="badge badge-gold">Primário</span>'
+    : '<span class="badge badge-blue">Secundário</span>';
+
+  const rows = signals.map(s => `
+    <tr>
+      <td>${catBadge(s.categoria)}</td>
+      <td>${s.texto}</td>
+      <td style="color:var(--muted)">${s.subtexto || '—'}</td>
+      <td>${s.checked ? '<span class="badge badge-green">✓</span>' : '<span class="badge badge-muted">—</span>'}</td>
+      <td>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-small" onclick="editarSignal(${JSON.stringify(JSON.stringify(s))})">Editar</button>
+          <button class="btn btn-danger btn-small" onclick="deletarSignal(${s.id})">Remover</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead>
+        <tr><th>Categoria</th><th>Texto</th><th>Subtexto</th><th>Checked</th><th>Ações</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function editarSignal(jsonStr) {
+  const s = JSON.parse(jsonStr);
+  setVal('sg_id',        s.id);
+  setVal('sg_categoria', s.categoria);
+  setVal('sg_texto',     s.texto);
+  setVal('sg_subtexto',  s.subtexto);
+  setVal('sg_checked',   s.checked ? 'true' : 'false');
+  document.getElementById('formSignal').classList.add('open');
+}
+
+async function salvarSignal() {
+  const id = val('sg_id');
+  const body = {
+    token:     selectedClient.token,
+    categoria: val('sg_categoria'),
+    texto:     val('sg_texto'),
+    subtexto:  val('sg_subtexto'),
+    checked:   val('sg_checked') === 'true',
+  };
+  try {
+    if (id) {
+      await apiCall('PUT', `/admin/signal/${id}`, body);
+    } else {
+      await apiCall('POST', '/admin/signal', body);
+    }
+    flash('Signal salvo.');
+    cancelarFormSignal();
+    loadSignals();
+  } catch(e) { flash('Erro ao salvar signal.', 'err'); }
+}
+
+async function deletarSignal(id) {
+  if (!confirm('Remover este signal?')) return;
+  try {
+    await apiCall('DELETE', `/admin/signal/${id}`);
+    flash('Signal removido.');
+    loadSignals();
+  } catch(e) { flash('Erro ao remover signal.', 'err'); }
+}
+
+function cancelarFormSignal() {
+  ['sg_id','sg_texto','sg_subtexto'].forEach(i => setVal(i,''));
+  setVal('sg_categoria','primario');
+  setVal('sg_checked','false');
+  closeForm('formSignal');
+}
+
+/* ═══════════ PLAYBOOK ═══════════ */
+async function loadPlaybook() {
+  const stepsWrap = document.getElementById('stepsWrap');
+  stepsWrap.innerHTML = '<div class="empty-state">Carregando…</div>';
+  try {
+    const data = await apiCall('GET', `/admin/playbook?token=${selectedClient.token}`);
+    // Preenche header
+    setVal('pb_titulo',      data.titulo);
+    setVal('pb_step_atual',  data.step_atual);
+    setVal('pb_alert_texto', data.alert_texto);
+    setVal('pb_alert_sub',   data.alert_sub);
+    renderSteps(data.steps || []);
+  } catch(e) {
+    stepsWrap.innerHTML = '<div class="empty-state">Playbook não encontrado — preencha e salve para criar.</div>';
+  }
+}
+
+function renderSteps(steps) {
+  const wrap = document.getElementById('stepsWrap');
+  if (!steps.length) {
+    wrap.innerHTML = '<div class="empty-state">Nenhum step cadastrado.</div>';
+    return;
+  }
+
+  const rows = steps.sort((a,b) => a.numero - b.numero).map(s => {
+    const cls = s.status === 'done' ? 'done' : s.status === 'current' ? 'current' : s.status === 'next' ? 'next' : '';
+    return `<tr>
+      <td><span class="step-badge ${cls}">${s.numero}</span></td>
+      <td>${s.label}</td>
+      <td><span class="badge badge-${cls === 'done' ? 'green' : cls === 'current' ? 'gold' : cls === 'next' ? 'blue' : 'muted'}">${s.status}</span></td>
+      <td>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-small" onclick="editarStep(${JSON.stringify(JSON.stringify(s))})">Editar</button>
+          <button class="btn btn-danger btn-small" onclick="deletarStep(${s.id})">Remover</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Label</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+async function salvarPlaybook() {
+  const body = {
+    titulo:      val('pb_titulo'),
+    step_atual:  parseInt(val('pb_step_atual')) || 1,
+    alert_texto: val('pb_alert_texto'),
+    alert_sub:   val('pb_alert_sub'),
+  };
+  try {
+    await apiCall('PUT', `/admin/playbook/${selectedClient.token}`, body);
+    flash('Playbook salvo.');
+  } catch(e) { flash('Erro ao salvar playbook.', 'err'); }
+}
+
+function editarStep(jsonStr) {
+  const s = JSON.parse(jsonStr);
+  setVal('st_id',     s.id);
+  setVal('st_numero', s.numero);
+  setVal('st_label',  s.label);
+  setVal('st_status', s.status);
+  document.getElementById('formStep').classList.add('open');
+}
+
+async function salvarStep() {
+  const id = val('st_id');
+  const body = {
+    token:  selectedClient.token,
+    numero: parseInt(val('st_numero')),
+    label:  val('st_label'),
+    status: val('st_status'),
+  };
+  try {
+    if (id) {
+      await apiCall('PUT', `/admin/playbook_step/${id}`, body);
+    } else {
+      await apiCall('POST', '/admin/playbook_step', body);
+    }
+    flash('Step salvo.');
+    cancelarFormStep();
+    loadPlaybook();
+  } catch(e) { flash('Erro ao salvar step.', 'err'); }
+}
+
+async function deletarStep(id) {
+  if (!confirm('Remover este step?')) return;
+  try {
+    await apiCall('DELETE', `/admin/playbook_step/${id}`);
+    flash('Step removido.');
+    loadPlaybook();
+  } catch(e) { flash('Erro ao remover step.', 'err'); }
+}
+
+function cancelarFormStep() {
+  ['st_id','st_numero','st_label'].forEach(i => setVal(i,''));
+  setVal('st_status','pending');
+  closeForm('formStep');
+}
+</script>
+</body>
+</html>
