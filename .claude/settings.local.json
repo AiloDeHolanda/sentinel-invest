@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(open ~/projetos/sentinel-invest/index.html)",
-      "Bash(open /Users/ailoholanda/projetos/sentinel-invest/index.html)",
-      "Bash(open /Users/ailoholanda/projetos/sentinel-invest/ailo_dashboard.html)"
-    ]
-  }
-}
