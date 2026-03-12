@@ -718,7 +718,7 @@ function renderClientes(clientes) {
       ? '<span class="badge badge-green">Ativo</span>'
       : '<span class="badge badge-muted">Inativo</span>';
     const langBadge = `<span class="badge badge-gold">${(c.idioma || 'pt').toUpperCase()}</span>`;
-    return `<tr class="${sel}" onclick="selectClient(${JSON.stringify(JSON.stringify(c))})">
+    return `<tr class="${sel}" onclick='selectClient(${JSON.stringify(JSON.stringify(c))})'>
       <td class="mono">${c.token}</td>
       <td>${c.nome}</td>
       <td class="mono" style="color:var(--muted)">${c.email || '—'}</td>
@@ -726,7 +726,7 @@ function renderClientes(clientes) {
       <td>${badge}</td>
       <td onclick="event.stopPropagation()">
         <div class="btn-row">
-          <button class="btn btn-ghost btn-small" onclick="abrirEditarCliente(${JSON.stringify(JSON.stringify(c))})">Editar</button>
+          <button class="btn btn-ghost btn-small" onclick='abrirEditarCliente(${JSON.stringify(JSON.stringify(c))})'>Editar</button>
           <button class="btn btn-ghost btn-small"
             onclick="window.open('ailo_dashboard.html?token=${c.token}','_blank')">Dashboard ↗</button>
         </div>
@@ -869,7 +869,7 @@ function renderTranches(tranches) {
       <td>${statusBadge(t.status)}</td>
       <td>
         <div class="btn-row">
-          <button class="btn btn-ghost btn-small" onclick="editarTranche(${JSON.stringify(JSON.stringify(t))})">Editar</button>
+          <button class="btn btn-ghost btn-small" onclick='editarTranche(${JSON.stringify(JSON.stringify(t))})'>Editar</button>
           <button class="btn btn-danger btn-small" onclick="deletarTranche(${t.id})">Remover</button>
         </div>
       </td>
@@ -964,7 +964,7 @@ function renderSignals(signals) {
       <td>${s.checked ? '<span class="badge badge-green">✓</span>' : '<span class="badge badge-muted">—</span>'}</td>
       <td>
         <div class="btn-row">
-          <button class="btn btn-ghost btn-small" onclick="editarSignal(${JSON.stringify(JSON.stringify(s))})">Editar</button>
+          <button class="btn btn-ghost btn-small" onclick='editarSignal(${JSON.stringify(JSON.stringify(s))})'>Editar</button>
           <button class="btn btn-danger btn-small" onclick="deletarSignal(${s.id})">Remover</button>
         </div>
       </td>
@@ -1058,7 +1058,7 @@ function renderSteps(steps) {
       <td><span class="badge badge-${cls === 'done' ? 'green' : cls === 'current' ? 'gold' : cls === 'next' ? 'blue' : 'muted'}">${s.status}</span></td>
       <td>
         <div class="btn-row">
-          <button class="btn btn-ghost btn-small" onclick="editarStep(${JSON.stringify(JSON.stringify(s))})">Editar</button>
+          <button class="btn btn-ghost btn-small" onclick='editarStep(${JSON.stringify(JSON.stringify(s))})'>Editar</button>
           <button class="btn btn-danger btn-small" onclick="deletarStep(${s.id})">Remover</button>
         </div>
       </td>
